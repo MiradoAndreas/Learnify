@@ -1,6 +1,3 @@
-// components/footer/FooterLogo.tsx
-import Link from "next/link";
-
 import Logo from "../navbar/Logo";
 
 export function FooterLogo() {

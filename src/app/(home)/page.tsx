@@ -5,7 +5,8 @@ import { HeroSection } from "@/modules/home/ui/components/hero-section";
 import { Navbar } from "@/modules/home/ui/components/navbar";
 import { AnimatedTestimonialsDemo } from "@/modules/home/ui/components/testimonials";
 
-const Page = () => {
+const Page = async () => {
+  
   return (
     <>
       <Navbar />
