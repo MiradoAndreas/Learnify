@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Menu, LogIn, Sparkles, Search } from "lucide-react";
+import { Menu, LogIn, Sparkles, Search, LogInIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "./Logo";
 
@@ -10,8 +10,16 @@ import SearchInput from "./search-input";
 
 import { NavLinks } from "./nav-links";
 import { MobileMenu } from "./mobile-menu";
+import { AuthModal } from "@/modules/auth/ui/components/auth-modal";
+import { authClient } from "@/lib/auth-client";
+import { UserAvatarPersonal } from "@/components/user-avatar-personal";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Navbar: React.FC = () => {
+  // * data from the session of the user
+  const { data, isPending } = authClient.useSession();
+  const [isOpen, setIsOpen] = useState(false);
+  const [mode, setMode] = useState<"login" | "register">("login");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -63,22 +71,42 @@ export const Navbar: React.FC = () => {
                 <SearchInput />
               </div>
 
-              {/* Get Started Button */}
-              <Button variant="outline">
-                <Sparkles className="w-4 h-4" />
-                <span>Get Started</span>
-              </Button>
-
               {/* Login Button */}
-              <Button
-                variant="ghost"
-                className="hidden lg:flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-[#feba46] dark:hover:text-[#feba46]"
-              >
-                <LogIn className="w-4 h-4" />
-                <span>Login</span>
-              </Button>
 
-              {/* Mobile Menu Button */}
+              {data && (
+                <>
+                  <UserAvatarPersonal
+                    name={data.user.name}
+                    size="lg"
+                    imageUrl={data.user.image}
+                    onClickLogout={() => {
+                      authClient.signOut();
+                    }}
+                  />
+                </>
+              )}
+              {!isPending && !data && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setMode("login");
+                      setIsOpen(true);
+                    }}
+                  >
+                    <LogInIcon className="w-4 h-4" />
+                    <span>Login</span>
+                  </Button>
+                </>
+              )}
+              {isPending && <Skeleton className="w-10 h-10 rounded-full" />}
+              <AuthModal
+                open={isOpen}
+                mode={mode}
+                onModeChange={setMode}
+                onOpenChange={setIsOpen}
+              />
+
               <Button
                 variant="ghost"
                 size="icon"
@@ -99,7 +127,6 @@ export const Navbar: React.FC = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}

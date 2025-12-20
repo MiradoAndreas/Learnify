@@ -6,9 +6,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { LogIn, Github, Twitter, Linkedin } from "lucide-react";
+import { Github, Twitter, Linkedin } from "lucide-react";
 import Logo from "./Logo";
-import SearchInput from "./search-input";
+
 import { NavLinks } from "./nav-links";
 
 interface MobileMenuProps {
@@ -30,22 +30,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
 
           <div className="flex-1 px-6 py-4 overflow-y-auto">
             <NavLinks isMobile onClick={onClose} className="mb-8" />
-
-            <div className="space-y-4 mb-8">
-              <h3 className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
-                Quick Actions
-              </h3>
-              <Button className="w-full h-12 text-base rounded-xl">
-                <LogIn className="w-5 h-5 mr-2" />
-                Sign In
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full h-12 text-base rounded-xl"
-              >
-                Get Started
-              </Button>
-            </div>
 
             <div className="pt-8 border-t">
               <h3 className="font-semibold text-muted-foreground text-sm uppercase tracking-wider mb-4">
