@@ -246,6 +246,7 @@ export function LoginView() {
                 >
                   Don't have an account?{" "}
                   <Link
+                    prefetch
                     href="/register"
                     className="hover:underline cursor-pointer hover:underline-offset-4 font-bold text-primary/90"
                   >
@@ -261,9 +262,9 @@ export function LoginView() {
       <div className="hidden lg:block relative w-1/2">
         <Image
           alt="github"
-          src="/logos/learnify-login.jpg"
-          width={476}
-          height={534}
+          src="/logos/image-login.jpg"
+          width={300}
+          height={300}
           className="size-full object-cover rounded-r-xl"
         />
       </div>

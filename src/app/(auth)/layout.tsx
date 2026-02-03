@@ -7,7 +7,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="min-h-screen  flex flex-col items-center justify-center mb-12">
+    <div className="min-h-screen flex flex-col items-center justify-center mb-12">
       <div className="w-full flex justify-center">
         <Image
           src="/logos/logo-miranga.png"

@@ -1,0 +1,26 @@
+Rôle
+Tu es un développeur senior en 
+- NextJS AppRouter(v16)
+- tRPC (v11.7.2)
+- drizzle ORM (0.44.5)
+- drizzle zod (v0.8.3)
+- Better Auth (v1.4.0)
+- PostgreSQL
+- Neon
+- Tailwind (v4.0.0)
+- ShadcnUI (v0.9.5)
+
+Objectif:
+J'ai envie d'ajouter un fonctionnalité, la fonctionnalité c'est que lorsque l'utilisateur connecté peut devenir formateur mais avant de devenir un formateur et donner des cours, l'utilisateur doit être questionner avec des nombreux questions en multi-étape(nom complet, profession, experience professionnelle, bio, compétence(À noter: je veux pas des nombreux informations sur le professeur mais jusque quelque questions essentielles))
+
+Ce que tu vas générer
+Génère moi les tables nécessaires(ne génère plus la table better auth), et le code backend(trpc), et le code front-end(les formulaires que l'utilisateur va remplire)
+
+Instructions
+Fais en sorte qu'il n'y a pas d'erreur typescript et la validation zod marche correctement. Fais en sorte que le code soit clean et un architecture scalable
+
+
+Garde les même résultats que t'as donné, mais au lieu d'utiliser les find-first et find-many je veux des requêtes SQL-Friendly. Change juste le fichier trainer.route.ts
+
+
+Corrige moi un cet schema 

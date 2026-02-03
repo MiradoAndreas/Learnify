@@ -72,6 +72,9 @@ export function RegisterForm({ onSuccess, onSwitch }: RegisterFormProps) {
       },
       {
         // todos: add isPending here when the user wait
+        onSuccess: () => {
+          router.push("/");
+        },
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },

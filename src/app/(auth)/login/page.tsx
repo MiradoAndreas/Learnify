@@ -10,11 +10,7 @@ const Page = async () => {
   if (!!session) {
     redirect("/");
   }
-  return (
-    <div>
-      <LoginView />
-    </div>
-  );
+  return <LoginView />;
 };
 
 export default Page;
