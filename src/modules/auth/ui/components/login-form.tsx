@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -76,6 +76,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
   const isPending = form.formState.isSubmitting;
 
   const onSocial = async (provider: "github" | "google" | "linkedin") => {
+    toast.loading(`Redirecting to ${provider}`)
     setIsSocialPending(true);
     await authClient.signIn.social(
       {
@@ -125,7 +126,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                       src="/logos/google.svg"
                       width={15}
                       height={15}
-                      className={cn(isSocialPending && "animate-spin")}
+                     
                     />
                     <span className="text-xs text-muted-foreground">
                       Continue with Goggle
@@ -145,7 +146,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                         src="/logos/github.svg"
                         width={15}
                         height={15}
-                        className={cn(isSocialPending && "animate-spin")}
+                       
                       />
                     </Button>
                     <Button
@@ -160,7 +161,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                         src="/logos/linkedin.svg"
                         width={15}
                         height={15}
-                        className={cn(isSocialPending && "animate-spin")}
+                   
                       />
                     </Button>
                   </div>

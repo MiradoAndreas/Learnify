@@ -1,20 +1,33 @@
-import { DescriptionSection } from "@/modules/home/ui/components/description-section";
-import { FaqAccordion } from "@/modules/home/ui/components/faq";
-import { Footer } from "@/modules/home/ui/components/footer";
-import { HeroSection } from "@/modules/home/ui/components/hero-section";
-import { Navbar } from "@/modules/home/ui/components/navbar";
-import { AnimatedTestimonialsDemo } from "@/modules/home/ui/components/testimonials";
+
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
+import { HeroFloat } from "@/components/ui/hero-section";
+import { BeneficSection } from "@/modules/landing/ui/sections/benefic-section";
+import { FacSection } from "@/modules/landing/ui/sections/faq-section";
+import { FooterSection } from "@/modules/landing/ui/sections/footer-section";
+import { GoSection } from "@/modules/landing/ui/sections/go-section";
+import { HowItWorkSection } from "@/modules/landing/ui/sections/how-it-work-section";
+import { NavbarSection } from "@/modules/landing/ui/sections/navbar-section";
+import { ProblemSection } from "@/modules/landing/ui/sections/problem-section";
+import { StickyBannerDemo } from "@/modules/landing/ui/sections/sticky-banner-section";
+import { TestimonialSection } from "@/modules/landing/ui/sections/testimonial-section";
+
+
+
 
 const Page = async () => {
-  
   return (
     <>
-      <Navbar />
-      <HeroSection />
-      <DescriptionSection />
-      <AnimatedTestimonialsDemo />
-      <FaqAccordion />
-      <Footer />
+      <StickyBannerDemo />
+      <NavbarSection />
+      <HeroFloat />
+      <ProblemSection />
+      <BeneficSection />
+      <HowItWorkSection />
+      <TestimonialSection />
+      <FacSection />
+      <GoSection />
+
+
     </>
   );
 };

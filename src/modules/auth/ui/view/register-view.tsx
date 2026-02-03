@@ -293,6 +293,7 @@ export function RegisterView() {
                 <div className="text-center text-xs text-muted-foreground relative border-t-3 -mx-6 p-3 -mb-7 pb-9">
                   Already have an account?{" "}
                   <Link
+                    prefetch
                     href="/login"
                     className="hover:underline cursor-pointer hover:underline-offset-4 font-bold text-primary/90"
                   >
@@ -307,10 +308,10 @@ export function RegisterView() {
       <div className="hidden lg:block relative md:w-1/2">
         <Image
           alt="github"
-          src="/logos/learnify-login.jpg"
+          src="/logos/image-login.jpg"
           width={476}
           height={534}
-          className="size-full object-contain rounded-r-xl"
+          className="size-full object-cover rounded-r-xl"
         />
       </div>
     </div>

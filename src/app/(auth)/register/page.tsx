@@ -11,11 +11,7 @@ const Page = async () => {
     redirect("/");
   }
 
-  return (
-    <div>
-      <RegisterView />
-    </div>
-  );
+  return <RegisterView />;
 };
 
 export default Page;

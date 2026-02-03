@@ -17,7 +17,6 @@ export const AuthModal = ({
   onModeChange,
   onOpenChange,
 }: AuthModalProps) => {
-  console.log("onModeChange = ", onModeChange);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[400px]">
