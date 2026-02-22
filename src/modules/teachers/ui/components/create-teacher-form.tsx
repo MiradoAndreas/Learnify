@@ -39,7 +39,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { TrainerApplicationInput, trainerApplicationSchema } from "@/db/schema";
 import { useTRPC } from "@/trpc/client";
-import Logo from "@/modules/landing/ui/components/navbar/Logo";
+
 import Image from "next/image";
 
 const steps = [
@@ -115,8 +115,8 @@ export function CreateTeacherForm() {
       steps[step].title === "Informations"
         ? ["fullName", "profession"]
         : steps[step].title === "Expérience"
-        ? ["experience", "bio"]
-        : ["skills"];
+          ? ["experience", "bio"]
+          : ["skills"];
 
     const isValid = await form.trigger(fields as any);
     if (isValid) {
@@ -129,7 +129,7 @@ export function CreateTeacherForm() {
   const progress = ((step + 1) / steps.length) * 100;
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-orange-50 via-white to-amber-50 py-4 md:py-8 px-3 sm:px-4 lg:px-6">
+    <div className="min-h-screen  py-4 md:py-8 px-3 sm:px-4 lg:px-6">
       <div className="max-w-4xl mx-auto">
         {/* Header avec animation - Responsive */}
         <motion.div
@@ -207,9 +207,8 @@ export function CreateTeacherForm() {
                           style={{
                             background:
                               index < step
-                                ? `linear-gradient(to right, ${
-                                    steps[index].color
-                                  }, ${steps[index + 1].color})`
+                                ? `linear-gradient(to right, ${steps[index].color
+                                }, ${steps[index + 1].color})`
                                 : "#e5e7eb",
                           }}
                         />
@@ -499,7 +498,7 @@ export function CreateTeacherForm() {
                           Compétences
                         </Label>
                         <Input
-                          placeholder="Ex: React, TypeScript, DevOps, UX Design, Python"
+                          placeholder="Ecrivez vos compétences ici"
                           onChange={(e) =>
                             form.setValue(
                               "skills",

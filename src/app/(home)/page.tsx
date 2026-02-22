@@ -1,9 +1,8 @@
 
-import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { HeroFloat } from "@/components/ui/hero-section";
 import { BeneficSection } from "@/modules/landing/ui/sections/benefic-section";
 import { FacSection } from "@/modules/landing/ui/sections/faq-section";
-import { FooterSection } from "@/modules/landing/ui/sections/footer-section";
+
 import { GoSection } from "@/modules/landing/ui/sections/go-section";
 import { HowItWorkSection } from "@/modules/landing/ui/sections/how-it-work-section";
 import { NavbarSection } from "@/modules/landing/ui/sections/navbar-section";
@@ -12,11 +11,9 @@ import { StickyBannerDemo } from "@/modules/landing/ui/sections/sticky-banner-se
 import { TestimonialSection } from "@/modules/landing/ui/sections/testimonial-section";
 
 
-
-
-const Page = async () => {
+const Page = () => {
   return (
-    <>
+    <div className="overflow-hidden max-w-full">
       <StickyBannerDemo />
       <NavbarSection />
       <HeroFloat />
@@ -26,9 +23,7 @@ const Page = async () => {
       <TestimonialSection />
       <FacSection />
       <GoSection />
-
-
-    </>
+    </div>
   );
 };
 

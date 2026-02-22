@@ -6,7 +6,7 @@ import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-
+import { motion } from "framer-motion"
 interface CourseCompetencesSectionProps {
   courseId: string;
 }
@@ -60,37 +60,35 @@ const CourseCompetencesSectionSuspense = ({
   );
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .6 }} className="space-y-6">
       {/* En-tête */}
       <div>
-        <h2 className="text-2xl font-bold">
-          Quelles sont mes compétences apès ce cours ?
+        <h2 className="text-2xl font-bold text-foreground dark:text-zinc-100">
+          Quelles sont mes compétences après ce cours ?
         </h2>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-muted-foreground dark:text-zinc-400 mt-1">
           Ce cours vous permet d'acquérir des compétences directement applicables
         </p>
       </div>
-
-     
 
       {/* Liste simple */}
       <div className="space-y-4">
         {competences.map((competence, index) => (
           <div key={competence.id} className="flex items-start">
-            <div className="mr-3 text-primary font-medium">
+            <div className="mr-3 text-primary dark:text-primary/90 font-medium">
               {String(index + 1).padStart(2, '0')}
             </div>
             <div>
-              <div className="font-medium">
+              <div className="font-medium text-foreground dark:text-zinc-200">
                 {competence.text}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">
+              <div className="text-sm text-muted-foreground dark:text-zinc-400 mt-1">
                 Appliquée à travers des exercices pratiques et des mises en situation
               </div>
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };

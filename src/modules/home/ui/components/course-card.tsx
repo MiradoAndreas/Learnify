@@ -46,6 +46,11 @@ import { formatCourseDuration } from "@/modules/teachers/courses/lessons/ui/util
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
+import { RichTextDisplay } from "@/modules/teachers/courses/lessons/ui/components/rich-text-display";
+import { motion, AnimatePresence } from "framer-motion";
+
+// Animation easing style Apple
+const appleEasing = [0.16, 1, 0.3, 1] as const;
 
 interface CourseCardProps {
   course: {
@@ -59,7 +64,6 @@ interface CourseCardProps {
       profession: string;
       image?: string | null;
     };
-
     level?: "beginner" | "intermediate" | "advanced" | null;
     duration?: number;
     totalLessons?: number;
@@ -76,6 +80,7 @@ export const CourseCard = ({
 }: CourseCardProps) => {
   const trpc = useTRPC();
   const [hovered, setHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -132,7 +137,6 @@ export const CourseCard = ({
   };
 
   const safeLevel = course.level || "Tous le niveaux";
-
   const levelConfig = getLevelConfig(safeLevel);
 
   const getLanguageLabel = (lang?: string) => {
@@ -148,130 +152,214 @@ export const CourseCard = ({
     }
   };
 
-  // Fonction pour calculer le prix "avant réduction" (marketing)
   const getMarketingPrice = (price: number) => {
     if (isFreeCourse) return null;
-    // Ajouter 20% au prix réel pour créer une "réduction"
     return Math.round(price * 1.2);
   };
 
-  // Formatage du prix avec fausse réduction de 20%
   const formatPriceWithDiscount = (price: number) => {
     if (isFreeCourse) return "Gratuit";
-
-    const originalPrice = getMarketingPrice(price); // Prix "avant réduction"
+    const originalPrice = getMarketingPrice(price);
 
     return (
       <div className="flex items-center gap-2">
-        <span className="text-2xl font-bold text-[#ffb74d]">
+        <motion.span
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="text-2xl font-bold text-[#ffb74d]"
+        >
           {price.toLocaleString()} Ar
-        </span>
+        </motion.span>
         {originalPrice && (
           <>
             <span className="text-sm text-muted-foreground line-through">
               {originalPrice.toLocaleString()} Ar
             </span>
-            <Badge className="bg-red-500 hover:bg-red-600 text-white text-xs px-1.5 py-0">
-              -20%
-            </Badge>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+            >
+              <Badge className="bg-red-500 hover:bg-red-600 text-white text-xs px-1.5 py-0">
+                -20%
+              </Badge>
+            </motion.div>
           </>
         )}
       </div>
     );
   };
 
-  // Contenu compact pour mobile
+  // Version compacte avec animations
   if (variant === "compact") {
     return (
-      <Link href={`/home/${course.id}`} className="block">
-        <Card className="group pt-0 overflow-hidden border border-border hover:border-[#ffb74d]/30 transition-all duration-300 hover:shadow-lg">
-          <div className="flex flex-col sm:flex-row">
-            {/* Image */}
-            <div className="relative sm:w-2/5 aspect-video sm:aspect-auto bg-[#ffb74d]/5">
-              {course.thumbnailUrl ? (
-                <Image
-                  src={course.thumbnailUrl}
-                  alt={course.title}
-                  className="h-full w-full object-cover"
-                  width={300}
-                  height={200}
-                />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center">
-                  <BookOpen className="h-12 w-12 text-[#ffb74d]/20" />
-                </div>
-              )}
-              <div className="absolute top-2 left-2">
-                <Badge
-                  className={cn("text-xs font-semibold", levelConfig.color)}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.4, ease: appleEasing }}
+        whileHover={{ y: -4 }}
+      >
+        <Link href={`/home/${course.id}`} className="block">
+          <Card className="group pt-0 overflow-hidden border border-border hover:border-[#ffb74d]/30 transition-all duration-300 hover:shadow-lg">
+            <div className="flex flex-col sm:flex-row">
+              {/* Image avec animation de chargement */}
+              <motion.div
+                className="relative sm:w-2/5 aspect-video sm:aspect-auto bg-[#ffb74d]/5"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+              >
+                {course.thumbnailUrl ? (
+                  <>
+                    <motion.div
+                      initial={{ scale: 1.1, opacity: 0 }}
+                      animate={{
+                        scale: imageLoaded ? 1 : 1.1,
+                        opacity: imageLoaded ? 1 : 0
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Image
+                        src={course.thumbnailUrl}
+                        alt={course.title}
+                        className="h-full w-full object-cover"
+                        width={300}
+                        height={200}
+                        onLoad={() => setImageLoaded(true)}
+                      />
+                    </motion.div>
+                  </>
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center">
+                    <BookOpen className="h-12 w-12 text-[#ffb74d]/20" />
+                  </div>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="absolute top-2 left-2"
                 >
-                  <span className="mr-1">{levelConfig.icon}</span>
-                  {levelConfig.label}
-                </Badge>
+                  <Badge className={cn("text-xs font-semibold", levelConfig.color)}>
+                    <span className="mr-1">{levelConfig.icon}</span>
+                    {levelConfig.label}
+                  </Badge>
+                </motion.div>
+              </motion.div>
+
+              {/* Contenu */}
+              <div className="flex-1 p-4">
+                <motion.h3
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-[#ffb74d] transition-colors"
+                >
+                  {course.title}
+                </motion.h3>
+
+                <RichTextDisplay
+                  content={course.description}
+                  className="text-sm text-muted-foreground mb-3 line-clamp-2"
+                />
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="flex items-center justify-between"
+                >
+                  <div className="text-lg font-bold text-[#ffb74d]">
+                    {isFreeCourse ? "Gratuit" : `${course.price.toLocaleString()} Ar`}
+                  </div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button className="bg-[#ffb74d] hover:bg-[#ffb74d]/90 text-white">
+                      {isFreeCourse ? "Commencer" : "Voir le cours"}
+                    </Button>
+                  </motion.div>
+                </motion.div>
               </div>
             </div>
-
-            {/* Contenu */}
-            <div className="flex-1 p-4">
-              <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-[#ffb74d] transition-colors">
-                {course.title}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                {course.description}
-              </p>
-
-              <div className="flex items-center justify-between">
-                <div className="text-lg font-bold text-[#ffb74d]">
-                  {isFreeCourse
-                    ? "Gratuit"
-                    : `${course.price.toLocaleString()} Ar`}
-                </div>
-
-                <Button className="bg-[#ffb74d] hover:bg-[#ffb74d]/90 text-white">
-                  {isFreeCourse ? "Commencer" : "Voir le cours"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </Link>
+          </Card>
+        </Link>
+      </motion.div>
     );
   }
 
+  // Version par défaut avec animations
   return (
     <TooltipProvider>
       <HoverCard openDelay={300} closeDelay={100}>
         <HoverCardTrigger asChild>
           <Link href={`/home/${course.id}`} className="block">
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.4, ease: appleEasing }}
+              whileHover={{ y: -4 }}
               className={cn("w-full cursor-pointer group")}
               onMouseEnter={handleMouseEnter}
             >
-              <Card className="h-full pt-0 gap-0  overflow-hidden border border-border/50 hover:border-[#ffb74d]/30 transition-all duration-500 hover:shadow-xl group-hover:-translate-y-1">
-                {/* Image avec overlay */}
-                <div className="relative aspect-video overflow-hidden bg-[#ffb74d]/5">
+              <Card className="h-full pt-0 gap-0 overflow-hidden border border-border/50 hover:border-[#ffb74d]/30 transition-all duration-500 hover:shadow-xl">
+                {/* Image avec overlay et animation */}
+                <motion.div
+                  className="relative aspect-video overflow-hidden bg-[#ffb74d]/5"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
                   {course.thumbnailUrl ? (
                     <>
-                      <Image
-                        src={course.thumbnailUrl}
-                        alt={course.title}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        width={400}
-                        height={225}
+                      <motion.div
+                        initial={{ scale: 1.1, opacity: 0 }}
+                        animate={{
+                          scale: imageLoaded ? 1 : 1.1,
+                          opacity: imageLoaded ? 1 : 0
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Image
+                          src={course.thumbnailUrl}
+                          alt={course.title}
+                          className="h-full w-full object-cover"
+                          width={400}
+                          height={225}
+                          onLoad={() => setImageLoaded(true)}
+                        />
+                      </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent"
                       />
-                      <div className="absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent" />
                     </>
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
                       <div className="relative">
                         <BookOpen className="h-16 w-16 text-[#ffb74d]/20" />
-                        <PlayCircle className="absolute inset-0 h-full w-full text-[#ffb74d]/40" />
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <PlayCircle className="absolute inset-0 h-full w-full text-[#ffb74d]/40" />
+                        </motion.div>
                       </div>
                     </div>
                   )}
 
-                  {/* Badges superposés */}
-                  <div className="absolute top-3 right-3 flex flex-col gap-2">
+                  {/* Badges superposés avec animation */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="absolute top-3 right-3 flex flex-col gap-2"
+                  >
                     {course.language && (
                       <Badge
                         variant="secondary"
@@ -281,23 +369,31 @@ export const CourseCard = ({
                         {getLanguageLabel(course.language)}
                       </Badge>
                     )}
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
 
                 {/* Contenu principal */}
                 <CardContent className="p-5">
-                  {/* Titre */}
-                  <h3 className="font-bold text-lg leading-tight line-clamp-2 group-hover:text-[#ffb74d] transition-colors">
+                  <motion.h3
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.15 }}
+                    className="font-bold text-lg leading-tight line-clamp-2 group-hover:text-[#ffb74d] transition-colors"
+                  >
                     {course.title}
-                  </h3>
+                  </motion.h3>
 
-                  {/* Description courte */}
-                  <p className="text-sm text-muted-foreground line-clamp-2 my-3">
-                    {course.description}
-                  </p>
+                  <RichTextDisplay
+                    content={course.description}
+                    className="text-sm text-muted-foreground my-3 line-clamp-2"
+                  />
 
-                  {/* Formateur */}
-                  <div>
+                  {/* Formateur avec animation */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
                     <div className="flex items-center gap-1">
                       <p className="font-semibold text-sm truncate">
                         {course.trainer.fullName}
@@ -307,32 +403,42 @@ export const CourseCard = ({
                         {course.trainer.profession}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 </CardContent>
 
                 {/* Footer avec prix et CTA */}
-                <CardFooter className="px-5 flex  pt-0 border-t">
+                <CardFooter className="px-5 pt-0 border-t">
                   <div className="w-full flex flex-col gap-10">
                     <div className="space-y-1">
                       {formatPriceWithDiscount(course.price)}
                     </div>
                     <div className="w-full flex items-center justify-between">
                       <div></div>
-                      <Button className="bg-[#ffb74d] hover:bg-[#ffb74d]/90 text-white font-semibold hover:shadow-md transition-all duration-300 group/btn">
-                        <span className="group-hover/btn:translate-x-1 transition-transform">
-                          {isFreeCourse ? "Commencer" : "Acheter"}
-                        </span>
-                        <ChevronRight className="ml-2 h-4 w-4 opacity-0 group-hover/btn:opacity-100 transition-all" />
-                      </Button>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button className="bg-[#ffb74d] hover:bg-[#ffb74d]/90 text-white font-semibold hover:shadow-md transition-all duration-300 group/btn">
+                          <span className="group-hover/btn:translate-x-1 transition-transform">
+                            {isFreeCourse ? "Commencer" : "Acheter"}
+                          </span>
+                          <motion.div
+                            animate={{ x: [0, 5, 0] }}
+                            transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                          >
+                            <ChevronRight className="ml-2 h-4 w-4" />
+                          </motion.div>
+                        </Button>
+                      </motion.div>
                     </div>
                   </div>
                 </CardFooter>
               </Card>
-            </div>
+            </motion.div>
           </Link>
         </HoverCardTrigger>
 
-        {/* Hover Card enrichi */}
+        {/* Hover Card enrichi avec animations */}
         <HoverCardContent
           className="w-[300px] lg:w-[400px] p-0 border shadow-2xl overflow-hidden"
           align="center"
@@ -340,14 +446,29 @@ export const CourseCard = ({
           sideOffset={20}
           collisionPadding={20}
         >
-          <div className="relative">
-            {/* Bannière supérieure */}
-            <div className="h-1 bg-[#ffb74d]" />
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="relative"
+          >
+            {/* Bannière supérieure animée */}
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.3 }}
+              className="h-1 bg-[#ffb74d] origin-left"
+            />
 
             <ScrollArea className="h-[500px]">
               <div className="p-6 space-y-3">
                 {/* En-tête avec niveau et prix */}
-                <div className="flex items-start justify-between gap-2">
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.05 }}
+                  className="flex items-start justify-between gap-2"
+                >
                   <Badge
                     className={cn(
                       "px-3 py-1 font-semibold text-sm",
@@ -357,48 +478,66 @@ export const CourseCard = ({
                     <span className="mr-1">{levelConfig.icon}</span>
                     {levelConfig.label}
                   </Badge>
-                </div>
+                </motion.div>
 
                 {/* Titre */}
-                <h3 className="font-bold text-xl leading-tight">
+                <motion.h3
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="font-bold text-xl leading-tight"
+                >
                   {course.title}
-                </h3>
+                </motion.h3>
 
                 <Separator className="bg-[#ffb74d]/20" />
 
                 {/* Description */}
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
-                    {course.description}
-                  </p>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.15 }}
+                  className="space-y-2"
+                >
+                  <RichTextDisplay
+                    content={course.description}
+                    className="text-sm text-muted-foreground my-3 line-clamp-4"
+                  />
+                </motion.div>
 
-                {/* Stats essentielles */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1 p-3 bg-[#ffb74d]/5 rounded-lg">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      <span>Durée</span>
-                    </div>
-                    <p className="font-bold text-lg">
-                      {formatCourseDuration(course.duration)}
-                    </p>
-                  </div>
-
-                  <div className="space-y-1 p-3 bg-[#ffb74d]/5 rounded-lg">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <BookOpen className="h-4 w-4" />
-                      <span>Leçons</span>
-                    </div>
-                    <p className="font-bold text-lg">
-                      {course.totalLessons || 0}
-                    </p>
-                  </div>
-                </div>
+                {/* Stats essentielles avec animations */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="grid grid-cols-2 gap-4"
+                >
+                  {[
+                    { icon: Clock, label: "Durée", value: formatCourseDuration(course.duration) },
+                    { icon: BookOpen, label: "Leçons", value: course.totalLessons || 0 }
+                  ].map((stat, idx) => (
+                    <motion.div
+                      key={idx}
+                      whileHover={{ scale: 1.02 }}
+                      className="space-y-1 p-3 bg-[#ffb74d]/5 rounded-lg"
+                    >
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <stat.icon className="h-4 w-4" />
+                        <span>{stat.label}</span>
+                      </div>
+                      <p className="font-bold text-lg">{stat.value}</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
 
                 {/* Objectifs d'apprentissage */}
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-muted-foreground  flex items-center gap-2">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.25 }}
+                  className="space-y-3"
+                >
+                  <h4 className="font-semibold text-muted-foreground flex items-center gap-2">
                     Ce que vous allez apprendre
                   </h4>
                   {isDetailsLoading ? (
@@ -412,50 +551,78 @@ export const CourseCard = ({
                       {(courseDetails?.objectives || [])
                         .slice(0, 4)
                         .map((objective: string, index: number) => (
-                          <li
+                          <motion.li
                             key={index}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + index * 0.05 }}
                             className="flex items-start gap-2 text-sm"
                           >
-                            <CheckIcon className="h-3.5 w-3.5  mt-0.5 shrink-0" />
+                            <CheckIcon className="h-3.5 w-3.5 mt-0.5 shrink-0" />
                             <span className="text-muted-foreground">
                               {objective}
                             </span>
-                          </li>
+                          </motion.li>
                         ))}
                     </ul>
                   )}
-                </div>
+                </motion.div>
 
                 {/* Avantages */}
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="flex items-center gap-2 text-xs p-2 bg-[#ffb74d]/5 rounded">
-                    <Clock className="h-3 w-3 text-[#ffb74d]" />
-                    <span className="font-medium">Accès à vie</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs p-2 bg-[#ffb74d]/5 rounded">
-                    <Unlock className="h-3 w-3 text-green-500" />
-                    <span className="font-medium">Garantie 30 jours</span>
-                  </div>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.35 }}
+                  className="grid grid-cols-2 gap-2"
+                >
+                  {[
+                    { icon: Clock, text: "Accès à vie", color: "text-[#ffb74d]" },
+                    { icon: Unlock, text: "Garantie 30 jours", color: "text-green-500" }
+                  ].map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 183, 77, 0.1)" }}
+                      className="flex items-center gap-2 text-xs p-2 bg-[#ffb74d]/5 rounded transition-colors"
+                    >
+                      <item.icon className={cn("h-3 w-3", item.color)} />
+                      <span className="font-medium">{item.text}</span>
+                    </motion.div>
+                  ))}
+                </motion.div>
 
                 {/* CTA principal */}
-                <div className="space-y-3 pt-2">
-                  <Button className="w-full h-12 bg-[#ffb74d] hover:bg-[#ffb74d]/90 text-white font-bold text-base shadow-lg hover:shadow-xl transition-all duration-300">
-                    <ShoppingCart className="mr-2 h-5 w-5" />
-                    {isFreeCourse
-                      ? "Commencer gratuitement"
-                      : "Acheter maintenant"}
-                  </Button>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="space-y-3 pt-2"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button className="w-full h-12 bg-[#ffb74d] hover:bg-[#ffb74d]/90 text-white font-bold text-base shadow-lg hover:shadow-xl transition-all duration-300">
+                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      {isFreeCourse
+                        ? "Commencer gratuitement"
+                        : "Acheter maintenant"}
+                    </Button>
+                  </motion.div>
 
                   {!isFreeCourse && (
-                    <p className="text-xs text-center text-muted-foreground">
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.45 }}
+                      className="text-xs text-center text-muted-foreground"
+                    >
                       ⭐ Paiement sécurisé · Support 7j/7
-                    </p>
+                    </motion.p>
                   )}
-                </div>
+                </motion.div>
               </div>
             </ScrollArea>
-          </div>
+          </motion.div>
         </HoverCardContent>
       </HoverCard>
     </TooltipProvider>

@@ -15,6 +15,7 @@ import { ErrorBoundary } from "react-error-boundary"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
+import { cn } from "@/lib/utils";
 
 const basicInfoSchema = z.object({
   firstName: z.string().optional(),
@@ -22,19 +23,19 @@ const basicInfoSchema = z.object({
   bio: z.string().max(500).optional(),
   location: z.string().optional(),
   phone: z.string().optional(),
-  website: z.url().optional().or(z.literal("")),
+  website: z.string().url("URL invalide").optional().or(z.literal("")),
 });
 
 type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
 
 const ProfileSectionSkeleton = () => {
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border border-border bg-card">
+      <CardHeader className="border-b border-border">
         <Skeleton className="h-6 w-48 mb-2" />
         <Skeleton className="h-4 w-64" />
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Skeleton className="h-4 w-20" />
@@ -71,9 +72,19 @@ const ProfileSectionSkeleton = () => {
 
 const ProfileSectionError = () => {
   return (
-    <div>
-      ProfileSectionError...
-    </div>
+    <Card className="border border-destructive/20 bg-destructive/5 dark:border-destructive/30 dark:bg-destructive/10">
+      <CardContent className="p-8 text-center">
+        <div className="w-12 h-12 mx-auto mb-4 bg-destructive/10 rounded-full flex items-center justify-center">
+          <span className="text-2xl">⚠️</span>
+        </div>
+        <h3 className="text-lg font-semibold text-destructive mb-2">
+          Erreur de chargement
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Impossible de charger le profil.
+        </p>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -81,17 +92,17 @@ export const ProfileFormSection = () => {
   return (
     <Suspense fallback={<ProfileSectionSkeleton />}>
       <ErrorBoundary fallback={<ProfileSectionError />}>
-        <ProfileSectionSupsense />
+        <ProfileSectionSuspense />
       </ErrorBoundary>
     </Suspense>
   )
 }
 
-const ProfileSectionSupsense = () => {
+const ProfileSectionSuspense = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient()
 
-  const {data: profile} = useSuspenseQuery(
+  const { data: profile } = useSuspenseQuery(
     trpc.user.getProfile.queryOptions()
   )
 
@@ -113,23 +124,27 @@ const ProfileSectionSupsense = () => {
       website: "",
     },
   });
-  
-  const { register, handleSubmit, formState: {
-    errors,
-    isSubmitting,
-    isDirty,
-  } } = form;
+
+  const { register, handleSubmit, watch } = form;
+  const { errors, isSubmitting, isDirty } = form.formState;
+  const bioLength = watch('bio')?.length || 0;
 
   const updateMutation = useMutation(
     trpc.user.updateBasicInfo.mutationOptions({
       onSuccess: () => {
-        toast.success("Profil mis à jour")
+        toast.success("Profil mis à jour", {
+          style: {
+            background: "hsl(var(--primary))",
+            color: "hsl(var(--primary-foreground))",
+            border: "none",
+          },
+        });
         queryClient.invalidateQueries({
           queryKey: trpc.user.getProfile.queryKey()
         })
       },
       onError: (error) => {
-        toast.error(error.message || "Une erreur est survenue")
+        toast.error(error.message || "Une erreur est survenue");
       }
     })
   )
@@ -139,92 +154,104 @@ const ProfileSectionSupsense = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Informations personnelles</CardTitle>
-        <CardDescription>
+    <Card className="border border-border bg-card">
+      <CardHeader className="border-b border-border">
+        <CardTitle className="text-foreground">Informations personnelles</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Mettez à jour vos informations personnelles
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardContent className="p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="firstName">Prénom</Label>
+              <Label htmlFor="firstName" className="text-foreground">Prénom</Label>
               <Input
                 id="firstName"
                 {...register("firstName")}
                 placeholder="Votre prénom"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
               {errors.firstName && (
-                <p className="text-sm text-red-500">{errors.firstName.message}</p>
+                <p className="text-sm text-destructive">{errors.firstName.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lastName">Nom</Label>
+              <Label htmlFor="lastName" className="text-foreground">Nom</Label>
               <Input
                 id="lastName"
                 {...register("lastName")}
                 placeholder="Votre nom"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
               {errors.lastName && (
-                <p className="text-sm text-red-500">{errors.lastName.message}</p>
+                <p className="text-sm text-destructive">{errors.lastName.message}</p>
               )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
+            <Label htmlFor="bio" className="text-foreground">Bio</Label>
             <Textarea
               id="bio"
               {...register("bio")}
               placeholder="Parlez-nous un peu de vous..."
-              rows={3}
+              rows={4}
+              className="bg-background border-border text-foreground placeholder:text-muted-foreground resize-none"
             />
-            <p className="text-sm text-muted-foreground">
-              {profile?.bio?.length || 0}/500 caractères
-            </p>
-            {errors.bio && (
-              <p className="text-sm text-red-500">{errors.bio.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="location">Localisation</Label>
-            <Input
-              id="location"
-              {...register("location")}
-              placeholder="Ville, Pays"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="phone">Téléphone</Label>
-              <Input
-                id="phone"
-                {...register("phone")}
-                placeholder="+261 34 00 000 00"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="website">Site web</Label>
-              <Input
-                id="website"
-                {...register("website")}
-                placeholder="https://votre-site.com"
-              />
-              {errors.website && (
-                <p className="text-sm text-red-500">{errors.website.message}</p>
+            <div className="flex justify-between">
+              <p className="text-sm text-muted-foreground">
+                {bioLength}/500 caractères
+              </p>
+              {errors.bio && (
+                <p className="text-sm text-destructive">{errors.bio.message}</p>
               )}
             </div>
           </div>
 
-          <Button 
-            type="submit" 
+          <div className="space-y-2">
+            <Label htmlFor="location" className="text-foreground">Localisation</Label>
+            <Input
+              id="location"
+              {...register("location")}
+              placeholder="Ville, Pays"
+              className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-foreground">Téléphone</Label>
+              <Input
+                id="phone"
+                {...register("phone")}
+                placeholder="+261 34 00 000 00"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="website" className="text-foreground">Site web</Label>
+              <Input
+                id="website"
+                {...register("website")}
+                placeholder="https://votre-site.com"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+              />
+              {errors.website && (
+                <p className="text-sm text-destructive">{errors.website.message}</p>
+              )}
+            </div>
+          </div>
+
+          <Button
+            type="submit"
             disabled={isSubmitting || updateMutation.isPending || !isDirty}
+            className={cn(
+              "bg-primary text-primary-foreground hover:bg-primary/90",
+              "disabled:opacity-50 disabled:cursor-not-allowed"
+            )}
           >
             {isSubmitting || updateMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin mr-2" />

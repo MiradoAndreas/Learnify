@@ -1,12 +1,12 @@
 // modules/home/sections/course-section.tsx
 "use client";
 
-import { useInfiniteQuery, useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
 
 import { useTRPC } from "@/trpc/client";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { CourseCard } from "../components/course-card";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { DEFAULT_COURSE_LIMIT } from "@/constants";
@@ -45,20 +45,20 @@ const CoursesSectionSuspense = ({ categoryId }: CoursesSectionProps) => {
   const trpc = useTRPC();
 
   const {
-    data : courses,
+    data: courses,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage
   } = useSuspenseInfiniteQuery(
     trpc.course.getAllPublishedCourses.infiniteQueryOptions(
       { categoryId, limit: DEFAULT_COURSE_LIMIT },
-      { 
-         getNextPageParam: lastPage => lastPage.nextCursor
-         }
+      {
+        getNextPageParam: lastPage => lastPage.nextCursor
+      }
     ),
   );
 
-  
+
 
   const allCourses = courses?.pages.flatMap((page) => page.items) || [];
 

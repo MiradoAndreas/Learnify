@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-
+import { motion } from "framer-motion"
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -54,7 +54,7 @@ export function LoginView() {
         callbackURL: "/",
       },
       {
-        onSuccess: () => {},
+        onSuccess: () => { },
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
@@ -67,7 +67,7 @@ export function LoginView() {
         provider: provider,
       },
       {
-        onSuccess: () => {},
+        onSuccess: () => { },
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
@@ -78,7 +78,11 @@ export function LoginView() {
   const isPending = form.formState.isSubmitting;
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
       className="
   flex
   w-full
@@ -246,7 +250,7 @@ export function LoginView() {
                 >
                   Don't have an account?{" "}
                   <Link
-                    prefetch
+
                     href="/register"
                     className="hover:underline cursor-pointer hover:underline-offset-4 font-bold text-primary/90"
                   >
@@ -268,6 +272,6 @@ export function LoginView() {
           className="size-full object-cover rounded-r-xl"
         />
       </div>
-    </div>
+    </motion.div>
   );
 }

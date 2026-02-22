@@ -132,7 +132,7 @@ interface Section {
   lessons: Lesson[];
 }
 
-// Créer un composant Sortable pour les leçons
+// SortableLessonRow adapté dark mode
 const SortableLessonRow = ({ lesson, courseId, index }: any) => {
   const {
     attributes,
@@ -153,18 +153,18 @@ const SortableLessonRow = ({ lesson, courseId, index }: any) => {
     <TableRow
       ref={setNodeRef}
       style={style}
-      className="hover:bg-gray-50/50 border-b last:border-b-0 relative"
+      className="hover:bg-muted/50 dark:hover:bg-gray-800/50 border-border last:border-b-0 relative transition-colors"
     >
       <TableCell className="py-3 pl-4">
         <div className="flex items-center gap-2">
           <div
             {...attributes}
             {...listeners}
-            className="w-4 h-4 text-gray-400 cursor-move hover:text-[#feba45] transition-colors"
+            className="w-4 h-4 text-muted-foreground cursor-move hover:text-primary transition-colors"
           >
             <GripVertical className="w-4 h-4" />
           </div>
-          <span className="font-medium text-gray-600">{index + 1}</span>
+          <span className="font-medium text-muted-foreground">{index + 1}</span>
         </div>
       </TableCell>
 
@@ -172,15 +172,16 @@ const SortableLessonRow = ({ lesson, courseId, index }: any) => {
       <TableCell className="py-3">
         <div className="flex items-center gap-3">
           <div
-            className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+            className={cn(
+              "w-8 h-8 rounded-lg flex items-center justify-center",
               lesson.type === "video"
-                ? "bg-blue-100 text-blue-600"
+                ? "bg-blue-100 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
                 : lesson.type === "article"
-                ? "bg-emerald-100 text-emerald-600"
-                : lesson.type === "quiz"
-                ? "bg-purple-100 text-purple-600"
-                : "bg-amber-100 text-amber-600"
-            }`}
+                  ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400"
+                  : lesson.type === "quiz"
+                    ? "bg-purple-100 text-purple-600 dark:bg-purple-950/30 dark:text-purple-400"
+                    : "bg-amber-100 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400"
+            )}
           >
             {lesson.type === "video" && <FileVideo className="w-4 h-4" />}
             {lesson.type === "article" && <FileText className="w-4 h-4" />}
@@ -189,9 +190,9 @@ const SortableLessonRow = ({ lesson, courseId, index }: any) => {
           </div>
           <div className="min-w-0 flex-1">
             <Link
-              prefetch
+
               href={`/teacher/courses/${courseId}/lessons/${lesson.id}`}
-              className="font-medium text-gray-900 hover:text-[#feba45] hover:underline truncate w-100 block"
+              className="font-medium text-foreground hover:text-primary hover:underline truncate w-100 block transition-colors"
             >
               {lesson.title}
             </Link>
@@ -201,32 +202,35 @@ const SortableLessonRow = ({ lesson, courseId, index }: any) => {
 
       {/* Type de leçon */}
       <TableCell className="py-3 text-center">
-        <Badge variant="outline" className="capitalize text-xs">
+        <Badge
+          variant="outline"
+          className="capitalize text-xs border-border text-foreground bg-background"
+        >
           {lesson.type || "video"}
         </Badge>
       </TableCell>
 
       {/* Durée */}
       <TableCell className="py-3 text-center">
-        <div className="flex items-center justify-center gap-1 text-gray-700">
-          <Clock className="w-3 h-3" />
+        <div className="flex items-center justify-center gap-1 text-foreground">
+          <Clock className="w-3 h-3 text-muted-foreground" />
           <span className="font-medium text-sm">
             {formatDuration(lesson.duration)}
           </span>
         </div>
       </TableCell>
 
-      {/* Accès (Free/Paid) - NOUVELLE COLONNE */}
+      {/* Accès (Free/Paid) */}
       <TableCell className="py-3 text-center">
         {lesson.visibility === "free" || lesson.free === true ? (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-0 text-xs">
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-950/30 dark:text-green-400 border-0 text-xs">
             <span className="flex items-center justify-center gap-1">
               <Globe className="w-3 h-3" />
               Gratuit
             </span>
           </Badge>
         ) : (
-          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0 text-xs">
+          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-400 border-0 text-xs">
             <span className="flex items-center justify-center gap-1">
               <DollarSign className="w-3 h-3" />
               Payant
@@ -238,12 +242,15 @@ const SortableLessonRow = ({ lesson, courseId, index }: any) => {
       {/* Visibilité (Published/Not Published) */}
       <TableCell className="py-3 text-center">
         {lesson.isPublished === true ? (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-0 text-xs">
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-950/30 dark:text-green-400 border-0 text-xs">
             <Eye className="w-3 h-3 mr-1" />
             Publiée
           </Badge>
         ) : (
-          <Badge variant="outline" className="text-gray-600 text-xs">
+          <Badge
+            variant="outline"
+            className="text-muted-foreground border-border text-xs bg-background"
+          >
             <EyeOff className="w-3 h-3 mr-1" />
             Non publiée
           </Badge>
@@ -254,14 +261,14 @@ const SortableLessonRow = ({ lesson, courseId, index }: any) => {
       <TableCell className="py-3 text-center">
         <Badge
           variant="outline"
-          className={
-            `text-xs ` +
-            (lesson.muxStatus === "ready"
-              ? "bg-green-50 text-green-700 border-green-200"
+          className={cn(
+            "text-xs border",
+            lesson.muxStatus === "ready"
+              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
               : lesson.muxStatus === "processing"
-              ? "bg-amber-50 text-amber-700 border-amber-200"
-              : "bg-red-50 text-red-700 border-red-200")
-          }
+                ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800"
+                : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800"
+          )}
         >
           {lesson.muxStatus === "ready" ? (
             <CheckCircle className="w-3 h-3 mr-1" />
@@ -283,18 +290,20 @@ const SortableLessonRow = ({ lesson, courseId, index }: any) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 w-7 p-0 hover:bg-orange-50 hover:text-[#feba45]"
+                  className="h-7 w-7 p-0 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20"
                   asChild
                 >
                   <Link
-                    prefetch
+
                     href={`/teacher/courses/${courseId}/lessons/${lesson.id}`}
                   >
                     <Edit className="w-3 h-3" />
                   </Link>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Éditer la leçon</TooltipContent>
+              <TooltipContent>
+                <p>Éditer la leçon</p>
+              </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
@@ -369,15 +378,13 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
     })
   );
 
-  // Fonction de suppression
   const handleConfirmDelete = async () => {
     if (!sectionToDelete) return;
     try {
       await deleteSectionMutation.mutateAsync({
         sectionId: sectionToDelete.id,
       });
-      // Recharger les données ou invalider le cache
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleEditSuccess = () => {
@@ -394,34 +401,34 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
         transition={{ duration: 0.4 }}
         className="max-w-fit mx-auto"
       >
-        <Card className="border-0 shadow-xl rounded-2xl overflow-hidden bg-linear-to-br from-white to-gray-50/50">
+        <Card className="border border-border bg-card shadow-xl rounded-2xl overflow-hidden">
           <CardContent className="p-12 text-center">
-            <div className="w-24 h-24 mx-auto mb-8 bg-linear-to-br from-[#feba45] to-[#ff9e1f] rounded-full flex items-center justify-center shadow-lg">
-              <Layers className="w-12 h-12 text-white" />
+            <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-lg">
+              <Layers className="w-12 h-12 text-primary-foreground" />
             </div>
 
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-2xl font-bold text-foreground mb-4">
               Commencez à créer le contenu de votre cours
             </h3>
 
-            <p className="text-gray-600 max-w-lg mx-auto mb-8 text-lg">
+            <p className="text-muted-foreground max-w-lg mx-auto mb-8 text-lg">
               Créez votre première section pour organiser votre cours.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
               <Button
                 onClick={() => setOpen(true)}
-                className="bg-linear-to-r from-[#feba45] to-[#ff9e1f] hover:from-[#ff9e1f] hover:to-[#feba45] text-white shadow-lg hover:shadow-xl transition-all"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all"
               >
                 <Plus className="w-5 h-5 mr-2" />
                 Créer une section
               </Button>
               <Button
                 variant="ghost"
-                className="text-gray-600 hover:text-[#feba45] hover:bg-gray-100"
+                className="text-muted-foreground hover:text-primary hover:bg-accent"
                 asChild
               >
-                <Link href={`/teacher/courses/${courseId}`} prefetch>
+                <Link href={`/teacher/courses/${courseId}`} >
                   <ArrowRight className="w-4 h-4 mr-2" />
                   Configurer le cours
                 </Link>
@@ -429,36 +436,36 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
             </div>
 
             {/* Guide de démarrage */}
-            <Card className="border border-gray-200 bg-white/50 max-w-2xl mx-auto">
+            <Card className="border border-border bg-card/50 max-w-2xl mx-auto">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <Sparkles className="w-6 h-6 text-[#feba45] shrink-0 mt-1" />
+                  <Sparkles className="w-6 h-6 text-primary shrink-0 mt-1" />
                   <div className="text-left">
-                    <h4 className="font-semibold text-gray-900 mb-3">
+                    <h4 className="font-semibold text-foreground mb-3">
                       Comment structurer votre cours efficacement
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="flex items-start gap-2">
-                        <div className="w-2 h-2 bg-[#feba45] rounded-full mt-2"></div>
-                        <span className="text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                        <span className="text-sm text-muted-foreground">
                           Commencez par une introduction captivante
                         </span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <div className="w-2 h-2 bg-[#feba45] rounded-full mt-2"></div>
-                        <span className="text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                        <span className="text-sm text-muted-foreground">
                           Limitez les sections à 3-5 modules
                         </span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <div className="w-2 h-2 bg-[#feba45] rounded-full mt-2"></div>
-                        <span className="text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                        <span className="text-sm text-muted-foreground">
                           Incluez des exercices pratiques
                         </span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <div className="w-2 h-2 bg-[#feba45] rounded-full mt-2"></div>
-                        <span className="text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                        <span className="text-sm text-muted-foreground">
                           Terminez par un projet final
                         </span>
                       </div>
@@ -478,10 +485,6 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
     );
   }
 
-  // ? Log pour debugger côté Frontend
-
-  
-
   const totalLessons = sections.reduce(
     (sum: number, section: Section) => sum + (section.lessons?.length || 0),
     0
@@ -489,7 +492,6 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
 
   const totalDuration = sections.reduce((sum: number, section: Section) => {
     if (!section.lessons || section.lessons.length === 0) return sum;
-
     return (
       sum +
       section.lessons.reduce((lessonSum: number, lesson: Lesson) => {
@@ -499,7 +501,7 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
   }, 0);
 
   return (
-    <div className="space-y-8 w-full">
+    <div className="space-y-8 w-full bg-background text-foreground">
       {sectionToEdit && (
         <EditSectionModal
           section={sectionToEdit}
@@ -509,55 +511,57 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
           onSuccess={handleEditSuccess}
         />
       )}
+
       {/* Modal de confirmation de suppression */}
       <AlertDialog
         open={!!sectionToDelete}
         onOpenChange={(open) => !open && setSectionToDelete(null)}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-card border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-red-600">
+            <AlertDialogTitle className="text-destructive">
               <Trash2 className="w-5 h-5 inline mr-2" />
               Supprimer la section
             </AlertDialogTitle>
           </AlertDialogHeader>
           <div className="space-y-4 mt-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="font-medium text-red-800">
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+              <p className="font-medium text-destructive">
                 Cette action est irréversible.
               </p>
             </div>
 
             <div className="space-y-2">
-              <p className="text-gray-700">
-                {" "}
-                {/* Changez ce div en p */}
+              <p className="text-foreground">
                 Êtes-vous sûr de vouloir supprimer la section :
               </p>
-              <div className="bg-gray-50 p-3 rounded-lg border">
-                <p className="font-semibold text-gray-900">
+              <div className="bg-muted p-3 rounded-lg border border-border">
+                <p className="font-semibold text-foreground">
                   "{sectionToDelete?.title}"
                 </p>
-                <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Video className="w-3 h-3" />
                     {sectionToDelete?.lessonCount} leçon(s)
                   </span>
                 </div>
               </div>
-              <p className="text-sm text-gray-600 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Toutes les leçons de cette section seront également supprimées.
               </p>
             </div>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteSectionMutation.isPending}>
+            <AlertDialogCancel
+              disabled={deleteSectionMutation.isPending}
+              className="border-border bg-background hover:bg-accent"
+            >
               Annuler
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
               disabled={deleteSectionMutation.isPending}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {deleteSectionMutation.isPending ? (
                 <>
@@ -574,8 +578,8 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      {/* Header avec stats */}
 
+      {/* Header avec stats */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -585,33 +589,34 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
         <div>
           <div className="mb-6">
             <Link
-              prefetch
+
               href={`/teacher/courses/${courseId}`}
-              className="flex items-center gap-2 text-gray-700 hover:text-[#feba45] transition-colors"
+              className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
-              <ArrowLeftIcon /> Revenir au cours information du cours
+              <ArrowLeftIcon className="w-4 h-4" />
+              Revenir au cours information du cours
             </Link>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             Structure du cours
           </h2>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Gérez vos sections et leçons pour créer une expérience
             d'apprentissage engageante
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 text-sm text-gray-600">
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Layers className="w-4 h-4" />
               <span className="font-medium">{sections.length} sections</span>
             </div>
-            <div className="w-px h-4 bg-gray-300"></div>
+            <div className="w-px h-4 bg-border"></div>
             <div className="flex items-center gap-1">
               <Video className="w-4 h-4" />
               <span className="font-medium">{totalLessons} leçons</span>
             </div>
-            <div className="w-px h-4 bg-gray-300"></div>
+            <div className="w-px h-4 bg-border"></div>
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
               <span className="font-medium">
@@ -630,29 +635,29 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
       />
 
       {/* Table principale des sections */}
-      <Card className="border-0 shadow-lg w-full rounded-xl overflow-hidden">
+      <Card className="border border-border bg-card shadow-lg w-full rounded-xl overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-linear-to-r from-gray-50 to-gray-100/50">
-                <TableRow className="hover:bg-transparent border-b">
+              <TableHeader className="bg-muted/50 dark:bg-gray-900/50">
+                <TableRow className="hover:bg-transparent border-border">
                   <TableHead className="w-12 text-center py-6">
-                    <Hash className="w-4 h-4 mx-auto text-gray-500" />
+                    <Hash className="w-4 h-4 mx-auto text-muted-foreground" />
                   </TableHead>
                   <TableHead className="py-6 min-w-[300px]">
-                    <span className="text-gray-700 font-semibold">Section</span>
+                    <span className="text-foreground font-semibold">Section</span>
                   </TableHead>
                   <TableHead className="py-6 text-center w-32">
-                    <span className="text-gray-700 font-semibold">Leçons</span>
+                    <span className="text-foreground font-semibold">Leçons</span>
                   </TableHead>
                   <TableHead className="py-6 text-center w-32">
-                    <span className="text-gray-700 font-semibold">Durée</span>
+                    <span className="text-foreground font-semibold">Durée</span>
                   </TableHead>
                   <TableHead className="py-6 text-center w-32">
-                    <span className="text-gray-700 font-semibold">Statut</span>
+                    <span className="text-foreground font-semibold">Statut</span>
                   </TableHead>
                   <TableHead className="py-6 text-right w-40">
-                    <span className="text-gray-700 font-semibold">Actions</span>
+                    <span className="text-foreground font-semibold">Actions</span>
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -678,9 +683,9 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
           </div>
 
           {/* Footer de la table */}
-          <div className="px-6 py-4 bg-linear-to-r from-gray-50 to-gray-100/30 border-t">
+          <div className="px-6 py-4 bg-muted/30 border-t border-border">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 <span className="font-medium">{sections.length}</span> sections
                 • <span className="font-medium">{totalLessons}</span> leçons •{" "}
                 <span className="font-medium">
@@ -696,28 +701,7 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
   );
 };
 
-// Composant pour une ligne de section avec ses leçons
-interface TableSectionRowProps {
-  section: Section;
-  index: number;
-  courseId: string;
-  isExpanded: boolean;
-  onToggle: () => void;
-  // Props pour la suppression
-  onDeleteRequest: (section: {
-    id: string;
-    title: string;
-    lessonCount: number;
-  }) => void;
-
-  // Props pour l'édition
-  onEditRequest: (section: {
-    id: string;
-    title: string;
-    description?: string;
-  }) => void;
-}
-
+// TableSectionRow adapté dark mode
 const TableSectionRow = ({
   section,
   index,
@@ -732,7 +716,6 @@ const TableSectionRow = ({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [localLessons, setLocalLessons] = useState(section.lessons);
 
-  // Mutation pour mettre à jour la position
   const updatePositionMutation = useMutation(
     trpc.teacher.updateLessonPosition.mutationOptions({
       onSuccess: () => {
@@ -745,7 +728,6 @@ const TableSectionRow = ({
       },
       onError: (error: any) => {
         toast.error(error.message || "Erreur lors de la mise à jour");
-        // Revenir à l'état précédent en cas d'erreur
         queryClient.invalidateQueries({
           queryKey: trpc.teacher.getAllLessonByCourseId.queryKey({
             courseId,
@@ -758,7 +740,7 @@ const TableSectionRow = ({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // 8px de déplacement pour activer le drag
+        distance: 8,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -783,11 +765,9 @@ const TableSectionRow = ({
       );
 
       if (oldIndex !== -1 && newIndex !== -1) {
-        // Mettre à jour l'état local immédiatement
         const newLessons = arrayMove(localLessons, oldIndex, newIndex);
         setLocalLessons(newLessons);
 
-        // Mettre à jour la position dans la base de données
         updatePositionMutation.mutate({
           lessonId: active.id as string,
           newPosition: newIndex + 1,
@@ -796,28 +776,27 @@ const TableSectionRow = ({
     }
   };
 
-  // Mettre à jour localLessons quand section.lessons change
   useEffect(() => {
     setLocalLessons(section.lessons);
   }, [section.lessons]);
 
   return (
     <>
-      <TableRow className="border-b hover:bg-gray-50/50 group">
+      <TableRow className="border-border hover:bg-muted/50 dark:hover:bg-gray-800/50 group transition-colors">
         <TableCell className="py-4">
           <div className="flex items-center justify-center">
-            <div className="w-8 h-8 bg-linear-to-br from-[#feba45]/10 to-[#ff9e1f]/10 rounded-md flex items-center justify-center">
-              <span className="font-medium text-[#feba45]">{index + 1}</span>
+            <div className="w-8 h-8 bg-primary/10 rounded-md flex items-center justify-center">
+              <span className="font-medium text-primary">{index + 1}</span>
             </div>
           </div>
         </TableCell>
         <TableCell className="py-4">
           <div className="space-y-1">
-            <h3 className="font-semibold text-gray-900 group-hover:text-[#feba45] transition-colors">
+            <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
               {section.title}
             </h3>
             {section.description && (
-              <p className="text-sm text-gray-600 line-clamp-2">
+              <p className="text-sm text-muted-foreground line-clamp-2">
                 {section.description}
               </p>
             )}
@@ -827,7 +806,7 @@ const TableSectionRow = ({
           <div className="flex flex-col items-center gap-1">
             <Badge
               variant="outline"
-              className="bg-blue-50 text-blue-700 border-blue-200"
+              className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
             >
               <Video className="w-3 h-3 mr-1" />
               {section.lessons.length}
@@ -835,8 +814,8 @@ const TableSectionRow = ({
           </div>
         </TableCell>
         <TableCell className="py-4 text-center">
-          <div className="flex items-center justify-center gap-1 text-gray-700">
-            <Clock className="w-4 h-4" />
+          <div className="flex items-center justify-center gap-1 text-foreground">
+            <Clock className="w-4 h-4 text-muted-foreground" />
             <span className="font-medium">
               {formatDuration(
                 section.lessons.reduce(
@@ -851,7 +830,7 @@ const TableSectionRow = ({
         <TableCell className="py-4 text-center">
           <Badge
             variant="outline"
-            className="bg-emerald-50 text-emerald-700 border-emerald-200"
+            className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
           >
             <CheckCircle className="w-3 h-3 mr-1" />
             Active
@@ -865,7 +844,7 @@ const TableSectionRow = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-[#feba45]"
+                    className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20"
                     onClick={onToggle}
                   >
                     <ChevronDown
@@ -877,13 +856,11 @@ const TableSectionRow = ({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {isExpanded ? "Masquer les leçons" : "Voir les leçons"}
+                  <p>{isExpanded ? "Masquer les leçons" : "Voir les leçons"}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            {/* *
-             * The number 1
-             */}
+
             <LessonUploadModal courseId={courseId} sectionId={section.id} />
 
             <DropdownMenu>
@@ -891,12 +868,15 @@ const TableSectionRow = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-[#feba45]"
+                  className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20"
                 >
                   <MoreVertical className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent
+                align="end"
+                className="w-48 bg-popover border-border"
+              >
                 <DropdownMenuItem
                   onClick={() =>
                     onEditRequest({
@@ -905,14 +885,15 @@ const TableSectionRow = ({
                       description: section.description,
                     })
                   }
+                  className="text-foreground hover:bg-accent hover:text-accent-foreground"
                 >
                   <Edit className="w-4 h-4 mr-2" />
                   Modifier la section
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuItem
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10 focus:text-destructive focus:bg-destructive/10"
                   onClick={() => {
                     onDeleteRequest({
                       id: section.id,
@@ -930,9 +911,9 @@ const TableSectionRow = ({
         </TableCell>
       </TableRow>
 
-      {/* Ligne pour les leçons (colspan sur toute la largeur) */}
+      {/* Ligne pour les leçons */}
       {isExpanded && (
-        <TableRow className="bg-gray-50/30">
+        <TableRow className="bg-muted/20 dark:bg-gray-900/20">
           <TableCell colSpan={6} className="p-0">
             <AnimatePresence>
               <motion.div
@@ -944,13 +925,13 @@ const TableSectionRow = ({
                 <div className="px-6 pb-6 pt-4">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-2 h-6 bg-linear-to-b from-[#feba45] to-[#ff9e1f] rounded-full"></div>
-                      <h4 className="font-semibold text-gray-900">
+                      <div className="w-2 h-6 bg-gradient-to-b from-primary to-primary/80 rounded-full"></div>
+                      <h4 className="font-semibold text-foreground">
                         Leçons de "{section.title}"
                       </h4>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-muted-foreground">
                         {section.lessons.length} leçon
                         {section.lessons.length > 1 ? "s" : ""}
                       </span>
@@ -958,21 +939,17 @@ const TableSectionRow = ({
                   </div>
 
                   {section.lessons.length === 0 ? (
-                    <div className="text-center py-8 border border-dashed border-gray-300 rounded-lg bg-white/50">
-                      <Video className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-                      <p className="text-gray-600 font-medium mb-2">
+                    <div className="text-center py-8 border border-dashed border-border rounded-lg bg-card/50">
+                      <Video className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+                      <p className="text-foreground font-medium mb-2">
                         Aucune leçon dans cette section
                       </p>
-                      <p className="text-sm text-gray-500 mb-4">
+                      <p className="text-sm text-muted-foreground mb-4">
                         Ajoutez votre première leçon pour commencer
                       </p>
-                      <LessonUploadModal
-                        courseId={courseId}
-                        sectionId={section.id}
-                      />
                     </div>
                   ) : (
-                    <div className="overflow-x-auto border border-gray-200 rounded-lg bg-white">
+                    <div className="overflow-x-auto border border-border rounded-lg bg-card">
                       <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}
@@ -984,45 +961,45 @@ const TableSectionRow = ({
                           strategy={verticalListSortingStrategy}
                         >
                           <Table>
-                            <TableHeader className="bg-gray-50">
-                              <TableRow>
+                            <TableHeader className="bg-muted/50 dark:bg-gray-900/50">
+                              <TableRow className="border-border">
                                 <TableHead className="w-12 text-center px-4 py-3">
-                                  <span className="text-xs font-medium text-gray-600">
+                                  <span className="text-xs font-medium text-muted-foreground">
                                     #
                                   </span>
                                 </TableHead>
                                 <TableHead className="px-4 py-3">
-                                  <span className="text-xs font-medium text-gray-600">
+                                  <span className="text-xs font-medium text-muted-foreground">
                                     Titre
                                   </span>
                                 </TableHead>
                                 <TableHead className="w-24 text-center px-4 py-3">
-                                  <span className="text-xs font-medium text-gray-600">
+                                  <span className="text-xs font-medium text-muted-foreground">
                                     Type
                                   </span>
                                 </TableHead>
                                 <TableHead className="w-24 text-center px-4 py-3">
-                                  <span className="text-xs font-medium text-gray-600">
+                                  <span className="text-xs font-medium text-muted-foreground">
                                     Durée
                                   </span>
                                 </TableHead>
                                 <TableHead className="w-24 text-center px-4 py-3">
-                                  <span className="text-xs font-medium text-gray-600">
+                                  <span className="text-xs font-medium text-muted-foreground">
                                     Accès
                                   </span>
                                 </TableHead>
                                 <TableHead className="w-24 text-center px-4 py-3">
-                                  <span className="text-xs font-medium text-gray-600">
+                                  <span className="text-xs font-medium text-muted-foreground">
                                     Visibilité
                                   </span>
                                 </TableHead>
                                 <TableHead className="w-24 text-center px-4 py-3">
-                                  <span className="text-xs font-medium text-gray-600">
+                                  <span className="text-xs font-medium text-muted-foreground">
                                     Statut
                                   </span>
                                 </TableHead>
                                 <TableHead className="w-24 text-center px-4 py-3">
-                                  <span className="text-xs font-medium text-gray-600">
+                                  <span className="text-xs font-medium text-muted-foreground">
                                     Actions
                                   </span>
                                 </TableHead>
@@ -1041,16 +1018,16 @@ const TableSectionRow = ({
                           </Table>
                         </SortableContext>
 
-                        {/* Overlay pendant le drag */}
+                        {/* DragOverlay */}
                         <DragOverlay>
                           {activeId ? (
-                            <div className="bg-white border border-[#feba45] shadow-lg rounded-lg p-4 opacity-80">
+                            <div className="bg-card border border-primary shadow-lg rounded-lg p-4 opacity-90">
                               <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-[#feba45]/10 rounded-lg flex items-center justify-center">
-                                  <GripVertical className="w-4 h-4 text-[#feba45]" />
+                                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                  <GripVertical className="w-4 h-4 text-primary" />
                                 </div>
                                 <div>
-                                  <p className="font-medium text-gray-900">
+                                  <p className="font-medium text-foreground">
                                     {localLessons.find((l) => l.id === activeId)
                                       ?.title || "Leçon"}
                                   </p>
@@ -1072,29 +1049,74 @@ const TableSectionRow = ({
   );
 };
 
+// Skeleton amélioré avec shadcn/ui
 const LessonSectionSkeleton = () => {
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-6 w-full bg-background">
       {/* Header Skeleton */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-48 rounded" />
-          <Skeleton className="h-4 w-64 rounded" />
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-96" />
         </div>
-        <Skeleton className="h-10 w-40 rounded-lg" />
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-4 w-px" />
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-4 w-px" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-10 w-40 rounded-lg" />
+        </div>
       </div>
 
       {/* Table Skeleton */}
-      <Card className="border-0 shadow-lg rounded-xl">
+      <Card className="border border-border bg-card rounded-xl">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <div className="min-w-[800px]">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="p-4 border-b">
-                  <Skeleton className="h-16 w-full rounded-lg" />
+              {/* Header */}
+              <div className="flex items-center p-4 border-b border-border bg-muted/50">
+                <Skeleton className="h-4 w-8 mx-auto mr-4" />
+                <Skeleton className="h-4 w-64 mr-auto" />
+                <Skeleton className="h-4 w-16 mx-4" />
+                <Skeleton className="h-4 w-16 mx-4" />
+                <Skeleton className="h-4 w-16 mx-4" />
+                <Skeleton className="h-4 w-20 ml-auto" />
+              </div>
+
+              {/* Rows */}
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="p-4 border-b border-border hover:bg-muted/20">
+                  <div className="flex items-center">
+                    <div className="flex items-center gap-3 w-12">
+                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1 flex items-center gap-4">
+                      <Skeleton className="h-8 w-8 rounded-lg" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-48" />
+                        <Skeleton className="h-3 w-64" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-6 w-16 mx-4" />
+                    <Skeleton className="h-4 w-16 mx-4" />
+                    <Skeleton className="h-6 w-20 mx-4" />
+                    <Skeleton className="h-8 w-8 ml-auto" />
+                  </div>
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Footer */}
+          <div className="px-6 py-4 border-t border-border bg-muted/20">
+            <Skeleton className="h-4 w-64" />
           </div>
         </CardContent>
       </Card>
@@ -1110,28 +1132,32 @@ const LessonSectionError = () => {
       transition={{ duration: 0.3 }}
       className="max-w-fit"
     >
-      <Card className="border border-red-200 bg-linear-to-r from-red-50/50 to-red-100/30 shadow-lg">
+      <Card className="border border-destructive/20 bg-destructive/5 dark:border-destructive/30 dark:bg-destructive/10 shadow-lg">
         <CardContent className="p-8 text-center">
-          <div className="w-20 h-20 mx-auto mb-6 bg-linear-to-r from-red-100 to-red-200 rounded-full flex items-center justify-center shadow">
-            <AlertCircle className="w-10 h-10 text-red-500" />
+          <div className="w-20 h-20 mx-auto mb-6 bg-destructive/10 rounded-full flex items-center justify-center shadow">
+            <AlertCircle className="w-10 h-10 text-destructive" />
           </div>
-          <h3 className="text-xl font-bold text-red-800 mb-3">
+          <h3 className="text-xl font-bold text-destructive mb-3">
             Impossible de charger les sections
           </h3>
-          <p className="text-red-600 mb-6 max-w-md mx-auto">
+          <p className="text-destructive/80 mb-6 max-w-md mx-auto">
             Une erreur est survenue lors du chargement de la structure du cours.
             Veuillez vérifier votre connexion et réessayer.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button
               onClick={() => window.location.reload()}
-              className="bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow"
             >
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Réessayer
             </Button>
-            <Button variant="outline" className="border-red-300" asChild>
-              <Link href="/teacher/dashboard" prefetch>
+            <Button
+              variant="outline"
+              className="border-border hover:bg-accent"
+              asChild
+            >
+              <Link href="/teacher/dashboard" >
                 <ArrowRight className="w-4 h-4 mr-2" />
                 Tableau de bord
               </Link>
@@ -1142,3 +1168,22 @@ const LessonSectionError = () => {
     </motion.div>
   );
 };
+
+// Types manquants à ajouter
+interface TableSectionRowProps {
+  section: Section;
+  index: number;
+  courseId: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onDeleteRequest: (section: {
+    id: string;
+    title: string;
+    lessonCount: number;
+  }) => void;
+  onEditRequest: (section: {
+    id: string;
+    title: string;
+    description?: string;
+  }) => void;
+}

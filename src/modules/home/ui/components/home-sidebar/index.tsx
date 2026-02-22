@@ -4,7 +4,10 @@ import { MainSection } from "./main-section";
 
 export const HomeSidebar = () => {
   return (
-    <Sidebar className="pt-25 z-40 border-none" collapsible="icon">
+    <Sidebar
+      className="pt-25 z-40 border-none bg-background"
+      collapsible="icon"
+    >
       <SidebarContent className="bg-background">
         <MainSection />
       </SidebarContent>

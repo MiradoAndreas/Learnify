@@ -1,12 +1,14 @@
 "use client"
 import { useState } from "react"
-import { Button } from "./button"
+
 import { InteractiveHoverButton } from "./interactive-hover-button"
-import Image from "next/image"
+
 import { motion } from "framer-motion"
-import { Highlight } from "./hero-highlight"
+
 import { VideoPlayer } from "../video-player"
 import Link from "next/link"
+import { PointerHighlight } from "./pointer-highlight"
+import { TextAnimate } from "./text-animate"
 
 export const HeroFloat = () => {
   const features = [
@@ -40,7 +42,7 @@ export const HeroFloat = () => {
     <section>
       <div className="max-w-7xl mx-auto px-4 py-28 md:py-50 gap-12 text-gray-600 md:px-8 xl:flex">
         <div className="space-y-5 max-w-2xl mx-auto text-center xl:text-left">
-          <div className="flex flex-wrap items-center justify-center gap-6 xl:justify-start">
+          <motion.div initial={{ opacity: 0, x: 500 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: 0.5 }} className="flex flex-wrap items-center justify-center gap-6 xl:justify-start">
             {
               features.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-x-2 text-gray-500 text-sm">
@@ -49,46 +51,49 @@ export const HeroFloat = () => {
                 </div>
               ))
             }
+          </motion.div>
+          <div className="flex items-center md:items-start flex-col  gap-4 ">
+
+
+            <TextAnimate animation="blurInUp" by="character" className="text-2xl md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug  mx-auto" once={true} >
+              Arrêter de regarder des tutos
+            </TextAnimate>
+
+            <motion.h1 initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: .3 }} className="text-2xl  md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white  leading-relaxed lg:leading-snug  ">
+              <PointerHighlight>
+                <span>Commencez à maîtriser</span>
+              </PointerHighlight>
+            </motion.h1>
           </div>
-          <motion.h1
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: [20, -5, 0],
-            }}
-            transition={{
-              duration: 0.5,
-              ease: [0.4, 0.0, 0.2, 1],
-            }}
-            className="text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug  mx-auto"
-          >
-            Arrêtez de regarder des tutos. {" "} <br />
-            <Highlight className="text-black dark:text-white">
-              Commencer à maîtriser.
-            </Highlight>
-          </motion.h1>
 
-          <p className="max-w-xl mx-auto xl:mx-0">
+          <motion.p initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: .5 }} className="max-w-xl mx-auto xl:mx-0">
             Learnify t’aide à apprendre vite, pratiquer mieux et construire des projets concrets qui comptent.
-          </p>
+          </motion.p>
 
-          <Link href="/home" prefetch>
-            <InteractiveHoverButton>
-              Lancer mon apprentissage
-            </InteractiveHoverButton></Link>
+          <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{
+              duration: 0.7,
+              delay: 1
+            }}
+          >
+            <Link href="/home" >
+              <InteractiveHoverButton>
+                Lancer mon apprentissage
+              </InteractiveHoverButton></Link>
+          </motion.div>
         </div>
-        <div className="flex-1 max-w-xl mx-auto mt-14 xl:mt-0 rounded-xl">
+        <div className="flex-1 max-w-xl mx-auto mt-14 xl:mt-0 rounded-xl overflow-x-hidden overflow-y-hidden">
 
-          <div className="rounded-xl">
+          <motion.div initial={{ opacity: 0, y: 200 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: 0.5 }}>
             <VideoPlayer
               playbackId="MXt1YAmkBML7d00NbgEoig33do4tbxH4QK3NA1Wvj1FQ"
 
               thumbnailUrl="https://image.mux.com/MXt1YAmkBML7d00NbgEoig33do4tbxH4QK3NA1Wvj1FQ/thumbnail.png?width=214&height=121&time=6"
             />
-          </div>
+          </motion.div>
         </div>
       </div>
       {

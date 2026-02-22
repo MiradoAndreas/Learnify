@@ -6,7 +6,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-
+import { motion } from "framer-motion"
 interface CourseAudienceSectionProps {
   courseId: string;
 }
@@ -62,26 +62,28 @@ const CourseAudienceSectionSuspense = ({
   );
 
   return (
-    <div className="space-y-4">
+    <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .6 }} className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold">À quoi ce cours s'adresse-t-il ?</h2>
-        <p className="text-muted-foreground mt-1">
+        <h2 className="text-2xl font-bold text-foreground dark:text-zinc-100">
+          À quoi ce cours s'adresse-t-il ?
+        </h2>
+        <p className="text-muted-foreground dark:text-zinc-400 mt-1">
           Ce cours s'adresse aux personnes correspondant à ces profils
         </p>
       </div>
 
-      <Separator />
+      <Separator className="bg-border dark:bg-zinc-800" />
 
       <div className="space-y-3">
         {audience.map((audienceItem) => (
           <div key={audienceItem.id} className="flex items-start gap-3">
-            <Check className="h-5 w-5 text-primary shrink-0 mt-1" />
-            <span className="text-foreground leading-relaxed">
+            <Check className="h-5 w-5 text-primary dark:text-primary shrink-0 mt-1" />
+            <span className="text-foreground dark:text-zinc-200 leading-relaxed">
               {audienceItem.text}
             </span>
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };

@@ -62,6 +62,8 @@ import { RichTextEditor } from "../components/advanced-rich-text-editor";
 import { formatDuration } from "../utils/format-duration";
 import { LessonAttachments } from "../components/lesson-attachments";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LessonIdSectionProps {
   lessonId: string;
@@ -73,18 +75,187 @@ export const LessonIdSection = ({
   courseId,
 }: LessonIdSectionProps) => {
   return (
-    <Suspense fallback={<LessonIdSectionLoading />}>
-      <ErrorBoundary fallback={<div>Erreur, veuillez réessayer plus tard</div>}>
+    <Suspense fallback={<LessonIdSectionSkeleton />}>
+      <ErrorBoundary fallback={<LessonIdSectionError />}>
         <LessonFormSuspense lessonId={lessonId} courseId={courseId} />
       </ErrorBoundary>
     </Suspense>
   );
 };
 
-const LessonIdSectionLoading = () => {
+// Skeleton amélioré avec shadcn/ui
+const LessonIdSectionSkeleton = () => {
   return (
-    <div className="min-h-screen flex flex-col w-full items-center justify-center ">
-      <Loader2Icon className="w-12 h-12 text-orange-400 animate-spin" />
+    <div className="w-full px-4 py-8 bg-background">
+      <div className="space-y-8">
+        {/* Header Skeleton */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="space-y-3">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-4 w-96" />
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Skeleton className="h-11 w-24" />
+            <Skeleton className="h-11 w-56" />
+          </div>
+        </div>
+
+        {/* Layout principal */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Colonne gauche - Éditeur principal */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Titre Skeleton */}
+            <Card className="border border-border bg-card shadow-lg rounded-2xl">
+              <CardHeader className="border-b border-border">
+                <Skeleton className="h-7 w-48" />
+                <Skeleton className="h-4 w-64" />
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-40" />
+                    <Skeleton className="h-12 w-full rounded-lg" />
+                  </div>
+                  <div className="flex justify-end">
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Description Skeleton */}
+            <Card className="border border-border bg-card shadow-lg rounded-2xl">
+              <CardHeader className="border-b border-border">
+                <Skeleton className="h-7 w-48" />
+                <Skeleton className="h-4 w-72" />
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-5 w-40" />
+                    <Skeleton className="h-6 w-32 rounded-full" />
+                  </div>
+                  <Skeleton className="h-[400px] w-full rounded-xl" />
+                  <Skeleton className="h-32 w-full rounded-lg" />
+                  <Skeleton className="h-4 w-64" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Colonne droite - Paramètres */}
+          <div className="space-y-8">
+            {/* Vidéo Skeleton */}
+            <Card className="border border-border bg-card shadow-lg rounded-2xl">
+              <CardHeader className="bg-muted border-b border-border py-6">
+                <Skeleton className="h-7 w-40" />
+              </CardHeader>
+              <CardContent className="p-0">
+                <Skeleton className="aspect-video w-full" />
+                <div className="p-6 space-y-4">
+                  <Skeleton className="h-10 w-full" />
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-6 w-20 rounded-full" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Paramètres Skeleton */}
+            <Card className="border border-border bg-card shadow-lg rounded-2xl">
+              <CardHeader className="border-b border-border">
+                <Skeleton className="h-7 w-32" />
+                <Skeleton className="h-3 w-48" />
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-12 w-full rounded-lg" />
+                </div>
+                <div className="space-y-3">
+                  <Skeleton className="h-20 w-full rounded-lg" />
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-6 w-24 rounded-full" />
+                    <Skeleton className="h-6 w-32 rounded-full" />
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-border">
+                  <Skeleton className="h-11 w-full" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Statistiques Skeleton */}
+            <Card className="border border-border bg-card shadow-lg rounded-2xl">
+              <CardHeader className="border-b border-border">
+                <Skeleton className="h-7 w-32" />
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Attachments Skeleton */}
+        <div className="mt-5 md:mt-10">
+          <Card className="border border-border bg-card shadow-lg rounded-2xl">
+            <CardHeader className="border-b border-border">
+              <Skeleton className="h-7 w-48" />
+              <Skeleton className="h-4 w-56" />
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <Skeleton className="h-32 w-full rounded-lg" />
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <Skeleton key={i} className="h-16 rounded-lg" />
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LessonIdSectionError = () => {
+  return (
+    <div className="min-h-screen flex flex-col w-full items-center justify-center bg-background">
+      <Card className="border border-destructive/20 bg-destructive/5 dark:border-destructive/30 dark:bg-destructive/10 shadow-lg max-w-md">
+        <CardContent className="p-8 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-destructive/10 rounded-full flex items-center justify-center">
+            <span className="text-3xl">⚠️</span>
+          </div>
+          <h3 className="text-lg font-semibold text-destructive mb-2">
+            Erreur de chargement
+          </h3>
+          <p className="text-sm text-muted-foreground mb-6">
+            Impossible de charger la leçon. Veuillez réessayer.
+          </p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
+            Réessayer
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };
@@ -114,13 +285,11 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
         queryClient.invalidateQueries({
           queryKey: trpc.teacher.getLesson.queryKey({ lessonId }),
         });
-        // todo: add this
         queryClient.invalidateQueries({
           queryKey: trpc.teacher.getAllLessonByCourseId.queryKey({
             courseId,
           }),
         });
-        router.back();
       },
       onError: () =>
         toast.error("Une erreur est survenue lors de la suppression"),
@@ -130,7 +299,13 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
   const update = useMutation(
     trpc.teacher.updateLesson.mutationOptions({
       onSuccess: () => {
-        toast.success("Leçon mise à jour avec succès");
+        toast.success("Leçon mise à jour avec succès", {
+          style: {
+            background: "hsl(var(--primary))",
+            color: "hsl(var(--primary-foreground))",
+            border: "none",
+          },
+        });
         queryClient.invalidateQueries({
           queryKey: trpc.teacher.getLesson.queryKey({ lessonId }),
         });
@@ -139,9 +314,30 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
             courseId,
           }),
         });
-        router.back();
       },
       onError: () => toast.error("Une erreur est survenue"),
+    })
+  );
+
+  const revalidate = useMutation(
+    trpc.course.revalidate.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.teacher.getLesson.queryKey({
+            lessonId: lessonId
+          }),
+        });
+        toast.success("Vidéo revalidée avec succès", {
+          style: {
+            background: "hsl(var(--primary))",
+            color: "hsl(var(--primary-foreground))",
+            border: "none",
+          },
+        });
+      },
+      onError: () => {
+        toast.error("Erreur lors de la revalidation");
+      },
     })
   );
 
@@ -151,13 +347,13 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 bg-background text-foreground">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* Header amélioré */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-6 bg-linear-to-r">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-0">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-foreground">
                 Éditeur de leçon
               </h1>
               <p className="mt-2 text-muted-foreground text-sm">
@@ -170,14 +366,14 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
-                className="h-11"
+                className="h-11 border-border bg-background hover:bg-accent hover:text-accent-foreground"
               >
                 Retour
               </Button>
               <Button
                 type="submit"
                 disabled={!form.formState.isDirty || update.isPending}
-                className="h-11 bg-linear-to-r from-[#feba45] to-[#ff9e1f] hover:from-[#ff9e1f] hover:to-[#feba45]"
+                className="h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-primary-foreground"
               >
                 {update.isPending ? (
                   <>
@@ -199,12 +395,12 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
             {/* Colonne gauche - Éditeur principal */}
             <div className="lg:col-span-2 space-y-8">
               {/* Titre */}
-              <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">
+              <Card className="border border-border bg-card shadow-lg rounded-2xl overflow-hidden">
+                <CardHeader className="border-b border-border">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Informations de base
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-muted-foreground">
                     Les informations essentielles de votre leçon
                   </CardDescription>
                 </CardHeader>
@@ -214,19 +410,19 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                     name="title"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel className="text-lg font-semibold">
+                        <FormLabel className="text-lg font-semibold text-foreground">
                           Titre de la leçon *
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             placeholder="Ex: Introduction à React - Les bases fondamentales"
-                            className="h-12 text-lg border-2 focus:border-blue-500"
+                            className="h-12 text-lg border-2 border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/20 rounded-lg dark:border-gray-700"
                           />
                         </FormControl>
                         <div className="flex items-center justify-between">
-                          <FormMessage />
-                          <span className="text-sm text-gray-500">
+                          <FormMessage className="text-destructive" />
+                          <span className="text-sm text-muted-foreground">
                             {field.value?.length || 0}/100 caractères
                           </span>
                         </div>
@@ -237,13 +433,13 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
               </Card>
 
               {/* Description avec Rich Text Editor */}
-              <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">
+              <Card className="border border-border bg-card shadow-lg rounded-2xl overflow-hidden">
+                <CardHeader className="border-b border-border">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Contenu détaillé
                   </CardTitle>
-                  <CardDescription>
-                    Expliquer et resumez en format text votre vidéo pour être
+                  <CardDescription className="text-muted-foreground">
+                    Expliquer et résumez en format text votre vidéo pour être
                     facile au étudiant de le comprendre
                   </CardDescription>
                 </CardHeader>
@@ -254,10 +450,13 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                     render={({ field }) => (
                       <FormItem className="space-y-4">
                         <div className="flex items-center justify-between">
-                          <FormLabel className="text-lg font-semibold">
+                          <FormLabel className="text-lg font-semibold text-foreground">
                             Description du leçon
                           </FormLabel>
-                          <Badge variant="outline" className="bg-blue-50">
+                          <Badge
+                            variant="outline"
+                            className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
+                          >
                             <Edit3Icon className="w-3 h-3 mr-1" />
                             Avec un éditeur complet
                           </Badge>
@@ -273,29 +472,29 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                         </FormControl>
 
                         <div className="space-y-3">
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-950/30 dark:border-blue-800">
                             <div className="flex items-start gap-3">
-                              <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5" />
+                              <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
                               <div className="space-y-2">
-                                <p className="font-medium text-blue-900">
+                                <p className="font-medium text-blue-900 dark:text-blue-300">
                                   Conseils pour une excellente description :
                                 </p>
-                                <ul className="text-sm text-blue-800 space-y-1">
+                                <ul className="text-sm text-blue-800 dark:text-blue-300/80 space-y-1">
                                   <li className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
                                     Commencez par une introduction captivante
                                   </li>
                                   <li className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
                                     Utilisez des titres pour structurer votre
                                     contenu
                                   </li>
                                   <li className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
                                     Ajoutez des listes pour les points clés
                                   </li>
                                   <li className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
                                     Insérez des liens vers des ressources
                                     complémentaires
                                   </li>
@@ -304,15 +503,15 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                             </div>
                           </div>
 
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-muted-foreground">
                             <p>
-                              💡 <strong>Astuce :</strong> Utilisez, Ctrl+I pour
+                              💡 <strong>Astuce :</strong> Utilisez Ctrl+I pour
                               l'italique, Ctrl+K pour insérer un lien
                             </p>
                           </div>
                         </div>
 
-                        <FormMessage />
+                        <FormMessage className="text-destructive" />
                       </FormItem>
                     )}
                   />
@@ -323,44 +522,71 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
             {/* Colonne droite - Paramètres */}
             <div className="space-y-8">
               {/* Aperçu vidéo */}
-              <Card className="border-0 pt-0 shadow-lg rounded-2xl overflow-hidden gap-0">
-                <CardHeader className="bg-[#f36b16] py-6">
-                  <CardTitle className="text-xl font-bold text-white">
+              <Card className="border border-border bg-card shadow-lg rounded-2xl overflow-hidden pt-0">
+                <CardHeader className="bg-gradient-to-r from-primary to-primary/80 py-6  border-b border-border/20">
+                  <CardTitle className="text-xl font-bold text-primary-foreground">
                     Aperçu de la vidéo
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <div className="aspect-video">
+                  <div className="aspect-video bg-black/5 dark:bg-black/20">
                     <VideoPlayer
                       playbackId={lesson.muxPlaybackId}
                       thumbnailUrl={lesson.thumbnailUrl}
                     />
                   </div>
                   <div className="p-6 space-y-4">
+                    <div className="w-full">
+                      <Button
+                        variant="outline"
+                        className="w-full border-border hover:bg-accent hover:text-accent-foreground"
+                        onClick={() => revalidate.mutate({
+                          id: lesson.id
+                        })}
+                        disabled={revalidate.isPending}
+                      >
+                        {revalidate.isPending ? (
+                          <>
+                            <Spinner className="mr-2 size-4" />
+                            Revalidation...
+                          </>
+                        ) : (
+                          "Revalider la vidéo"
+                        )}
+                      </Button>
+                    </div>
+
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2">
-                        <Video className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">Statut :</span>
+                        <Video className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Statut :</span>
                       </div>
                       <Badge
-                        className={
+                        className={cn(
+                          "border-0",
                           lesson.muxStatus === "ready"
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-green-100 text-green-800 dark:bg-green-950/30 dark:text-green-400"
                             : lesson.muxStatus === "processing"
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-red-100 text-red-800"
-                        }
+                              ? "bg-amber-100 text-amber-800 dark:bg-amber-950/30 dark:text-amber-400"
+                              : "bg-red-100 text-red-800 dark:bg-red-950/30 dark:text-red-400"
+                        )}
                       >
+                        {lesson.muxStatus === "ready" && (
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                        )}
+                        {lesson.muxStatus === "processing" && (
+                          <Spinner className="w-3 h-3 mr-1" />
+                        )}
                         {lesson.muxStatus}
                       </Badge>
                     </div>
 
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">Durée :</span>
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Durée :</span>
                       </div>
-                      <span className="font-medium">
+                      <span className="font-medium text-foreground">
                         {formatDuration(lesson.duration || 0)}
                       </span>
                     </div>
@@ -369,9 +595,9 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
               </Card>
 
               {/* Paramètres de visibilité */}
-              <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">
+              <Card className="border border-border bg-card shadow-lg rounded-2xl overflow-hidden">
+                <CardHeader className="border-b border-border">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Paramètres
                   </CardTitle>
                   <CardDescription className="text-xs text-muted-foreground">
@@ -384,7 +610,7 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                     name="visibility"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="font-semibold">
+                        <FormLabel className="font-semibold text-foreground">
                           Visibilité de la leçon
                         </FormLabel>
                         <FormControl>
@@ -392,16 +618,16 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                             defaultValue={field.value}
                             onValueChange={field.onChange}
                           >
-                            <SelectTrigger className="h-12">
+                            <SelectTrigger className="h-12 bg-background border-border text-foreground">
                               <SelectValue placeholder="Sélectionnez une visibilité" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-popover border-border">
                               <SelectItem value="free" className="py-3">
                                 <div className="flex items-center gap-2">
-                                  <Globe className="w-4 h-4" />
+                                  <Globe className="w-4 h-4 text-foreground" />
                                   <div>
-                                    <p className="font-medium">Gratuit</p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="font-medium text-foreground">Gratuit</p>
+                                    <p className="text-xs text-muted-foreground">
                                       Accessible à tous les étudiants
                                     </p>
                                   </div>
@@ -409,10 +635,10 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                               </SelectItem>
                               <SelectItem value="paid" className="py-3">
                                 <div className="flex items-center gap-2">
-                                  <DollarSign className="w-4 h-4" />
+                                  <DollarSign className="w-4 h-4 text-foreground" />
                                   <div>
-                                    <p className="font-medium">Payant</p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="font-medium text-foreground">Payant</p>
+                                    <p className="text-xs text-muted-foreground">
                                       Uniquement pour les étudiants payants
                                     </p>
                                   </div>
@@ -421,7 +647,7 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                             </SelectContent>
                           </Select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-destructive" />
                       </FormItem>
                     )}
                   />
@@ -432,12 +658,12 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                       control={form.control}
                       name="isPublished"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base font-semibold">
+                            <FormLabel className="text-base font-semibold text-foreground">
                               Statut de publication
                             </FormLabel>
-                            <FormDescription className="text-sm text-gray-600">
+                            <FormDescription className="text-sm text-muted-foreground">
                               {field.value
                                 ? "La leçon est visible par les étudiants"
                                 : "La leçon est en brouillon, seuls vous pouvez la voir"}
@@ -448,11 +674,11 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                               checked={field.value}
                               onCheckedChange={field.onChange}
                               disabled={update.isPending}
-                              className={
+                              className={cn(
                                 field.value
-                                  ? "data-[state=checked]:bg-green-600"
-                                  : "data-[state=unchecked]:bg-gray-300"
-                              }
+                                  ? "data-[state=checked]:bg-green-600 dark:data-[state=checked]:bg-green-600"
+                                  : "data-[state=unchecked]:bg-gray-300 dark:data-[state=unchecked]:bg-gray-600"
+                              )}
                             />
                           </FormControl>
                         </FormItem>
@@ -462,14 +688,12 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                     {/* Badge d'état */}
                     <div className="flex items-center justify-between">
                       <Badge
-                        variant={
-                          form.watch("isPublished") ? "default" : "outline"
-                        }
-                        className={
+                        variant={form.watch("isPublished") ? "default" : "outline"}
+                        className={cn(
                           form.watch("isPublished")
-                            ? "bg-green-100 text-green-800 hover:bg-green-100"
-                            : "bg-gray-100 text-gray-800 hover:bg-gray-100"
-                        }
+                            ? "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-950/30 dark:text-green-400 border-0"
+                            : "bg-muted text-muted-foreground border-border"
+                        )}
                       >
                         <div className="flex items-center gap-2">
                           {form.watch("isPublished") ? (
@@ -490,7 +714,7 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                       {form.formState.dirtyFields.isPublished && (
                         <Badge
                           variant="outline"
-                          className="bg-amber-50 text-amber-800"
+                          className="bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800"
                         >
                           Modification non enregistrée
                         </Badge>
@@ -499,7 +723,7 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
                   </div>
 
                   {/* Bouton de suppression */}
-                  <div className="pt-4 border-t">
+                  <div className="pt-4 border-t border-border">
                     <Button
                       type="button"
                       variant="destructive"
@@ -532,37 +756,38 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
               </Card>
 
               {/* Statistiques rapides */}
-              <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">
+              <Card className="border border-border bg-card shadow-lg rounded-2xl overflow-hidden">
+                <CardHeader className="border-b border-border">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Statistiques
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Date de création</span>
-                      <span className="font-medium">
+                      <span className="text-muted-foreground">Date de création</span>
+                      <span className="font-medium text-foreground">
                         {new Date(lesson.createdAt).toLocaleDateString("fr-FR")}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">
+                      <span className="text-muted-foreground">
                         Dernière modification
                       </span>
-                      <span className="font-medium">
+                      <span className="font-medium text-foreground">
                         {lesson.updatedAt
-                          ? new Date(lesson.updatedAt).toLocaleDateString(
-                              "fr-FR"
-                            )
+                          ? new Date(lesson.updatedAt).toLocaleDateString("fr-FR")
                           : "Jamais"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">
+                      <span className="text-muted-foreground">
                         Position dans la section
                       </span>
-                      <Badge variant="outline" className="font-medium">
+                      <Badge
+                        variant="outline"
+                        className="font-medium border-border text-foreground"
+                      >
                         #{lesson.position}
                       </Badge>
                     </div>
@@ -573,6 +798,8 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
           </div>
         </form>
       </Form>
+
+      {/* Attachments */}
       <div className="mt-5 md:mt-10">
         <LessonAttachments lessonId={lessonId} />
       </div>

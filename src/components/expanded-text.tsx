@@ -11,10 +11,10 @@ interface ExpandableTextProps {
   className?: string;
 }
 
-export const ExpandableText = ({ 
-  text, 
-  maxLines = 3, 
-  className = "" 
+export const ExpandableText = ({
+  text,
+  maxLines = 3,
+  className = ""
 }: ExpandableTextProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [needsTruncation, setNeedsTruncation] = useState(false);
@@ -54,7 +54,7 @@ export const ExpandableText = ({
   // Hauteur pour l'état réduit
   const getCollapsedHeight = () => {
     if (!contentRef.current) return maxLines * 24;
-    
+
     const style = window.getComputedStyle(contentRef.current);
     const lineHeight = parseFloat(style.lineHeight) || 24;
     return Math.min(lineHeight * maxLines, contentHeight);
@@ -103,7 +103,6 @@ export const ExpandableText = ({
           className="mt-2"
         >
           <Button
-            variant="ghost"
             size="sm"
             className="h-8 px-2 text-sm text-primary hover:text-primary/80 hover:bg-transparent"
             onClick={() => setIsExpanded(!isExpanded)}

@@ -13,21 +13,21 @@ interface CourseIdViewProps {
 
 export const CourseIdView = ({ courseId }: CourseIdViewProps) => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-hidden">
       <div className="px-4 py-8">
-      
-          {/** Contenu principal */}
-          <div className="flex flex-col gap-8 md:gap-10">
-            <CoursePreviewController courseId={courseId} />
-            <CourseHeroSection courseId={courseId} />
-            <CourseInstructorSection courseId={courseId} />
-            <CourseObjectivesSection courseId={courseId} />
-            <CourseCompetencesSection courseId={courseId} />
-            <CourseAudienceSection courseId={courseId} />
-            <CourseResourcesSection courseId={courseId} />
-          </div>
+
+        {/** Contenu principal */}
+        <div className="flex flex-col gap-8 md:gap-10">
+          <CoursePreviewController courseId={courseId} />
+          <CourseHeroSection courseId={courseId} />
+          <CourseInstructorSection courseId={courseId} />
+          <CourseObjectivesSection courseId={courseId} />
+          <CourseCompetencesSection courseId={courseId} />
+          <CourseAudienceSection courseId={courseId} />
+          <CourseResourcesSection courseId={courseId} />
         </div>
       </div>
-    
+    </div>
+
   );
 };

@@ -33,43 +33,53 @@ export const MainSection = () => {
     <SidebarGroup className="p-0">
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title} className="rounded-none">
-              <SidebarMenuButton
-                tooltip={item.title}
-                asChild
-                isActive={pathname === item.url}
-                className="rounded-none py-8 px-5"
-              >
-                <Link
-                  prefetch
-                  href={item.url}
+          {items.map((item) => {
+            const isActive = pathname === item.url;
+
+            return (
+              <SidebarMenuItem key={item.title} className="rounded-none relative">
+                {/* Indicateur de page active - barre latérale */}
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full shadow-md" />
+                )}
+
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  asChild
+                  isActive={isActive}
                   className={cn(
-                    "flex items-center gap-4",
-                    pathname === item.url && "bg-amber-400"
+                    "rounded-none py-8 px-5 transition-all duration-200",
+                    isActive && "bg-accent/50 dark:bg-accent/30"
                   )}
                 >
-                  {pathname === item.url ? (
-                    <>
-                      <item.icon className="w-30 h-30" color="#feba45" />
-                    </>
-                  ) : (
-                    <>
-                      <item.icon className="w-30 h-30" />
-                    </>
-                  )}
-                  <span
-                    className={cn(
-                      "text-md",
-                      pathname === item.url && "text-[#feba45]"
-                    )}
+                  <Link
+
+                    href={item.url}
+                    className="flex items-center gap-4 w-full"
                   >
-                    {item.title}
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+                    <item.icon
+                      className={cn(
+                        "w-30 h-30 transition-colors duration-200",
+                        isActive
+                          ? "text-primary dark:text-primary"
+                          : "text-muted-foreground dark:text-gray-500"
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "text-md transition-colors duration-200",
+                        isActive
+                          ? "text-primary dark:text-primary font-medium"
+                          : "text-foreground dark:text-gray-300"
+                      )}
+                    >
+                      {item.title}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

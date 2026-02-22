@@ -29,6 +29,7 @@ import { authClient } from "@/lib/auth-client";
 import { Spinner } from "@/components/ui/spinner";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { motion } from "framer-motion"
 
 const RegisterSchema = z
   .object({
@@ -67,7 +68,7 @@ export function RegisterView() {
         callbackURL: "/",
       },
       {
-        onSuccess: () => {},
+        onSuccess: () => { },
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
@@ -81,7 +82,7 @@ export function RegisterView() {
         provider: provider,
       },
       {
-        onSuccess: () => {},
+        onSuccess: () => { },
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
@@ -90,7 +91,11 @@ export function RegisterView() {
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
       className="
   flex
   w-full
@@ -293,7 +298,6 @@ export function RegisterView() {
                 <div className="text-center text-xs text-muted-foreground relative border-t-3 -mx-6 p-3 -mb-7 pb-9">
                   Already have an account?{" "}
                   <Link
-                    prefetch
                     href="/login"
                     className="hover:underline cursor-pointer hover:underline-offset-4 font-bold text-primary/90"
                   >
@@ -314,6 +318,6 @@ export function RegisterView() {
           className="size-full object-cover rounded-r-xl"
         />
       </div>
-    </div>
+    </motion.div>
   );
 }
