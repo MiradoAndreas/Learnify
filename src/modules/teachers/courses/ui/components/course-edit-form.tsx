@@ -112,6 +112,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { RichTextEditor } from "../../lessons/ui/components/advanced-rich-text-editor";
 
 // Charger dynamiquement les composants lourds
 const CourseAttachments = dynamic(
@@ -191,18 +192,18 @@ const CourseAttachmentsError = () => (
 );
 
 const CourseAttachmentsSkeleton = () => (
-  <Card className="border-0 pt-0 shadow-xl rounded-2xl">
+  <Card className="border">
     <CardHeader className="pt-6">
       <div className="space-y-2">
-        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
-        <div className="h-4 w-64 bg-gray-200 rounded animate-pulse" />
+        <div className="h-8 w-48 bg-muted rounded animate-pulse" />
+        <div className="h-4 w-64 bg-muted rounded animate-pulse" />
       </div>
     </CardHeader>
     <CardContent className="space-y-4">
       {[1, 2, 3, 4].map((i) => (
         <div key={i} className="space-y-2">
-          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
-          <div className="h-12 w-full bg-gray-200 rounded-xl animate-pulse" />
+          <div className="h-4 w-32 bg-muted rounded animate-pulse" />
+          <div className="h-12 w-full bg-muted rounded-lg animate-pulse" />
         </div>
       ))}
     </CardContent>
@@ -223,7 +224,7 @@ const FileIcon = memo(({ type }: { type: string }) => {
     case "zip":
       return <Archive className="h-5 w-5 text-purple-500" />;
     default:
-      return <File className="h-5 w-5 text-gray-500" />;
+      return <File className="h-5 w-5 text-muted-foreground" />;
   }
 });
 FileIcon.displayName = "FileIcon";
@@ -251,13 +252,10 @@ const AttachmentItem = memo(
     const isEditing = editingId === attachment.id;
 
     return (
-      <div className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-teal-300 hover:bg-teal-50/30 transition-all duration-200 group">
+      <div className="flex items-center justify-between p-4 border rounded-lg hover:border-primary/50 transition-colors group">
         <div className="flex items-center gap-4 flex-1">
           <div className="relative">
             <FileIcon type={attachment.type} />
-            {attachment.type === "pdf" && (
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
-            )}
           </div>
 
           {isEditing ? (
@@ -323,8 +321,6 @@ const AttachmentEditForm = memo(
       />
       <Button
         size="sm"
-        variant="default"
-        className="bg-teal-500 hover:bg-teal-600"
         onClick={() => {
           updateName.mutate({
             attachmentId,
@@ -355,17 +351,15 @@ const AttachmentView = memo(
         className="flex-1 cursor-pointer"
         onClick={() => window.open(attachment.attachmentUrl, "_blank")}
       >
-        <div className="font-medium group-hover:text-teal-700 transition-colors">
+        <div className="font-medium hover:text-primary transition-colors">
           {attachment.name}
         </div>
-        <div className="text-sm text-gray-500 flex items-center gap-2">
+        <div className="text-sm text-muted-foreground flex items-center gap-2">
           <span>{formatFileSize(attachment.size)}</span>
           <span>•</span>
-          <span className="px-2 py-0.5 bg-gray-100 rounded-full text-xs">
+          <span className="px-2 py-0.5 bg-muted rounded-full text-xs">
             {attachment.type.toUpperCase()}
           </span>
-          <span>•</span>
-          <span className="text-xs">Ajouté récemment</span>
         </div>
       </div>
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -373,13 +367,11 @@ const AttachmentView = memo(
           icon={<Eye className="h-4 w-4" />}
           onClick={() => window.open(attachment.attachmentUrl, "_blank")}
           title="Voir le fichier"
-          className="hover:bg-teal-100 hover:text-teal-700"
         />
         <AttachmentActionButton
           icon={<Edit className="h-4 w-4" />}
           onClick={onEdit}
           title="Renommer"
-          className="hover:bg-blue-100 hover:text-blue-700"
         />
         <AttachmentActionButton
           icon={
@@ -391,7 +383,6 @@ const AttachmentView = memo(
           }
           onClick={onDelete}
           title="Supprimer"
-          className="hover:bg-red-100 hover:text-red-700"
           disabled={deletePending}
         />
       </div>
@@ -401,11 +392,11 @@ const AttachmentView = memo(
 AttachmentView.displayName = "AttachmentView";
 
 const AttachmentActionButton = memo(
-  ({ icon, onClick, title, className, disabled }: any) => (
+  ({ icon, onClick, title, disabled }: any) => (
     <Button
       variant="ghost"
       size="icon"
-      className={`h-8 w-8 ${className}`}
+      className="h-8 w-8"
       onClick={onClick}
       title={title}
       disabled={disabled}
@@ -474,7 +465,7 @@ const UploadZone = memo(({ courseId }: { courseId: string }) => {
   const queryClient = useQueryClient();
 
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 bg-gray-50 transition-all duration-300 hover:border-teal-400 hover:shadow-lg">
+    <div className="border-2 border-dashed rounded-lg p-8 bg-muted/50 transition-colors hover:border-primary">
       <UploadDropzone
         endpoint="courseAttachmentUploader"
         input={{ courseId }}
@@ -496,20 +487,20 @@ const UploadZone = memo(({ courseId }: { courseId: string }) => {
             background: "transparent",
             borderRadius: "0.75rem",
           },
-          uploadIcon: { color: "#14b8a6", width: "3rem", height: "3rem" },
+          uploadIcon: { color: "var(--primary)", width: "3rem", height: "3rem" },
           label: {
-            color: "#0f766e",
+            color: "var(--primary)",
             fontSize: "1.1rem",
             fontWeight: "600",
             marginTop: "1rem",
           },
           allowedContent: {
-            color: "#64748b",
+            color: "var(--muted-foreground)",
             fontSize: "0.875rem",
             marginTop: "0.5rem",
           },
           button: {
-            background: "linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)",
+            background: "var(--primary)",
             color: "white",
             fontWeight: "600",
             padding: "0.75rem 2rem",
@@ -532,32 +523,32 @@ const FileTypeInfo = memo(() => (
     <div className="mt-6 grid grid-cols-2 gap-3">
       {[
         {
-          icon: <FileText className="h-4 w-4 text-teal-500" />,
+          icon: <FileText className="h-4 w-4 text-muted-foreground" />,
           text: "PDF, DOC, PPT",
         },
         {
-          icon: <ImageIcon className="h-4 w-4 text-teal-500" />,
+          icon: <ImageIcon className="h-4 w-4 text-muted-foreground" />,
           text: "Images (JPG, PNG)",
         },
         {
-          icon: <Music className="h-4 w-4 text-teal-500" />,
+          icon: <Music className="h-4 w-4 text-muted-foreground" />,
           text: "Son (MP3)",
         },
         {
-          icon: <Archive className="h-4 w-4 text-teal-500" />,
+          icon: <Archive className="h-4 w-4 text-muted-foreground" />,
           text: "ZIP, RAR",
         },
       ].map((item, index) => (
         <div
           key={index}
-          className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg"
+          className="flex items-center gap-2 text-sm text-muted-foreground bg-muted p-3 rounded-lg"
         >
           {item.icon}
           <span>{item.text}</span>
         </div>
       ))}
     </div>
-    <div className="mt-4 text-xs text-gray-500 text-center">
+    <div className="mt-4 text-xs text-muted-foreground text-center">
       <p>Glissez-déposez vos fichiers ou cliquez pour parcourir</p>
     </div>
   </>
@@ -569,7 +560,7 @@ const AttachmentList = memo((props: any) => {
 
   if (attachments.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-muted-foreground">
         Aucune pièce jointe pour le moment
       </div>
     );
@@ -847,12 +838,6 @@ export const CourseDetailsForm = ({ course }: { course: Course }) => {
     trpc.teacher.unpublishCourse.mutationOptions({
       onSuccess: (data) => {
         toast.success("📝 Cours dépublié avec succès!", {
-          style: {
-            background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-            color: "white",
-            border: "none",
-            fontSize: "16px",
-          },
           description: "Votre cours n'est plus visible par les étudiants.",
         });
         queryClient.invalidateQueries({
@@ -1047,7 +1032,7 @@ export const CourseDetailsForm = ({ course }: { course: Course }) => {
   const categoryIsValid = categoryForm.formState.isValid;
 
   return (
-    <div className="bg-gray-50 p-4 md:p-6">
+    <div className="p-4 md:p-6">
       <div className="mx-auto">
         <Header
           course={course}
@@ -1132,17 +1117,12 @@ const Header = memo(
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-0 bg-linear-to-r from-[#feba45] to-[#ff9e1f] rounded-xl blur-lg opacity-50" />
-              <div className="relative w-14 h-14 bg-linear-to-r from-[#feba45] to-[#ff9e1f] rounded-xl flex items-center justify-center shadow-xl">
-                <Crown className="w-7 h-7 text-white" />
-              </div>
-            </div>
+
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-[#feba45] to-[#ff9e1f] bg-clip-text text-transparent">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
                 Studio de Création
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="text-muted-foreground mt-2">
                 Transformez vos connaissances en cours exceptionnel
               </p>
             </div>
@@ -1216,7 +1196,7 @@ const PublishButton = memo(
             {status === "published" && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="rounded-full px-8 py-6 text-lg font-bold shadow-2xl bg-green-500 hover:bg-green-600">
+                  <Button className="rounded-full px-8 py-6 text-lg font-bold bg-green-500 hover:bg-green-600 text-white">
                     <CheckCircle className="w-5 h-5 mr-2" />
                     Publié
                     <ChevronDown className="w-4 h-4 ml-2" />
@@ -1238,7 +1218,7 @@ const PublishButton = memo(
                     Dépublier le cours
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-xs text-gray-500">
+                  <DropdownMenuItem className="text-xs text-muted-foreground">
                     Publié • Visible par les étudiants
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -1250,10 +1230,10 @@ const PublishButton = memo(
                 onClick={handlePublish}
                 disabled={publishCourse.isPending || !canPublishCourse}
                 className={cn(
-                  "rounded-full px-8 py-6 text-lg font-bold shadow-2xl",
+                  "rounded-full  text-md font-bold",
                   !canPublishCourse
-                    ? "bg-gray-400 hover:bg-gray-500 cursor-not-allowed"
-                    : "bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                    ? "hover:bg-muted cursor-not-allowed"
+                    : "bg-primary hover:bg-primary/90"
                 )}
               >
                 {publishCourse.isPending ? (
@@ -1275,10 +1255,10 @@ const PublishButton = memo(
           {status === "published" ? (
             <div className="space-y-2">
               <p className="font-semibold">Cours publié</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Votre cours est visible par les étudiants
               </p>
-              <div className="flex items-center gap-1 text-xs text-gray-500">
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Globe className="w-3 h-3" />
                 <span>Accessible au public</span>
               </div>
@@ -1286,7 +1266,7 @@ const PublishButton = memo(
           ) : !canPublishCourse ? (
             <div className="space-y-2">
               <p className="font-semibold">Prérequis manquants</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Complétez toutes les sections
               </p>
               <ValidationStatus course={course} />
@@ -1294,7 +1274,7 @@ const PublishButton = memo(
           ) : (
             <div className="space-y-2">
               <p className="font-semibold">Prêt à publier!</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Cliquez pour rendre votre cours visible
               </p>
               <div className="flex items-center gap-1 text-xs text-green-600">
@@ -1313,7 +1293,7 @@ PublishButton.displayName = "PublishButton";
 const TipsToggle = memo(({ showTips, setShowTips }: any) => (
   <Button
     variant="outline"
-    className="rounded-full border-2"
+    className="rounded-full"
     onClick={() => setShowTips(!showTips)}
   >
     {showTips ? (
@@ -1327,11 +1307,8 @@ const TipsToggle = memo(({ showTips, setShowTips }: any) => (
 TipsToggle.displayName = "TipsToggle";
 
 const LessonsButton = memo(({ courseId }: { courseId: string }) => (
-  <Button
-    asChild
-    className="rounded-full bg-linear-to-r from-[#feba45] to-[#ff9e1f] hover:from-[#ff9e1f] hover:to-[#feba45] text-white shadow-lg hover:shadow-xl"
-  >
-    <Link href={`/teacher/courses/${courseId}/lessons`} prefetch>
+  <Button asChild className="rounded-full">
+    <Link href={`/teacher/courses/${courseId}/lessons`} >
       <Video className="w-4 h-4 mr-2" />
       Voir les lessons de ce cours
     </Link>
@@ -1362,8 +1339,8 @@ const ValidationStatus = memo(({ course }: { course: Course }) => {
 
   return (
     <div className="mt-2">
-      <p className="text-xs font-medium text-gray-700 mb-1">Manquant:</p>
-      <ul className="text-xs text-gray-500 space-y-1 max-h-20 overflow-y-auto">
+      <p className="text-xs font-medium text-foreground mb-1">Manquant:</p>
+      <ul className="text-xs text-muted-foreground space-y-1 max-h-20 overflow-y-auto">
         {missingItems.map((item, index) => (
           <li key={index} className="flex items-center gap-1">
             <X className="w-3 h-3 text-red-500" />
@@ -1384,17 +1361,17 @@ const ProgressSection = memo(
       transition={{ duration: 0.4, delay: 0.1 }}
       className="mb-8"
     >
-      <Card className="border-0 pt-0 shadow-2xl rounded-2xl overflow-hidden bg-white">
-        <CardContent className="p-6 pt-6">
+      <Card className="border">
+        <CardContent className="p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <Rocket className="w-6 h-6 text-[#feba45]" />
-                <h3 className="text-xl font-bold text-gray-900">
+
+                <h3 className="text-xl font-bold text-foreground">
                   Progression vers la publication
                 </h3>
               </div>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Plus vous complétez de sections, plus votre cours sera visible
                 et attractif
               </p>
@@ -1402,29 +1379,26 @@ const ProgressSection = memo(
 
             <div className="text-center space-y-2">
               <div className="relative inline-block">
-                <div className="text-5xl font-bold bg-linear-to-r from-[#feba45] to-[#ff9e1f] bg-clip-text text-transparent">
+                <div className="text-5xl font-bold text-primary">
                   {completionPercentage}%
                 </div>
-                <div className="absolute -top-2 -right-2 animate-bounce">
-                  <Sparkles className="w-5 h-5 text-[#feba45]" />
-                </div>
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 {completionPercentage < 50
                   ? "À améliorer"
                   : completionPercentage < 80
-                  ? "Bien avancé"
-                  : "Presque parfait!"}
+                    ? "Bien avancé"
+                    : "Presque parfait!"}
               </div>
             </div>
           </div>
 
           <Progress
             value={completionPercentage}
-            className="h-3 mt-6 bg-gray-200"
+            className="h-3 mt-6"
           />
 
-          <div className="flex justify-between text-xs text-gray-500 mt-2">
+          <div className="flex justify-between text-xs text-muted-foreground mt-2">
             <span>Débutant</span>
             <span>Intermediaire</span>
             <span>Avancé</span>
@@ -1447,14 +1421,14 @@ const TipsPanel = memo(
           exit={{ opacity: 0, x: -20 }}
           className="lg:col-span-1"
         >
-          <Card className="border-0 pt-0 shadow-xl rounded-2xl sticky top-6 overflow-hidden bg-linear-to-br from-blue-50 to-cyan-50">
-            <CardHeader className="pb-4 pt-6">
+          <Card className="border sticky top-6">
+            <CardHeader className="pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-linear-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                  <Lightbulb className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                  <Lightbulb className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-bold text-gray-900">
+                  <CardTitle className="text-lg font-bold text-foreground">
                     Guide du Créateur
                   </CardTitle>
                   <CardDescription>
@@ -1466,11 +1440,11 @@ const TipsPanel = memo(
 
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-                  <Trophy className="w-4 h-4 text-[#feba45]" />
+                <h4 className="font-semibold text-foreground flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-primary" />
                   Pourquoi c'est important ?
                 </h4>
-                <ul className="space-y-2 text-sm text-gray-600">
+                <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
                     <span>Attire 3x plus d'étudiants</span>
@@ -1489,8 +1463,8 @@ const TipsPanel = memo(
               <Separator />
 
               <div className="space-y-3">
-                <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-[#feba45]" />
+                <h4 className="font-semibold text-foreground flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" />
                   Conseils rapides
                 </h4>
                 <div className="space-y-2">
@@ -1589,7 +1563,7 @@ const MainTabs = memo((props: any) => {
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-      <TabsList className="flex mt-5 md:mt-3 mb-25 md:mb-10 lg:mb-5 flex-wrap md:grid grid-cols-7 gap-2 bg-gray-50 p-1 rounded-2xl">
+      <TabsList className="flex flex-wrap md:grid grid-cols-7 gap-2 p-1 rounded-lg">
         {[
           { value: "basics", icon: BookOpen, label: "Informations" },
           { value: "thumbnail", icon: ImageIcon, label: "Image" },
@@ -1602,7 +1576,7 @@ const MainTabs = memo((props: any) => {
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            className="rounded-xl data-[state=active]:bg-linear-to-r data-[state=active]:from-[#feba45] data-[state=active]:to-[#ff9e1f] data-[state=active]:text-white data-[state=active]:shadow-lg"
+            className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             <tab.icon className="w-4 h-4 mr-2" />
             {tab.label}
@@ -1688,6 +1662,7 @@ const MainTabs = memo((props: any) => {
   );
 });
 MainTabs.displayName = "MainTabs";
+
 // BasicsTab complet mémoïsé
 const BasicsTab = memo(
   ({
@@ -1724,15 +1699,15 @@ const BasicsTab = memo(
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-0 pt-0 shadow-2xl rounded-2xl overflow-hidden">
-          <CardHeader className="bg-linear-to-r pt-6 from-[#feba45]/10 to-[#ff9e1f]/10">
+        <Card className="border">
+          <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-linear-to-r from-[#feba45] to-[#ff9e1f] rounded-xl flex items-center justify-center shadow-lg">
-                  <BookOpen className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                  <BookOpen className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Fondations du Cours
                   </CardTitle>
                   <CardDescription>
@@ -1742,7 +1717,7 @@ const BasicsTab = memo(
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Info className="w-5 h-5 text-gray-400 hover:text-[#feba45] cursor-help" />
+                  <Info className="w-5 h-5 text-muted-foreground hover:text-primary cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
@@ -1767,17 +1742,14 @@ const BasicsTab = memo(
                   render={({ field }) => (
                     <FormItem className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <FormLabel className="text-lg font-bold text-gray-900 flex items-center gap-3">
-                          <BookMarked className="w-6 h-6 text-[#feba45]" />
+                        <FormLabel className="text-lg font-bold text-foreground flex items-center gap-3">
+                          <BookMarked className="w-6 h-6 text-primary" />
                           Titre du cours
-                          <span className="text-xs font-normal text-gray-500">
+                          <span className="text-xs font-normal text-muted-foreground">
                             (Minimum 5 caractères)
                           </span>
                         </FormLabel>
-                        <Badge
-                          variant="outline"
-                          className="border-[#feba45] text-[#feba45]"
-                        >
+                        <Badge variant="outline">
                           {field.value?.length || 0}/5
                         </Badge>
                       </div>
@@ -1785,67 +1757,60 @@ const BasicsTab = memo(
                         <div className="relative group">
                           <Input
                             {...field}
-                            className="h-14 text-md pl-12 pr-4 border-2 border-gray-300 focus:border-[#feba45] focus:ring-4 focus:ring-[#feba45]/20 rounded-xl transition-all duration-300 group-hover:border-[#feba45]/50"
+                            className="h-14 text-md pl-12 pr-4 border-2 focus:border-primary rounded-lg"
                             placeholder="Ex: Développement Web Avancé avec React"
                           />
-                          <BookMarked className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-hover:text-[#feba45] transition-colors" />
-                          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                            <div
-                              className={`w-3 h-3 rounded-full ${
-                                field.value?.length >= 5
-                                  ? "bg-green-500 animate-pulse"
-                                  : "bg-gray-300"
-                              }`}
-                            />
-                          </div>
+                          <BookMarked className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-hover:text-primary" />
                         </div>
                       </FormControl>
                       <TipBubble>
-                        💡 Utilisez des mots-clés recherchés comme "Programmation", "Web", "Mobile", "Économie", "Élevage"
-                        "Développement personnel", "Marketing Digital"
+                        💡 Utilisez des mots-clés recherchés
                       </TipBubble>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                {/* Description Section */}
                 <FormField
                   control={form.control}
                   name="description"
-                  render={({ field }) => (
-                    <FormItem className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <FormLabel className="text-lg font-bold text-gray-900 flex items-center gap-3">
-                          <Edit className="w-6 h-6 text-[#feba45]" />
-                          Description complète
-                          <span className="text-xs font-normal text-gray-500">
-                            (Minimum 20 caractères)
-                          </span>
-                        </FormLabel>
-                        <Badge
-                          variant="outline"
-                          className="border-[#feba45] text-[#feba45]"
-                        >
-                          {field.value?.length || 0}/20
-                        </Badge>
-                      </div>
-                      <FormControl>
-                        <div className="relative group">
-                          <Textarea
-                            {...field}
-                            rows={8}
-                            className="text-md p-6 border-2 border-gray-300 focus:border-[#feba45] focus:ring-4 focus:ring-[#feba45]/20 rounded-xl transition-all duration-300 group-hover:border-[#feba45]/50 resize-none"
-                            placeholder=""
-                          />
+                  render={({ field }) => {
+                    const stripHtml = (html: string) =>
+                      html.replace(/<[^>]*>/g, "");
+
+                    const plainLength = stripHtml(field.value || "").length;
+
+                    return (
+                      <FormItem className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <FormLabel className="text-lg font-bold text-foreground flex items-center gap-3">
+                            <Edit className="w-6 h-6 text-primary" />
+                            Description complète
+                            <span className="text-xs font-normal text-muted-foreground">
+                              (Minimum 20 caractères)
+                            </span>
+                          </FormLabel>
+
+                          <Badge variant="outline">
+                            {plainLength}/20
+                          </Badge>
                         </div>
-                      </FormControl>
-                      <TipBubble className="mt-3">
-                        📝 Incluez : le problème que vous souhaitez résoudre + le contenu détaillé et répondez sur ce question que pourquoi les étudiants prend cet cours mais pas les autres ?
-                      </TipBubble>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+
+                        <FormControl>
+                          <RichTextEditor
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+
+                        <TipBubble className="mt-3">
+                          📝 Incluez : le problème que vous souhaitez résoudre
+                        </TipBubble>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 {/* Price Section */}
@@ -1854,17 +1819,16 @@ const BasicsTab = memo(
                   name="price"
                   render={({ field }) => (
                     <FormItem className="space-y-4">
-                      <FormLabel className="text-lg font-bold text-gray-900 flex items-center gap-3">
-                        <DollarSign className="w-6 h-6 text-[#feba45]" />
+                      <FormLabel className="text-lg font-bold text-foreground flex items-center gap-3">
+                        <DollarSign className="w-6 h-6 text-primary" />
                         Investissement
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <HelpCircle className="w-4 h-4 text-gray-400 hover:text-[#feba45]" />
+                            <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p className="max-w-xs">
-                              Les cours gratuits attirent plus d'étudiants, les
-                              cours payants génèrent du revenu
+                              Les cours gratuits attirent plus d'étudiants
                             </p>
                           </TooltipContent>
                         </Tooltip>
@@ -1902,11 +1866,11 @@ const BasicsTab = memo(
                               onChange={(e) =>
                                 field.onChange(Number(e.target.value))
                               }
-                              className="h-14 text-lg pl-12 pr-4 border-2 border-gray-300 focus:border-[#feba45] focus:ring-4 focus:ring-[#feba45]/20 rounded-xl"
+                              className="h-14 text-lg pl-12 pr-4 border-2 rounded-lg"
                               placeholder="Ou entrez un prix personnalisé..."
                             />
-                            <DollarSign className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-lg font-bold text-gray-700">
+                            <DollarSign className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-lg font-bold">
                               Ar {field.value.toLocaleString("fr-FR")}
                             </div>
                           </div>
@@ -1924,8 +1888,8 @@ const BasicsTab = memo(
                     name="level"
                     render={({ field }) => (
                       <FormItem className="space-y-4">
-                        <FormLabel className="text-lg font-bold text-gray-900 flex items-center gap-3">
-                          <TrendingUp className="w-6 h-6 text-[#feba45]" />
+                        <FormLabel className="text-lg font-bold text-foreground flex items-center gap-3">
+                          <TrendingUp className="w-6 h-6 text-primary" />
                           Niveau de difficulté
                         </FormLabel>
                         <FormControl>
@@ -1963,8 +1927,8 @@ const BasicsTab = memo(
                     name="language"
                     render={({ field }) => (
                       <FormItem className="space-y-4">
-                        <FormLabel className="text-lg font-bold text-gray-900 flex items-center gap-3">
-                          <Globe className="w-6 h-6 text-[#feba45]" />
+                        <FormLabel className="text-lg font-bold text-foreground flex items-center gap-3">
+                          <Globe className="w-6 h-6 text-primary" />
                           Langue d'enseignement
                         </FormLabel>
                         <FormControl>
@@ -2013,11 +1977,11 @@ const BasicsTab = memo(
                       updateBasics.isPending ||
                       updateSettings.isPending
                     }
-                    className="w-full h-16 rounded-xl bg-linear-to-r from-[#feba45] via-[#ff9e1f] to-[#feba45] text-white font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full h-16 rounded-lg bg-primary text-white font-bold text-lg"
                   >
                     {isSubmitting ||
-                    updateBasics.isPending ||
-                    updateSettings.isPending ? (
+                      updateBasics.isPending ||
+                      updateSettings.isPending ? (
                       <>
                         <Loader2 className="w-6 h-6 mr-3 animate-spin" />
                         <span className="text-lg">Mise à jour en cours...</span>
@@ -2086,15 +2050,15 @@ const CategoryTab = memo(
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-0 pt-0 shadow-2xl rounded-2xl overflow-hidden">
-          <CardHeader className="bg-linear-to-r pt-6 from-blue-500/10 to-cyan-500/10">
+        <Card className="border">
+          <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-linear-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <Star className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                  <Star className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Catégorie du cours
                   </CardTitle>
                   <CardDescription>
@@ -2105,12 +2069,11 @@ const CategoryTab = memo(
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Info className="w-5 h-5 text-gray-400 hover:text-blue-500 cursor-help" />
+                  <Info className="w-5 h-5 text-muted-foreground hover:text-primary cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
-                    Une bonne catégorie augmente la visibilité de votre cours de
-                    40%
+                    Une bonne catégorie augmente la visibilité de votre cours
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -2120,30 +2083,30 @@ const CategoryTab = memo(
           <CardContent className="p-8">
             <div className="space-y-8">
               {/* Tip Section */}
-              <div className="bg-linear-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200">
+              <div className="bg-muted rounded-lg p-6 border">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                    <Target className="w-5 h-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <Target className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-2">
+                    <h4 className="font-bold text-foreground mb-2">
                       Pourquoi la catégorie est importante
                     </h4>
                     <div className="space-y-2 mt-3">
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-blue-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">
                           Aide les étudiants à trouver votre cours
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-blue-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">
                           Améliore le référencement (SEO)
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-blue-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">
                           Cible le bon public dès le départ
                         </span>
@@ -2164,14 +2127,14 @@ const CategoryTab = memo(
                     render={({ field }) => (
                       <FormItem className="space-y-6">
                         <div>
-                          <FormLabel className="text-lg font-bold text-gray-900 flex items-center gap-3">
-                            <Star className="w-6 h-6 text-blue-500" />
+                          <FormLabel className="text-lg font-bold text-foreground flex items-center gap-3">
+                            <Star className="w-6 h-6 text-primary" />
                             Catégorie principale
-                            <span className="text-xs font-normal text-gray-500">
+                            <span className="text-xs font-normal text-muted-foreground">
                               (Affecte directement la visibilité)
                             </span>
                           </FormLabel>
-                          <p className="text-gray-600 mt-2">
+                          <p className="text-muted-foreground mt-2">
                             Sélectionnez la catégorie qui décrit le mieux le
                             contenu de votre cours
                           </p>
@@ -2184,18 +2147,18 @@ const CategoryTab = memo(
                               <motion.div
                                 initial={{ scale: 0.95 }}
                                 animate={{ scale: 1 }}
-                                className="p-6 border-2 border-blue-500 rounded-2xl bg-linear-to-r from-blue-500/5 to-cyan-500/5"
+                                className="p-6 border-2 border-primary rounded-lg bg-primary/5"
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-linear-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                                      <Check className="w-6 h-6 text-white" />
+                                    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                                      <Check className="w-6 h-6 text-primary-foreground" />
                                     </div>
                                     <div>
-                                      <p className="font-bold text-gray-900 text-lg">
+                                      <p className="font-bold text-foreground text-lg">
                                         {selectedCategory.name}
                                       </p>
-                                      <p className="text-sm text-gray-600">
+                                      <p className="text-sm text-muted-foreground">
                                         {selectedCategory.group || "Général"}
                                       </p>
                                     </div>
@@ -2205,23 +2168,19 @@ const CategoryTab = memo(
                                     variant="ghost"
                                     size="sm"
                                     onClick={clearCategory}
-                                    className="h-10 w-10 rounded-full hover:bg-red-50 hover:text-red-600"
+                                    className="h-10 w-10 rounded-full"
                                   >
                                     <X className="h-5 w-5" />
                                   </Button>
                                 </div>
                               </motion.div>
                             ) : (
-                              <div className="p-8 border-2 border-dashed border-gray-400 rounded-2xl text-center group hover:border-blue-500 transition-colors">
-                                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-blue-500/10">
-                                  <Search className="w-8 h-8 text-gray-400 group-hover:text-blue-500" />
+                              <div className="p-8 border-2 border-dashed rounded-lg text-center group hover:border-primary transition-colors">
+                                <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+                                  <Search className="w-8 h-8 text-muted-foreground" />
                                 </div>
-                                <p className="text-gray-500 text-lg">
+                                <p className="text-muted-foreground text-lg">
                                   Aucune catégorie sélectionnée
-                                </p>
-                                <p className="text-sm text-gray-400 mt-2">
-                                  Choisissez une catégorie pour mieux cibler
-                                  votre audience
                                 </p>
                               </div>
                             )}
@@ -2235,9 +2194,9 @@ const CategoryTab = memo(
                                 <div>
                                   <Button
                                     type="button"
-                                    className="w-full h-14 rounded-xl border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-500/5 text-lg font-medium group"
+                                    className="w-full h-14 rounded-lg border text-lg font-medium"
                                   >
-                                    <Search className="mr-3 h-5 w-5 group-hover:text-blue-600 transition-colors" />
+                                    <Search className="mr-3 h-5 w-5" />
                                     {field.value
                                       ? "Changer de catégorie"
                                       : "Explorer les catégories"}
@@ -2246,12 +2205,12 @@ const CategoryTab = memo(
                                 </div>
                               </PopoverTrigger>
                               <PopoverContent
-                                className="w-full p-0 rounded-2xl shadow-2xl"
+                                className="w-full p-0 rounded-lg"
                                 align="start"
                               >
-                                <Command className="rounded-2xl border-2">
+                                <Command className="rounded-lg border">
                                   <div className="flex items-center border-b px-4 py-3">
-                                    <Search className="mr-3 h-5 w-5 text-gray-400" />
+                                    <Search className="mr-3 h-5 w-5 text-muted-foreground" />
                                     <CommandInput
                                       placeholder="Rechercher une catégorie..."
                                       value={searchTerm}
@@ -2261,14 +2220,11 @@ const CategoryTab = memo(
                                   </div>
                                   <CommandList className="max-h-[400px] overflow-y-auto">
                                     <CommandEmpty className="py-8 text-center">
-                                      <div className="w-12 h-12 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
-                                        <Search className="w-6 h-6 text-gray-400" />
+                                      <div className="w-12 h-12 mx-auto mb-3 bg-muted rounded-full flex items-center justify-center">
+                                        <Search className="w-6 h-6 text-muted-foreground" />
                                       </div>
-                                      <p className="text-gray-500">
+                                      <p className="text-muted-foreground">
                                         Aucune catégorie trouvée
-                                      </p>
-                                      <p className="text-sm text-gray-400 mt-1">
-                                        Essayez d'autres mots-clés
                                       </p>
                                     </CommandEmpty>
                                     {Object.entries(groupedCategories).map(
@@ -2277,8 +2233,8 @@ const CategoryTab = memo(
                                           key={groupName}
                                           heading={
                                             <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 rounded-full bg-blue-500" />
-                                              <span className="font-bold text-gray-900">
+                                              <div className="w-2 h-2 rounded-full bg-primary" />
+                                              <span className="font-bold text-foreground">
                                                 {groupName}
                                               </span>
                                               <Badge className="ml-2">
@@ -2295,7 +2251,7 @@ const CategoryTab = memo(
                                                 onSelect={() =>
                                                   selectCategory(cat.id)
                                                 }
-                                                className="py-3 px-4 rounded-lg hover:bg-blue-500/5 cursor-pointer"
+                                                className="py-3 px-4 rounded-lg hover:bg-muted cursor-pointer"
                                               >
                                                 <div className="flex items-center justify-between w-full">
                                                   <div className="flex items-center gap-3">
@@ -2303,14 +2259,14 @@ const CategoryTab = memo(
                                                       className={cn(
                                                         "h-6 w-6 border-2 rounded-lg flex items-center justify-center",
                                                         field.value === cat.id
-                                                          ? "bg-blue-500 border-blue-500"
-                                                          : "border-gray-300"
+                                                          ? "bg-primary border-primary"
+                                                          : "border-muted-foreground/30"
                                                       )}
                                                     >
                                                       {field.value ===
                                                         cat.id && (
-                                                        <Check className="h-4 w-4 text-white" />
-                                                      )}
+                                                          <Check className="h-4 w-4 text-primary-foreground" />
+                                                        )}
                                                     </div>
                                                     <span className="font-medium">
                                                       {cat.name}
@@ -2356,7 +2312,7 @@ const CategoryTab = memo(
                         isSubmitting ||
                         updateSettings.isPending
                       }
-                      className="w-full h-14 rounded-xl bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-lg shadow-lg hover:shadow-xl"
+                      className="w-full h-14 rounded-lg bg-primary text-white font-bold text-lg"
                     >
                       {isSubmitting || updateSettings.isPending ? (
                         <>
@@ -2416,15 +2372,15 @@ const ThumbnailTab = memo(
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-0 pt-0 shadow-2xl rounded-2xl overflow-hidden">
-          <CardHeader className="bg-linear-to-r pt-6 from-indigo-500/10 to-purple-500/10">
+        <Card className="border">
+          <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-linear-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <ImageIcon className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                  <ImageIcon className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Image du cours (Thumbnail)
                   </CardTitle>
                   <CardDescription>
@@ -2435,11 +2391,11 @@ const ThumbnailTab = memo(
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Info className="w-5 h-5 text-gray-400 hover:text-indigo-500 cursor-help" />
+                  <Info className="w-5 h-5 text-muted-foreground hover:text-primary cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
-                    Une image attrayante augmente les clics de 60%
+                    Une image attrayante augmente les clics
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -2449,32 +2405,32 @@ const ThumbnailTab = memo(
           <CardContent className="p-8">
             <div className="space-y-8">
               {/* Tip Section */}
-              <div className="bg-linear-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-200">
+              <div className="bg-muted rounded-lg p-6 border">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
-                    <Sparkles className="w-5 h-5 text-indigo-600" />
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <Sparkles className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-2">
+                    <h4 className="font-bold text-foreground mb-2">
                       Conseils pour une image parfaite
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-indigo-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">
                           Haute résolution (1280x720)
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-indigo-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">Contrastes prononcés</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-indigo-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">Sujet clair et visible</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-indigo-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">
                           Texte minimal et lisible
                         </span>
@@ -2487,10 +2443,10 @@ const ThumbnailTab = memo(
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Current Thumbnail Preview */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">
+                  <h3 className="text-lg font-bold text-foreground">
                     Aperçu actuel
                   </h3>
-                  <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-gray-200">
+                  <div className="relative aspect-video rounded-lg overflow-hidden border">
                     {course.thumbnailUrl ? (
                       <>
                         <Image
@@ -2500,7 +2456,7 @@ const ThumbnailTab = memo(
                           className="object-cover"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent flex items-end p-6">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-6">
                           <div className="text-white">
                             <p className="font-bold text-lg">{course.title}</p>
                             <p className="text-sm opacity-90">
@@ -2510,13 +2466,10 @@ const ThumbnailTab = memo(
                         </div>
                       </>
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">
-                        <ImageIcon className="w-16 h-16 text-gray-400 mb-4" />
-                        <p className="text-gray-500 font-medium">
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-muted">
+                        <ImageIcon className="w-16 h-16 text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground font-medium">
                           Aucune image définie
-                        </p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Ajoutez une image pour améliorer l'attrait
                         </p>
                       </div>
                     )}
@@ -2540,7 +2493,7 @@ const ThumbnailTab = memo(
 
                 {/* Upload Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900">
+                  <h3 className="text-lg font-bold text-foreground">
                     Télécharger une nouvelle image
                   </h3>
                   <div className="space-y-4">
@@ -2549,21 +2502,19 @@ const ThumbnailTab = memo(
                       endpoint="thumbnailUploader"
                       onClientUploadComplete={handleUploadComplete}
                       onUploadError={handleUploadError}
-                      onUploadBegin={() => {}}
+                      onUploadBegin={() => { }}
                       config={{ mode: "auto" }}
                       appearance={{
                         container: {
-                          border: "2px dashed #6366f1",
-                          borderRadius: "1rem",
-                          background:
-                            "linear-gradient(to bottom right, #f5f3ff, #f0e7fe)",
+                          border: "2px dashed var(--border)",
+                          borderRadius: "0.75rem",
+                          background: "var(--muted)",
                         },
-                        uploadIcon: { color: "#6366f1" },
-                        label: { color: "#6366f1", fontWeight: "600" },
-                        allowedContent: { color: "#6b7280" },
+                        uploadIcon: { color: "var(--primary)" },
+                        label: { color: "var(--primary)", fontWeight: "600" },
+                        allowedContent: { color: "var(--muted-foreground)" },
                         button: {
-                          background:
-                            "linear-gradient(to right, #6366f1, #8b5cf6)",
+                          background: "var(--primary)",
                           color: "white",
                           fontWeight: "600",
                           padding: "0.75rem 1.5rem",
@@ -2574,14 +2525,11 @@ const ThumbnailTab = memo(
                     />
 
                     {isUploading && (
-                      <div className="flex items-center gap-3 p-4 bg-indigo-50 rounded-xl">
-                        <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" />
+                      <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                        <Loader2 className="w-5 h-5 text-primary animate-spin" />
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-indigo-900">
+                          <p className="text-sm font-medium">
                             Téléchargement en cours...
-                          </p>
-                          <p className="text-xs text-indigo-600">
-                            Veuillez ne pas fermer cette page
                           </p>
                         </div>
                       </div>
@@ -2629,15 +2577,15 @@ const ObjectivesTab = memo(
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-0 pt-0 shadow-2xl rounded-2xl overflow-hidden">
-          <CardHeader className="bg-linear-to-r pt-6 from-purple-500/10 to-pink-500/10">
+        <Card className="border">
+          <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-linear-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <Target className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                  <Target className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Objectifs d'apprentissage
                   </CardTitle>
                   <CardDescription>
@@ -2647,11 +2595,11 @@ const ObjectivesTab = memo(
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Info className="w-5 h-5 text-gray-400 hover:text-purple-500 cursor-help" />
+                  <Info className="w-5 h-5 text-muted-foreground hover:text-primary cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
-                    Des objectifs clairs augmentent l'engagement de 75%
+                    Des objectifs clairs augmentent l'engagement
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -2661,30 +2609,30 @@ const ObjectivesTab = memo(
           <CardContent className="p-8">
             <div className="space-y-8">
               {/* Tip Section */}
-              <div className="bg-linear-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
+              <div className="bg-muted rounded-lg p-6 border">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
-                    <Lightbulb className="w-5 h-5 text-purple-600" />
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <Lightbulb className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-2">
+                    <h4 className="font-bold text-foreground mb-2">
                       Conseil : Structurez vos objectifs avec la méthode SMART
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-purple-500" />
+                        <div className="w-2 h-2 rounded-full bg-primary" />
                         <span className="text-sm">Spécifique</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-purple-500" />
+                        <div className="w-2 h-2 rounded-full bg-primary" />
                         <span className="text-sm">Mesurable</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-purple-500" />
+                        <div className="w-2 h-2 rounded-full bg-primary" />
                         <span className="text-sm">Atteignable</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-purple-500" />
+                        <div className="w-2 h-2 rounded-full bg-primary" />
                         <span className="text-sm">Réaliste</span>
                       </div>
                     </div>
@@ -2694,7 +2642,7 @@ const ObjectivesTab = memo(
 
               {/* Existing Objectives */}
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-900">
+                <h3 className="text-lg font-bold text-foreground">
                   Objectifs définis ({course.objectives.length})
                 </h3>
                 {course.objectives.length > 0 ? (
@@ -2705,15 +2653,15 @@ const ObjectivesTab = memo(
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="bg-white p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-colors group"
+                        className="bg-card p-4 rounded-lg border hover:border-primary transition-colors group"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 bg-linear-to-r from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
+                            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                               <div className="text-lg">{index + 1}</div>
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">
+                              <p className="font-medium text-foreground">
                                 {obj.text}
                               </p>
                             </div>
@@ -2723,7 +2671,7 @@ const ObjectivesTab = memo(
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteObjective(obj.id)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
                             disabled={deleteObjective.isPending}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -2733,35 +2681,32 @@ const ObjectivesTab = memo(
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-2xl">
-                    <Target className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">Aucun objectif défini</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Commencez par ajouter vos objectifs
-                    </p>
+                  <div className="text-center py-8 border-2 border-dashed rounded-lg">
+                    <Target className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground">Aucun objectif défini</p>
                   </div>
                 )}
               </div>
 
               {/* Add Objective Form */}
               <div className="space-y-4">
-              <div>
-              <h3 className="text-lg font-bold text-gray-900">
-                  Ajouter un nouvel objectif
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Votre réponse doit juste réponse à cet question ! Après ce cours votre élève a le niveau à :
-                </p>
-              </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">
+                    Ajouter un nouvel objectif
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Votre réponse doit juste réponse à cet question ! <span className="font-bold">Après ce cours votre élève a le niveau à :</span>
+                  </p>
+                </div>
                 <div className="relative group">
                   <Textarea
                     value={objectivesText}
                     onChange={(e) => setObjectivesText(e.target.value)}
                     placeholder=""
-                    className="min-h-[120px] text-lg p-6 border-2 border-gray-300 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 rounded-xl transition-all duration-300 group-hover:border-purple-400 resize-none"
+                    className="min-h-[120px] text-lg p-6 rounded-lg resize-none"
                   />
                   <div className="absolute bottom-4 right-4">
-                    <Badge variant="outline" className="bg-white">
+                    <Badge variant="outline" className="bg-background">
                       {objectivesText.length}/100
                     </Badge>
                   </div>
@@ -2774,7 +2719,7 @@ const ObjectivesTab = memo(
                     type="button"
                     onClick={handleAddObjective}
                     disabled={!objectivesText.trim() || addObjective.isPending}
-                    className="w-full h-14 rounded-xl bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg shadow-lg hover:shadow-xl"
+                    className="w-full h-14 rounded-lg bg-primary text-white font-bold text-lg"
                   >
                     <PlusCircle className="w-5 h-5 mr-2" />
                     {addObjective.isPending
@@ -2823,15 +2768,15 @@ const AudienceTab = memo(
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-0 pt-0 shadow-2xl rounded-2xl overflow-hidden">
-          <CardHeader className="bg-linear-to-r pt-6 from-emerald-500/10 to-green-500/10">
+        <Card className="border">
+          <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-linear-to-r from-emerald-500 to-green-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <Users className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                  <Users className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Public cible
                   </CardTitle>
                   <CardDescription>
@@ -2841,7 +2786,7 @@ const AudienceTab = memo(
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Info className="w-5 h-5 text-gray-400 hover:text-emerald-500 cursor-help" />
+                  <Info className="w-5 h-5 text-muted-foreground hover:text-primary cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
@@ -2855,32 +2800,26 @@ const AudienceTab = memo(
           <CardContent className="p-8">
             <div className="space-y-8">
               {/* Tip Section */}
-              <div className="bg-linear-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200">
+              <div className="bg-muted rounded-lg p-6 border">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
-                    <MessageSquare className="w-5 h-5 text-emerald-600" />
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <MessageSquare className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-2">
+                    <h4 className="font-bold text-foreground mb-2">
                       Exemples de public cible précis
                     </h4>
                     <div className="space-y-2 mt-3">
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">
                           Développeurs débutants en JavaScript
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-500" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm">
                           Étudiants en marketing digital
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-500" />
-                        <span className="text-sm">
-                          Professionnels souhaitant apprendre Python
                         </span>
                       </div>
                     </div>
@@ -2890,7 +2829,7 @@ const AudienceTab = memo(
 
               {/* Existing Audiences */}
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-900">
+                <h3 className="text-lg font-bold text-foreground">
                   Publics définis ({course.audiences.length})
                 </h3>
                 {course.audiences.length > 0 ? (
@@ -2901,15 +2840,15 @@ const AudienceTab = memo(
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="bg-white p-4 rounded-xl border border-emerald-100 hover:border-emerald-300 transition-colors group"
+                        className="bg-card p-4 rounded-lg border hover:border-primary transition-colors group"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 bg-linear-to-r from-emerald-100 to-green-100 rounded-lg flex items-center justify-center">
-                              <Users className="w-4 h-4 text-emerald-600" />
+                            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                              <Users className="w-4 h-4 text-primary" />
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">
+                              <p className="font-medium text-foreground">
                                 {aud.text}
                               </p>
                             </div>
@@ -2919,7 +2858,7 @@ const AudienceTab = memo(
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteAudience(aud.id)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
                             disabled={deleteAudience.isPending}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -2929,30 +2868,30 @@ const AudienceTab = memo(
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-2xl">
-                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">Aucun public cible défini</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Définissez qui devrait suivre ce cours
-                    </p>
+                  <div className="text-center py-8 border-2 border-dashed rounded-lg">
+                    <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground">Aucun public cible défini</p>
                   </div>
                 )}
               </div>
 
               {/* Add Audience Form */}
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-900">
+                <h3 className="text-lg font-bold text-foreground">
                   Définir un nouveau public cible
                 </h3>
+                <p className="text-xs text-muted-foreground">
+                  Votre réponse doit juste réponse à cet question ! Ce cours s'adresse à :
+                </p>
                 <div className="relative group">
                   <Textarea
                     value={audienceText}
                     onChange={(e) => setAudienceText(e.target.value)}
-                    placeholder="Exemple: Développeurs débutants qui ont des bases sur l'informatque, Tous le monde qui veulent apprendre"
+                    placeholder="Public cible"
                     className="min-h-[120px] text-md"
                   />
                   <div className="absolute bottom-4 right-4">
-                    <Badge variant="outline" className="bg-white">
+                    <Badge variant="outline" className="bg-background">
                       {audienceText.length}/120
                     </Badge>
                   </div>
@@ -2965,7 +2904,7 @@ const AudienceTab = memo(
                     type="button"
                     onClick={handleAddAudience}
                     disabled={!audienceText.trim() || addAudience.isPending}
-                    className="w-full h-14 rounded-xl bg-linear-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white font-bold text-lg shadow-lg hover:shadow-xl"
+                    className="w-full h-14 rounded-lg bg-primary text-white font-bold text-lg"
                   >
                     <PlusCircle className="w-5 h-5 mr-2" />
                     {addAudience.isPending
@@ -3014,15 +2953,15 @@ const RequirementsTab = memo(
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-0 pt-0 shadow-2xl rounded-2xl overflow-hidden">
-          <CardHeader className="bg-linear-to-r pt-6 from-amber-500/10 to-orange-500/10">
+        <Card className="border">
+          <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-linear-to-r from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <GraduationCap className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                  <GraduationCap className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900">
+                  <CardTitle className="text-xl font-bold text-foreground">
                     Compétences acquises
                   </CardTitle>
                   <CardDescription>
@@ -3032,7 +2971,7 @@ const RequirementsTab = memo(
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Info className="w-5 h-5 text-gray-400 hover:text-amber-500 cursor-help" />
+                  <Info className="w-5 h-5 text-muted-foreground hover:text-primary cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
@@ -3046,38 +2985,26 @@ const RequirementsTab = memo(
           <CardContent className="p-8">
             <div className="space-y-8">
               {/* Tip Section */}
-              <div className="bg-linear-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200">
+              <div className="bg-muted rounded-lg p-6 border">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                    <Zap className="w-5 h-5 text-amber-600" />
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <Zap className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-2">
+                    <h4 className="font-bold text-foreground mb-2">
                       Formulez des compétences actionnables
                     </h4>
                     <div className="space-y-3 mt-3">
                       <div className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-amber-500 mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
                         <span className="text-sm">
                           Citer tous les compétences, ne soit pas timides
                         </span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-amber-500 mt-0.5" />
-                        <span className="text-sm">
-                          Citer tous le compétence même les plus profond
-                        </span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-amber-500 mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
                         <span className="text-sm">
                           Soyez spécifique et mesurable
-                        </span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-amber-500 mt-0.5" />
-                        <span className="text-sm">
-                          Mettez en avant la valeur pour l'étudiant
                         </span>
                       </div>
                     </div>
@@ -3087,7 +3014,7 @@ const RequirementsTab = memo(
 
               {/* Existing Requirements */}
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-900">
+                <h3 className="text-lg font-bold text-foreground">
                   Compétences définis ({course.requirements.length})
                 </h3>
                 {course.requirements.length > 0 ? (
@@ -3099,15 +3026,15 @@ const RequirementsTab = memo(
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.1 }}
-                          className="bg-white p-4 rounded-xl border border-amber-100 hover:border-amber-300 transition-colors group"
+                          className="bg-card p-4 rounded-lg border hover:border-primary transition-colors group"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex items-start gap-3">
-                              <div className="w-8 h-8 bg-linear-to-r from-amber-100 to-orange-100 rounded-lg flex items-center justify-center">
-                                <GraduationCap className="w-4 h-4 text-amber-600" />
+                              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <GraduationCap className="w-4 h-4 text-primary" />
                               </div>
                               <div>
-                                <p className="font-medium text-gray-900">
+                                <p className="font-medium text-foreground">
                                   {req.text}
                                 </p>
                               </div>
@@ -3117,7 +3044,7 @@ const RequirementsTab = memo(
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDeleteRequirement(req.id)}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
                               disabled={deleteRequirement.isPending}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -3128,24 +3055,21 @@ const RequirementsTab = memo(
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-2xl">
-                    <GraduationCap className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">Aucune compétence définie</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Ajoutez les compétences que les étudiants acquerront
-                    </p>
+                  <div className="text-center py-8 border-2 border-dashed rounded-lg">
+                    <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground">Aucune compétence définie</p>
                   </div>
                 )}
               </div>
 
               {/* Add Requirement Form */}
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-900">
+                <h3 className="text-lg font-bold text-foreground">
                   Ajouter une nouvelle compétence
                 </h3>
                 <p className="text-xs text-muted-foreground">
                   Votre réponse doit juste réponse à cette question ! <span className="font-bold">
-                  Quelles sont les compétences que votre élève peut acquérir après cet cours ?
+                    Quelles sont les compétences que votre élève peut acquérir après cet cours ?
                   </span>
                 </p>
                 <div className="relative group">
@@ -3154,9 +3078,9 @@ const RequirementsTab = memo(
                       value={newRequirement}
                       onChange={(e) => setNewRequirement(e.target.value)}
                       placeholder=""
-                      className="h-14 text-md pl-12 pr-4 border-2 border-gray-300 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 rounded-xl transition-all duration-300 group-hover:border-amber-400"
+                      className="h-14 text-md pl-12 pr-4 rounded-lg"
                     />
-                    <GraduationCap className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-hover:text-amber-500" />
+                    <GraduationCap className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   </div>
                 </div>
                 <motion.div
@@ -3169,7 +3093,7 @@ const RequirementsTab = memo(
                     disabled={
                       !newRequirement.trim() || addRequirement.isPending
                     }
-                    className="w-full h-14 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-lg shadow-lg hover:shadow-xl"
+                    className="w-full h-14 rounded-lg bg-primary text-white font-bold text-lg"
                   >
                     <PlusCircle className="w-5 h-5 mr-2" />
                     {addRequirement.isPending
@@ -3198,14 +3122,14 @@ const TipCard = memo(
     title: string;
     description: string;
   }) => (
-    <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#feba45] transition-colors">
+    <div className="bg-card rounded-lg p-4 border hover:border-primary transition-colors">
       <div className="flex items-start gap-3">
-        <div className="p-2 rounded-lg bg-blue-100">
-          <div className="text-blue-600">{icon}</div>
+        <div className="p-2 rounded-lg bg-primary/10">
+          <div className="text-primary">{icon}</div>
         </div>
         <div>
-          <h5 className="font-semibold text-gray-900">{title}</h5>
-          <p className="text-sm text-gray-600 mt-1">{description}</p>
+          <h5 className="font-semibold text-foreground">{title}</h5>
+          <p className="text-sm text-muted-foreground mt-1">{description}</p>
         </div>
       </div>
     </div>
@@ -3222,13 +3146,13 @@ const TipBubble = memo(
     className?: string;
   }) => (
     <div
-      className={`bg-linear-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-4 ${className}`}
+      className={`bg-muted border rounded-lg p-4 ${className}`}
     >
       <div className="flex items-start gap-3">
-        <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-          <Info className="w-3 h-3 text-blue-600" />
+        <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+          <Info className="w-3 h-3 text-primary" />
         </div>
-        <p className="text-sm text-gray-700">{children}</p>
+        <p className="text-sm text-foreground">{children}</p>
       </div>
     </div>
   )
@@ -3252,26 +3176,19 @@ const PriceOption = memo(
     <button
       type="button"
       onClick={onClick}
-      className={`p-4 rounded-xl border-2 transition-all ${
-        selected
-          ? "border-[#feba45] bg-linear-to-r from-[#feba45]/10 to-[#ff9e1f]/10"
-          : "border-gray-200 hover:border-gray-300"
-      }`}
+      className={`p-4 rounded-lg border transition-all ${selected
+        ? "border-primary bg-primary/10"
+        : "border hover:border-muted-foreground"
+        }`}
     >
       <div className="text-center">
         <div
-          className={`text-2xl font-bold ${
-            selected ? "text-[#feba45]" : "text-gray-700"
-          }`}
+          className={`text-2xl font-bold ${selected ? "text-primary" : "text-foreground"
+            }`}
         >
           {label}
         </div>
-        <div className="text-sm text-gray-600 mt-1">{description}</div>
-        {selected && (
-          <div className="mt-2">
-            <CheckCircle className="w-5 h-5 text-[#feba45] mx-auto" />
-          </div>
-        )}
+        <div className="text-sm text-muted-foreground mt-1">{description}</div>
       </div>
     </button>
   )
@@ -3295,24 +3212,19 @@ const LevelOption = memo(
     <button
       type="button"
       onClick={onClick}
-      className={`p-4 rounded-xl border-2 transition-all ${
-        selected
-          ? "border-[#feba45] bg-linear-to-r from-[#feba45]/10 to-[#ff9e1f]/10"
-          : "border-gray-200 hover:border-gray-300"
-      }`}
+      className={`p-4 rounded-lg border transition-all ${selected
+        ? "border-primary bg-primary/10"
+        : "border hover:border-muted-foreground"
+        }`}
     >
       <div className="text-center space-y-2">
         <div className="text-2xl">{icon}</div>
         <div
-          className={`font-semibold ${
-            selected ? "text-[#feba45]" : "text-gray-700"
-          }`}
+          className={`font-semibold ${selected ? "text-primary" : "text-foreground"
+            }`}
         >
           {label}
         </div>
-        {selected && (
-          <div className="w-3 h-3 rounded-full bg-[#feba45] mx-auto" />
-        )}
       </div>
     </button>
   )
@@ -3336,24 +3248,19 @@ const LanguageOption = memo(
     <button
       type="button"
       onClick={onClick}
-      className={`p-4 rounded-xl border-2 transition-all ${
-        selected
-          ? "border-[#feba45] bg-linear-to-r from-[#feba45]/10 to-[#ff9e1f]/10"
-          : "border-gray-200 hover:border-gray-300"
-      }`}
+      className={`p-4 rounded-lg border transition-all ${selected
+        ? "border-primary bg-primary/10"
+        : "border hover:border-muted-foreground"
+        }`}
     >
       <div className="text-center space-y-2">
         <div className="text-2xl">{flag}</div>
         <div
-          className={`font-semibold ${
-            selected ? "text-[#feba45]" : "text-gray-700"
-          }`}
+          className={`font-semibold ${selected ? "text-primary" : "text-foreground"
+            }`}
         >
           {label}
         </div>
-        {selected && (
-          <div className="w-3 h-3 rounded-full bg-[#feba45] mx-auto" />
-        )}
       </div>
     </button>
   )

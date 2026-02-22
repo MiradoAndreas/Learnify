@@ -71,6 +71,10 @@ export const Navbar = ({ children, className }: NavbarProps) => {
       ref={ref}
       // IMPORTANT: Change this to class of `fixed` if you want the navbar to be fixed
       className={cn("sticky lg:fixed inset-x-0 top-20 z-40 w-full", className)}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5, delay: 2 }}
     >
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
@@ -255,10 +259,12 @@ export const NavbarButton = ({
   children,
   className,
   variant = "primary",
+  asChild = false, // Nouvelle prop
   ...props
 }: {
   href?: string;
   as?: React.ElementType;
+  asChild?: boolean; // Si true, ne rend pas de balise <a> mais juste un span
   children: React.ReactNode;
   className?: string;
   variant?: "primary" | "secondary" | "dark" | "gradient";
@@ -277,6 +283,18 @@ export const NavbarButton = ({
     gradient:
       "bg-gradient-to-b from-[#ffd699] via-[#ffb74d] to-[#f9a825] text-white font-bold shadow-[0_1px_0_rgba(255,255,255,0.45)_inset,0_8px_24px_rgba(255,183,77,0.35)]",
   };
+
+  // Si asChild est true, on rend un span au lieu d'un a
+  if (asChild) {
+    return (
+      <span
+        className={cn(baseStyles, variantStyles[variant], className)}
+        {...props}
+      >
+        {children}
+      </span>
+    );
+  }
 
   return (
     <Tag

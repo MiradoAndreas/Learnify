@@ -78,7 +78,7 @@ export const teacherRouter = createTRPCRouter({
       status: ctx.trainer.status,
     };
   }),
-  getTeacherRedirect: teacherProcedure.query(async ({ ctx }) => {
+  getTeacherRedirect: protectedProcedure.query(async ({ ctx }) => {
     const trainer = await db
       .select({
         status: trainerProfiles.status,
@@ -2168,6 +2168,169 @@ export const teacherRouter = createTRPCRouter({
         message: "Cours dépublié avec succès",
       };
     }),
+
+    // Dans teacherRouter, après getMe
+getTeacherProfile: baseProcedure
+.input(
+  z.object({
+    teacherId: z.uuid(), // Optionnel pour récupérer un autre prof
+  })
+)
+.query(async ({ ctx, input }) => {
+  const { teacherId } = input;
+
+    // Vérifier que le professeur existe
+    const [teacherIdbase] = await db
+      .select({
+        id: trainerProfiles.id,
+      })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.id, teacherId))
+      .limit(1);
+
+    if (!teacherIdbase) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Id Professeur introuvable dans la base de donnés",
+      })
+    }
+
+
+
+  // 1. Récupérer les informations complètes du professeur + utilisateur lié
+  const [teacher] = await db
+    .select({
+      // Informations du professeur
+      id: trainerProfiles.id,
+      userId: trainerProfiles.userId,
+      fullName: trainerProfiles.fullName,
+      profession: trainerProfiles.profession,
+      experience: trainerProfiles.experience,
+      bio: trainerProfiles.bio,
+      skills: trainerProfiles.skills,
+      status: trainerProfiles.status,
+      createdAt: trainerProfiles.createdAt,
+      reviewedAt: trainerProfiles.reviewedAt,
+      
+      // Informations de l'utilisateur lié
+      userEmail: user.email,
+      userName: user.name,
+      userImage: user.image,
+      userImageKey: user.imageKey,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      userBio: user.bio,
+      location: user.location,
+      website: user.website,
+      
+      // Réseaux sociaux de l'utilisateur
+      facebookUrl: user.facebookUrl,
+      twitterUrl: user.twitterUrl,
+      linkedinUrl: user.linkedinUrl,
+      githubUrl: user.githubUrl,
+      instagramUrl: user.instagramUrl,
+      
+      userCreatedAt: user.createdAt,
+      userUpdatedAt: user.updatedAt,
+    })
+    .from(trainerProfiles)
+    .innerJoin(user, eq(trainerProfiles.userId, user.id))
+    .where(eq(trainerProfiles.id, teacherId))
+    .limit(1);
+
+  if (!teacher) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Professeur introuvable",
+    });
+  }
+
+
+
+
+
+
+  // 5. Formater les compétences (si c'est un tableau)
+  let formattedSkills: string[] = [];
+  if (teacher.skills && Array.isArray(teacher.skills)) {
+    formattedSkills = teacher.skills;
+  } else if (typeof teacher.skills === 'string') {
+    try {
+      formattedSkills = JSON.parse(teacher.skills);
+    } catch {
+      formattedSkills = [];
+    }
+  }
+
+  // 6. Formater les réseaux sociaux (supprimer les valeurs null/empty)
+  const socialLinks = {
+    website: teacher.website || null,
+    facebook: teacher.facebookUrl || null,
+    twitter: teacher.twitterUrl || null,
+    linkedin: teacher.linkedinUrl || null,
+    github: teacher.githubUrl || null,
+    instagram: teacher.instagramUrl || null,
+  };
+
+  // 7. Calculer les URL d'image (priorité: image prof → image user)
+  const profileImage =  teacher.userImage;
+  const profileImageKey =  teacher.userImageKey;
+
+  // 8. Retourner toutes les informations formatées
+  return {
+    // Informations principales
+    id: teacher.id,
+    fullName: teacher.fullName,
+    profession: teacher.profession,
+    experience: teacher.experience,
+    bio: teacher.bio,
+    skills: formattedSkills,
+    
+    // Image de profil
+    image: profileImage,
+    imageKey: profileImageKey,
+    
+    // Informations de contact (masquées si pas le propre profil)
+    contactInfo: {
+      email:   teacher.userEmail,
+      phone:  teacher.phone,
+      location: teacher.location,
+    },
+    
+    // Informations utilisateur
+    userInfo: {
+      id: teacher.userId,
+      name: teacher.userName,
+      firstName: teacher.firstName,
+      lastName: teacher.lastName,
+      email:  teacher.userEmail,
+      bio: teacher.userBio,
+      joinedAt: teacher.userCreatedAt,
+    },
+    
+    // Réseaux sociaux
+    socialLinks: Object.fromEntries(
+      Object.entries(socialLinks).filter(([_, value]) => value)
+    ) as Record<string, string>,
+    
+    
+    
+    // Statut et métadonnées
+    status: teacher.status,
+    isVerified: teacher.status === "success",
+    
+    // Dates
+    createdAt: teacher.createdAt,
+    reviewedAt: teacher.reviewedAt,
+    updatedAt: teacher.userUpdatedAt,
+    
+    // Note: Les cours peuvent être ajoutés plus tard avec une autre query
+    // ou en étendant cette procédure
+  };
+}),
+
+    // Dans teacherRouter, après la procédure getMe
 });
 
 // Fonction utilitaire de ce procedure

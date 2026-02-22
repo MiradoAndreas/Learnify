@@ -35,49 +35,50 @@ const items = [
 
 export const MainSection = () => {
   const pathname = usePathname();
-  //todos: add a very nice style for the main-section later
+  const isActive = (url: string) => pathname === url;
 
   return (
     <SidebarGroup className="p-0">
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title} className="rounded-none">
-              <SidebarMenuButton
-                tooltip={item.title}
-                asChild
-                isActive={pathname === item.url}
-                className="rounded-none py-8 px-5"
-              >
-                <Link
-                  prefetch
-                  href={item.url}
+          {items.map((item) => {
+            const active = isActive(item.url);
+
+            return (
+              <SidebarMenuItem key={item.title} className="rounded-none">
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  asChild
+                  isActive={active}
                   className={cn(
-                    "flex items-center gap-4",
-                    pathname === item.url && "bg-amber-400"
+                    "rounded-none py-8 px-5 transition-colors",
+                    active && "bg-accent dark:bg-accent/50"
                   )}
                 >
-                  {pathname === item.url ? (
-                    <>
-                      <item.icon className="w-30 h-30" color="#feba45" />
-                    </>
-                  ) : (
-                    <>
-                      <item.icon className="w-30 h-30" />
-                    </>
-                  )}
-                  <span
-                    className={cn(
-                      "text-md",
-                      pathname === item.url && "text-[#feba45]"
-                    )}
-                  >
-                    {item.title}
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+                  <Link href={item.url} className="flex items-center gap-4">
+                    <item.icon
+                      className={cn(
+                        "w-30 h-30 transition-colors",
+                        active
+                          ? "text-primary dark:text-primary"
+                          : "text-muted-foreground dark:text-gray-500"
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "text-md transition-colors",
+                        active
+                          ? "text-primary dark:text-primary font-medium"
+                          : "text-foreground dark:text-gray-300"
+                      )}
+                    >
+                      {item.title}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

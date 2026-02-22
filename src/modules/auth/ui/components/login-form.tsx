@@ -30,7 +30,7 @@ import { authClient } from "@/lib/auth-client";
 import { Spinner } from "@/components/ui/spinner";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email adress"),
@@ -126,7 +126,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                       src="/logos/google.svg"
                       width={15}
                       height={15}
-                     
+
                     />
                     <span className="text-xs text-muted-foreground">
                       Continue with Goggle
@@ -146,7 +146,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                         src="/logos/github.svg"
                         width={15}
                         height={15}
-                       
+
                       />
                     </Button>
                     <Button
@@ -161,7 +161,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                         src="/logos/linkedin.svg"
                         width={15}
                         height={15}
-                   
+
                       />
                     </Button>
                   </div>

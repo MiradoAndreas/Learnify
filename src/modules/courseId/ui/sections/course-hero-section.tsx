@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ExpandableRichText } from "@/modules/teachers/courses/lessons/ui/components/expanded-rich-text";
+
 import { formatCourseDuration } from "@/modules/teachers/courses/lessons/ui/utils/format-duration";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -11,6 +13,7 @@ import { BookOpen, Clock, Star, Users } from "lucide-react";
 import Image from "next/image";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { motion } from "framer-motion"
 
 interface CourseHeroSectionProps {
   courseId: string;
@@ -19,7 +22,7 @@ interface CourseHeroSectionProps {
 const CourseHeroSkeleton = () => {
   return (
     <div className="space-y-6">
-     
+
       <div className="space-y-4">
         <div className="space-y-2">
           <Skeleton className="h-8 w-3/4" />
@@ -75,7 +78,6 @@ export const CourseHeroSection = ({ courseId }: CourseHeroSectionProps) => {
 
 const CourseHeroSectionSuspense = ({ courseId }: CourseHeroSectionProps) => {
   const trpc = useTRPC();
-  // State
   const [expanded, setExpanded] = useState(false);
   const { data: course } = useSuspenseQuery(
     trpc.course.getCourseBasicInfo.queryOptions({
@@ -90,108 +92,111 @@ const CourseHeroSectionSuspense = ({ courseId }: CourseHeroSectionProps) => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Image du cours */}
-      <div>
-   
-        
-        {/* Badge niveau */}
-        {course.level && (
-          <div className="absolute top-4 left-4">
-            <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm">
-              {levelLabels[course.level as keyof typeof levelLabels]}
-            </Badge>
-          </div>
-        )}
-      </div>
+    <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .6 }} className="space-y-6">
+      {/* Badge niveau */}
+      {course.level && (
+        <Badge variant="secondary" className="bg-secondary/10 dark:bg-zinc-800 text-foreground dark:text-zinc-100 border-0">
+          {levelLabels[course.level as keyof typeof levelLabels]}
+        </Badge>
+      )}
 
       {/* Titre et description */}
       <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{course.title}</h1>
-          <ExpandableText
-      text={course.description}
-      maxLines={8}
-      className="mt-2"
-    />
+        <h1 className="text-3xl font-bold tracking-tight text-foreground dark:text-zinc-100">
+          {course.title}
+        </h1>
+        <ExpandableRichText
+          content={course.description}
+          maxLines={2}
+          className="text-muted-foreground dark:text-zinc-400"
+        />
+      </div>
 
+      <Separator className="bg-border dark:bg-zinc-800" />
+
+      {/* Métadonnées */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="space-y-1">
+          <div className="flex items-center text-sm text-muted-foreground dark:text-zinc-400">
+            <Clock className="h-4 w-4 mr-2" />
+            Durée
+          </div>
+          <p className="font-medium text-foreground dark:text-zinc-200">
+            {formatCourseDuration(course.duration)}
+          </p>
         </div>
 
-        <Separator />
-
-        {/* Métadonnées */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="space-y-1">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Clock className="h-4 w-4 mr-2" />
-              Durée
-            </div>
-            <p className="font-medium">
-              {formatCourseDuration(course.duration)}
-            </p>
+        <div className="space-y-1">
+          <div className="flex items-center text-sm text-muted-foreground dark:text-zinc-400">
+            <BookOpen className="h-4 w-4 mr-2" />
+            Leçons
           </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Leçons
-            </div>
-            <p className="font-medium">{course.totalLessons}</p>
-          </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Star className="h-4 w-4 mr-2" />
-              Niveau
-            </div>
-            <p className="font-medium capitalize">{course.level}</p>
-          </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Users className="h-4 w-4 mr-2" />
-              Langue
-            </div>
-            <p className="font-medium uppercase">{course.language}</p>
-          </div>
+          <p className="font-medium text-foreground dark:text-zinc-200">{course.totalLessons}</p>
         </div>
 
-        {/* Catégories */}
-        {course.categories && course.categories.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {course.categories.map((category) => (
-              <Badge key={category.id} variant="outline">
-                {category.name}
-              </Badge>
-            ))}
+        <div className="space-y-1">
+          <div className="flex items-center text-sm text-muted-foreground dark:text-zinc-400">
+            <Star className="h-4 w-4 mr-2" />
+            Niveau
           </div>
-        )}
+          <p className="font-medium capitalize text-foreground dark:text-zinc-200">{course.level}</p>
+        </div>
 
-        <Separator />
-
-        {/* Prix et actions */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
-          <div>
-            <div className="text-3xl font-bold">
-              {course.price > 0 ? `${course.price} Ar` : "Gratuit"}
-            </div>
-            {course.price > 0 && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Accès permanent
-              </p>
-            )}
+        <div className="space-y-1">
+          <div className="flex items-center text-sm text-muted-foreground dark:text-zinc-400">
+            <Users className="h-4 w-4 mr-2" />
+            Langue
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="outline" size="lg">
-              Ajouter aux favoris
-            </Button>
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
-              {course.price > 0 ? "S'inscrire" : "Commencer gratuitement"}
-            </Button>
-          </div>
+          <p className="font-medium uppercase text-foreground dark:text-zinc-200">{course.language}</p>
         </div>
       </div>
-    </div>
+
+      {/* Catégories */}
+      {course.categories && course.categories.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {course.categories.map((category) => (
+            <Badge
+              key={category.id}
+              variant="outline"
+              className="border-border dark:border-zinc-700 text-foreground dark:text-zinc-300 bg-transparent"
+            >
+              {category.name}
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      <Separator className="bg-border dark:bg-zinc-800" />
+
+      {/* Prix et actions */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
+        <div>
+          <div className="text-3xl font-bold text-foreground dark:text-zinc-100">
+            {course.price > 0 ? `${course.price} Ar` : "Gratuit"}
+          </div>
+          {course.price > 0 && (
+            <p className="text-sm text-muted-foreground dark:text-zinc-400 mt-1">
+              Accès permanent
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="outline"
+            size="lg"
+            className="border-border dark:border-zinc-700 bg-transparent hover:bg-accent dark:hover:bg-zinc-800 text-foreground dark:text-zinc-200"
+          >
+            Ajouter aux favoris
+          </Button>
+          <Button
+            size="lg"
+            className="bg-primary hover:bg-primary/90 dark:bg-primary dark:hover:bg-primary/80 text-white"
+          >
+            {course.price > 0 ? "S'inscrire" : "Commencer gratuitement"}
+          </Button>
+        </div>
+      </div>
+    </motion.div>
   );
 };

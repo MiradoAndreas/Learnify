@@ -3,8 +3,8 @@ import { Loader2 } from "lucide-react";
 
 export default function TeacherPendingPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white shadow-xl rounded-2xl p-10 max-w-md w-full text-center">
+    <div className="min-h-screen flex items-center justify-center w-full px-4">
+      <div className="bg-white dark:bg-neutral-800 shadow-xl rounded-2xl p-10 max-w-md w-full text-center">
         {/* Icône / Loader */}
         <div className="flex justify-center mb-6">
           <Loader2 className="w-12 h-12 text-[#feba45] animate-spin" />
@@ -30,7 +30,7 @@ export default function TeacherPendingPage() {
 
         {/* Bouton retour */}
         <Link
-          prefetch
+
           href="/home"
           className="inline-block w-full bg-[#feba45] hover:bg-[#e59430] text-white font-semibold py-3 rounded-xl transition-colors duration-200"
         >

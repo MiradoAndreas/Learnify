@@ -1,7 +1,45 @@
+"use client";
 
 import { MacbookScroll } from "@/components/ui/macbook-scroll";
 
+
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+
 export function MacbookScrollDemo() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Éviter l'hydratation mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="w-full overflow-hidden bg-white dark:bg-[#0B0B0F] hidden lg:block">
+        <MacbookScroll
+          title={
+            <span>
+              Voir les cours disponible sur Learnify <br /> Par des experts
+            </span>
+          }
+          badge={
+            <a href="https://peerlist.io/manuarora">
+              <Badge className="h-10 w-10 -rotate-12 transform" />
+            </a>
+          }
+          src="/capture-learnify2.png" // Version par défaut
+          showGradient={false}
+        />
+      </div>
+    );
+  }
+
+  const imageSrc = resolvedTheme === 'dark'
+    ? '/capture-learnify2-dark.png'
+    : '/capture-learnify2.png';
+
   return (
     <div className="w-full overflow-hidden bg-white dark:bg-[#0B0B0F] hidden lg:block">
       <MacbookScroll
@@ -15,7 +53,7 @@ export function MacbookScrollDemo() {
             <Badge className="h-10 w-10 -rotate-12 transform" />
           </a>
         }
-        src={`/capture-learnify2.png`}
+        src={imageSrc}
         showGradient={false}
       />
     </div>

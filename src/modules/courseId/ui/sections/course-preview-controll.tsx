@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CourseCurriculumSection } from "./course-curriculum-section";
 import { CourseSidebarSection } from "./course-sidebar-section";
 import { LessonVideoModal } from "../components/lesson-video-modal";
-
+import { motion } from "framer-motion"
 interface CoursePreviewControllerProps {
   courseId: string;
 }
@@ -18,7 +18,7 @@ export const CoursePreviewController = ({
 
   return (
     <>
-      <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+      <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .6 }} className="lg:grid lg:grid-cols-3 lg:gap-8">
         <div className="lg:col-span-2">
           <CourseCurriculumSection
             courseId={courseId}
@@ -40,7 +40,7 @@ export const CoursePreviewController = ({
             }}
           />
         </div>
-      </div>
+      </motion.div>
 
       <LessonVideoModal
         open={isVideoOpen}

@@ -6,8 +6,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Mail, CalendarDays, BookOpen } from "lucide-react";
+import Link from "next/link";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { motion } from "framer-motion"
 
 interface CourseHeroSectionProps {
   courseId: string;
@@ -70,51 +72,54 @@ const CourseInstructorSectionSuspense = ({
     .map((n) => n[0])
     .join("")
     .toUpperCase()
-    .slice(0, 2);
+    .slice(0, 1);
 
   return (
-    <div className="space-y-8">
+    <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .6 }} className="space-y-8">
       <div className="flex flex-col md:flex-row items-start gap-8">
         {/* Avatar */}
-        <Avatar className="h-20 w-20 border">
-          <AvatarImage 
-            src={instructor.image || undefined} 
-            alt={instructor.fullName}
-          />
-          <AvatarFallback className="text-lg">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
+        <Link href={`/home/teachers/${instructor.id}`}>
+          <Avatar className="w-[112px] h-[112px] hover:scale-105 transition-all duration-200 border-2 border-background dark:border-zinc-800 shadow-sm dark:shadow-zinc-900/50">
+            <AvatarImage
+              src={instructor.image || undefined}
+              alt={instructor.fullName}
+              className="object-cover"
+            />
+            <AvatarFallback className="bg-primary/90 dark:bg-primary/80 font-semibold text-white text-3xl">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
 
         {/* Contenu principal */}
         <div className="flex-1 space-y-2 md:space-y-3">
           {/* Nom et profession */}
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-semibold text-foreground dark:text-zinc-100">
               {instructor.fullName}
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground dark:text-zinc-400">
               {instructor.profession}
             </p>
           </div>
 
-          <Separator />
+          <Separator className="bg-border dark:bg-zinc-800" />
 
           {/* Informations de contact */}
           <div className="space-y-4 text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 text-muted-foreground dark:text-zinc-400">
               <Mail className="h-4 w-4" />
               <span>{instructor.email}</span>
             </div>
-            
-            <div className="flex items-center gap-2 text-muted-foreground">
+
+            <div className="flex items-center gap-2 text-muted-foreground dark:text-zinc-400">
               <CalendarDays className="h-4 w-4" />
               <span>
                 Formateur depuis {new Date(instructor.createdAt).getFullYear()}
               </span>
             </div>
-            
-            <div className="flex items-center gap-2 text-muted-foreground">
+
+            <div className="flex items-center gap-2 text-muted-foreground dark:text-zinc-400">
               <BookOpen className="h-4 w-4" />
               <span>
                 {instructor.totalCourses} formation{instructor.totalCourses > 1 ? 's' : ''} dispensée{instructor.totalCourses > 1 ? 's' : ''}
@@ -122,13 +127,11 @@ const CourseInstructorSectionSuspense = ({
             </div>
           </div>
 
-          
-
           {/* Expérience */}
           {instructor.experience && (
             <div className="space-y-2">
-              <h3 className="font-medium">Expérience professionnelle</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="font-medium text-foreground dark:text-zinc-200">Expérience professionnelle</h3>
+              <p className="text-muted-foreground dark:text-zinc-400 leading-relaxed">
                 {instructor.experience}
               </p>
             </div>
@@ -137,8 +140,8 @@ const CourseInstructorSectionSuspense = ({
           {/* Compétences sous forme de liste */}
           {instructor.skills && instructor.skills.length > 0 && (
             <div className="space-y-2">
-              <h3 className="font-medium">Compétences clés</h3>
-              <ul className="text-muted-foreground list-disc list-inside space-y-1">
+              <h3 className="font-medium text-foreground dark:text-zinc-200">Compétences clés</h3>
+              <ul className="text-muted-foreground dark:text-zinc-400 list-disc list-inside space-y-1">
                 {instructor.skills.map((skill, index) => (
                   <li key={index} className="pl-2">{skill}</li>
                 ))}
@@ -146,14 +149,13 @@ const CourseInstructorSectionSuspense = ({
             </div>
           )}
 
-<div className="">
-            <p className="text-muted-foreground italic text-[15px]">
+          <div className="">
+            <p className="text-muted-foreground dark:text-zinc-400 italic text-[15px]">
               "{instructor.bio}"
             </p>
           </div>
         </div>
-      
       </div>
-    </div>
+    </motion.div>
   );
 };

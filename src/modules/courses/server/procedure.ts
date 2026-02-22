@@ -35,6 +35,7 @@ import z from "zod";
 import { get } from "http";
 
 import { UTApi } from "uploadthing/server";
+import { DEFAULT_COURSE_LIMIT } from "@/constants";
 
 export const coursesRouter = createTRPCRouter({
   // trpc/routers/course.ts
@@ -218,7 +219,7 @@ export const coursesRouter = createTRPCRouter({
         )
       )
       .orderBy(desc(courses.publishedAt), desc(courses.id))
-      .limit(4); // Limite fixe à 4 cours
+      .limit(8); // Limite fixe à 4 cours
 
     return {
       items: data, // Retourne directement les 4 cours
@@ -651,156 +652,232 @@ export const coursesRouter = createTRPCRouter({
       };
     }),
 
-  // Procédure 9: Cours similaires
-  getRelatedCourses: baseProcedure
-    .input(
-      z.object({
-        courseId: z.uuid(),
-        limit: z.number().min(1).max(10).optional().default(4),
-      })
-    )
-    .query(async ({ input }) => {
-      const { courseId, limit } = input;
-
-      // 1. Récupérer les catégories du cours
-      const categories = await db
-        .select({ categoryId: courseCategoryRelations.categoryId })
-        .from(courseCategoryRelations)
-        .where(eq(courseCategoryRelations.courseId, courseId));
-
-      if (categories.length === 0) return [];
-
-      // 2. Récupérer les cours similaires par catégorie
-      const relatedCourses = await db
-        .select({
-          id: courses.id,
-          title: courses.title,
-          description: courses.description,
-          price: courses.price,
-          thumbnailUrl: courses.thumbnailUrl,
-          level: courses.level,
-          trainer: {
-            fullName: trainerProfiles.fullName,
-          },
+    getPublishedCoursesByTeacher: baseProcedure
+  .input(
+    z.object({
+      teacherId: z.uuid(),
+      cursor: z
+        .object({
+          id: z.uuid(),
+          publishedAt: z.date(),
         })
-        .from(courses)
-        .innerJoin(trainerProfiles, eq(courses.trainerId, trainerProfiles.id))
-        .innerJoin(
-          courseCategoryRelations,
-          eq(courseCategoryRelations.courseId, courses.id)
+        .nullish(),
+      limit: z.number().min(1).max(100).default(DEFAULT_COURSE_LIMIT),
+    })
+  )
+  .query(async ({ input }) => {
+    const { teacherId, cursor, limit } = input;
+
+    // Vérifier que le professeur existe
+    const [teacher] = await db
+      .select({
+        id: trainerProfiles.id,
+        fullName: trainerProfiles.fullName,
+        status: trainerProfiles.status,
+      })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.id, teacherId))
+      .limit(1);
+
+    if (!teacher) {
+      // Retourner un tableau vide au lieu de throw pour éviter les problèmes de déshydratation
+      return {
+        items: [],
+        nextCursor: null,
+      };
+    }
+
+    const [totalResult] = await db
+    .select({ count: sql<number>`COUNT(*)`.as("count") })
+    .from(courses)
+    .where(
+      and(
+        eq(courses.trainerId, teacherId),
+        eq(courses.status, "published")
+      )
+    );
+
+    // Construire les conditions WHERE
+    const whereConditions: SQL[] = [
+      eq(courses.trainerId, teacherId),
+      eq(courses.status, "published"),
+    ];
+
+    // Pagination cursor-based
+    if (cursor) {
+      const paginationCondition = or(
+        lt(courses.publishedAt, cursor.publishedAt),
+        and(
+          eq(courses.publishedAt, cursor.publishedAt),
+          lt(courses.id, cursor.id)
         )
-        .where(
-          and(
-            eq(courses.status, "published"),
-            eq(courseCategoryRelations.categoryId, categories[0].categoryId),
-            ne(courses.id, courseId)
+      );
+    
+      if (paginationCondition) {
+        whereConditions.push(paginationCondition);
+      }
+    }
+    
+
+    // Récupérer les données avec pagination
+    const data = await db
+      .select({
+        id: courses.id,
+        title: courses.title,
+        description: courses.description,
+        price: courses.price,
+        thumbnailUrl: courses.thumbnailUrl,
+        level: courses.level,
+        language: courses.language,
+        publishedAt: courses.publishedAt,
+
+        totalLessons: sql<number>`
+          (
+            SELECT COUNT(${courseLessons.id})
+            FROM ${courseLessons}
+            INNER JOIN ${courseSections}
+              ON ${courseLessons.sectionId} = ${courseSections.id}
+            WHERE ${courseSections.courseId} = ${courses.id}
           )
+        `.as("totalLessons"),
+
+        duration: sql<number>`
+          COALESCE(
+            (
+              SELECT SUM(${courseLessons.duration})
+              FROM ${courseLessons}
+              INNER JOIN ${courseSections}
+                ON ${courseLessons.sectionId} = ${courseSections.id}
+              WHERE ${courseSections.courseId} = ${courses.id}
+                AND ${courseLessons.duration} IS NOT NULL
+            ),
+            0
+          )
+        `.as("duration"),
+
+        // Informations du professeur
+        trainer: {
+          fullName: trainerProfiles.fullName,
+          profession: trainerProfiles.profession,
+          image: sql<string | null>`
+            COALESCE(
+              ${trainerProfiles.image},
+              ${user.image}
+            )
+          `.as("image"),
+        },
+      })
+      .from(courses)
+      .innerJoin(trainerProfiles, eq(courses.trainerId, trainerProfiles.id))
+      .innerJoin(user, eq(trainerProfiles.userId, user.id))
+      .where(and(...whereConditions))
+      .orderBy(desc(courses.publishedAt), desc(courses.id))
+      .limit(limit + 1); // +1 pour vérifier s'il y a plus de données
+
+    // Même logique de pagination que getAllPublishedCourses
+    const hasMore = data.length > limit;
+    const items = hasMore ? data.slice(0, -1) : data;
+    const lastItem = items[items.length - 1];
+    const nextCursor = hasMore && lastItem
+      ? {
+          id: lastItem.id,
+          publishedAt: lastItem.publishedAt,
+        }
+      : null;
+
+    // Retourner exactement le même format que getAllPublishedCourses
+    return {
+      items,
+      nextCursor,
+      total: totalResult?.count || 0
+    };
+  }),
+  revalidate: teacherProcedure
+  .input(
+    z.object({
+      id: z.uuid(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { id: trainerId } = ctx.trainer;
+
+    // Récupérer la leçon avec vérification de l'appartenance au cours du formateur
+    const [existingLesson] = await db
+      .select({
+        lesson: courseLessons,
+        courseTrainerId: courses.trainerId,
+      })
+      .from(courseLessons)
+      .innerJoin(courseSections, eq(courseLessons.sectionId, courseSections.id))
+      .innerJoin(courses, eq(courseSections.courseId, courses.id))
+      .where(
+        and(
+          eq(courseLessons.id, input.id),
+          eq(courses.trainerId, trainerId)
         )
-        .limit(limit)
-        .groupBy(courses.id, trainerProfiles.fullName);
+      )
+      .limit(1);
 
-      return relatedCourses;
-    }),
-  //   getLessonById: baseProcedure
-  //   .input(z.object({ 
-  //     lessonId: z.string().uuid(),
-  //     courseId: z.string().uuid()
-  //   }))
-  //   .query(async ({ input }) => {
-  //     const { lessonId, courseId } = input;
-  
-  //     const [lesson] = await db
-  //       .select({
-  //         id: courseLessons.id,
-  //         title: courseLessons.title,
-  //         description: courseLessons.description,
-  //         duration: courseLessons.duration,
-  //         visibility: courseLessons.visibility,
-  //         isPublished: courseLessons.isPublished,
-  //         muxPlaybackId: courseLessons.muxPlaybackId, // ⚠️ Vérifiez que c'est bien récupéré
-  //         muxAssetId: courseLessons.muxAssetId, // Optionnel
-  //         muxStatus: courseLessons.muxStatus, // Optionnel
-  //         thumbnailUrl: courseLessons.thumbnailUrl,
-  //         thumbnailKey: courseLessons.thumbnailKey, // Optionnel
-  //         position: courseLessons.position,
-  //         sectionId: courseLessons.sectionId,
-          
-  //         // Vérifiez ces champs dans votre table
-  //         // Si muxPlaybackId n'existe pas, utilisez un autre champ
-  //         hasAccess: sql<boolean>`true`.as("hasAccess"),
-          
-  //         section: {
-  //           title: courseSections.title,
-  //           position: courseSections.position,
-  //         },
-  //         course: {
-  //           id: courses.id,
-  //           title: courses.title,
-  //           price: courses.price,
-  //         }
-  //       })
-  //       .from(courseLessons)
-  //       .innerJoin(courseSections, eq(courseLessons.sectionId, courseSections.id))
-  //       .innerJoin(courses, eq(courseSections.courseId, courses.id))
-  //       .where(and(
-  //         eq(courseLessons.id, lessonId),
-  //         eq(courses.id, courseId),
-  //         eq(courses.status, "published"),
-  //         eq(courseLessons.isPublished, true)
-  //       ))
-  //       .limit(1);
-  
-  //     if (!lesson) {
-  //       throw new TRPCError({
-  //         code: "NOT_FOUND",
-  //         message: "Leçon non trouvée",
-  //       });
-  //     }
-  
-  //     // Vérifiez si la vidéo est prête
-  //     if (lesson.muxStatus !== "ready") {
-  //       console.warn(`Leçon ${lessonId}: statut Mux = ${lesson.muxStatus}`);
-  //     }
-  
-  //     return lesson;
-  //   }),
-  // // Récupérer les leçons gratuites d'un cours pour prévisualisation
-  // getFreeLessons: baseProcedure
-  //   .input(z.object({ courseId: z.string().uuid() }))
-  //   .query(async ({ input }) => {
-  //     const { courseId } = input;
+    if (!existingLesson) {
+      throw new TRPCError({ 
+        code: "NOT_FOUND",
+        message: "Leçon non trouvée ou vous n'y avez pas accès" 
+      });
+    }
 
-  //     const freeLessons = await db
-  //       .select({
-  //         id: courseLessons.id,
-  //         title: courseLessons.title,
-  //         description: courseLessons.description,
-  //         duration: courseLessons.duration,
-  //         thumbnailUrl: courseLessons.thumbnailUrl,
-  //         muxPlaybackId: courseLessons.muxPlaybackId,
-  //         position: courseLessons.position,
-  //         section: {
-  //           title: courseSections.title,
-  //           position: courseSections.position,
-  //         },
-  //       })
-  //       .from(courseLessons)
-  //       .innerJoin(
-  //         courseSections,
-  //         eq(courseLessons.sectionId, courseSections.id)
-  //       )
-  //       .innerJoin(courses, eq(courseSections.courseId, courses.id))
-  //       .where(
-  //         and(
-  //           eq(courses.id, courseId),
-  //           eq(courses.status, "published"),
-  //           eq(courseLessons.isPublished, true),
-  //           eq(courseLessons.visibility, "free")
-  //         )
-  //       )
-  //       .orderBy(asc(courseSections.position), asc(courseLessons.position))
-  //       .limit(5); // Limite pour éviter de charger trop de leçons
+    // Vérifier si la leçon a un muxUploadId
+    if (!existingLesson.lesson.muxUploadId) {
+      throw new TRPCError({ 
+        code: "BAD_REQUEST",
+        message: "La leçon n'a pas d'identifiant de téléchargement Mux" 
+      });
+    }
 
-  //     return freeLessons;
-  //   }),
+    // Récupérer l'upload depuis Mux
+    const upload = await mux.video.uploads.retrieve(
+      existingLesson.lesson.muxUploadId
+    );
+
+    if (!upload || !upload.asset_id) {
+      throw new TRPCError({ 
+        code: "BAD_REQUEST",
+        message: "Upload Mux non trouvé ou sans asset ID" 
+      });
+    }
+
+    // Récupérer l'asset depuis Mux
+    const asset = await mux.video.assets.retrieve(upload.asset_id);
+
+    if (!asset) {
+      throw new TRPCError({ 
+        code: "BAD_REQUEST",
+        message: "Asset Mux non trouvé" 
+      });
+    }
+
+    const playbackId = asset.playback_ids?.[0]?.id || null;
+    const duration = asset.duration ? Math.round(asset.duration * 1000) : 0;
+
+    // Mettre à jour la leçon avec les informations de Mux
+    const [updatedLesson] = await db
+      .update(courseLessons)
+      .set({
+        muxStatus: asset.status,
+        muxPlaybackId: playbackId,
+        muxAssetId: asset.id,
+        duration: duration,
+      })
+      .where(eq(courseLessons.id, input.id))
+      .returning();
+
+    if (!updatedLesson) {
+      throw new TRPCError({ 
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Échec de la mise à jour de la leçon" 
+      });
+    }
+
+    return updatedLesson;
+  }),
+  
 });

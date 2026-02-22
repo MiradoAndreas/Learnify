@@ -29,10 +29,12 @@ import { UploadDropzone } from "@/lib/uploadthing";
 import { z } from "zod";
 import { ErrorBoundary } from "react-error-boundary";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 
 interface AvatarUploadSectionProps {
- 
+
   className?: string;
   size?: "sm" | "md" | "lg";
 }
@@ -67,29 +69,29 @@ const AvatarUploadSectionError = () => {
   )
 }
 
-export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps) => {
+export const AvatarUploadSection = ({ size, className }: AvatarUploadSectionProps) => {
 
   return (
     <Suspense fallback={<AvatarUploadSectionSkeleton />}>
       <ErrorBoundary fallback={<AvatarUploadSectionError />}>
-        <AvatarUploadSectionSuspense  size={size} className={className} /></ErrorBoundary>
+        <AvatarUploadSectionSuspense size={size} className={className} /></ErrorBoundary>
     </Suspense>
   )
 }
 
 
- function AvatarUploadSectionSuspense({
-  
+function AvatarUploadSectionSuspense({
+
   className,
   size = "md",
 }: AvatarUploadSectionProps) {
-  
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
-  const {data: profile} = useSuspenseQuery(
+  const { data: profile } = useSuspenseQuery(
     trpc.user.getProfile.queryOptions(),
   )
 
@@ -106,8 +108,8 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
     trpc.user.updateAvatar.mutationOptions({
       onSuccess: (data) => {
         toast.success("Photo de profil mise à jour avec succès!", {
-          description: data.deletedOldImage 
-            ? "L'ancienne image a été supprimée" 
+          description: data.deletedOldImage
+            ? "L'ancienne image a été supprimée"
             : undefined,
         });
         queryClient.invalidateQueries({
@@ -125,6 +127,16 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
     })
   );
 
+  const getInitials = (name: string) => {
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map(part => part[0])
+      .slice(0, 1)
+      .join("")
+      .toUpperCase();
+  };
+
   const handleUploadComplete = useCallback(
     (res: any) => {
       if (res && res[0]) {
@@ -133,16 +145,16 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
         const key = file.key;
 
 
-        
+
         // Mettre à jour AUTOMATIQUEMENT sans bouton "Enregistrer"
-        updateAvatar.mutate({ 
+        updateAvatar.mutate({
           imageUrl: url,
-          imageKey: key 
+          imageKey: key
         });
-        
-        
+
+
         setIsUploading(false);
-      
+
       }
     },
     [updateAvatar]
@@ -208,33 +220,18 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
                 )}
                 onClick={() => setIsDialogOpen(true)}
               >
-                {profile?.image ? (
-                  <Image
-                    src={profile.image}
-                    alt={`Photo de profil de ${profile?.name}`}
-                    fill
+
+
+                <Avatar className="w-full h-full hover:scale-105 transition-all duration-200 border-2 border-background shadow-sm">
+                  <AvatarImage
+                    src={profile.image || undefined}
+                    alt={profile.name}
                     className="object-cover"
-                    sizes="(max-width: 768px) 100px, 150px"
                   />
-                ) : (
-                  <div 
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: customColor }}
-                  >
-                    <span
-                      className={cn(
-                        "font-bold text-white",
-                        sizeClasses.text
-                      )}
-                    >
-                      {profile?.name
-                        ?.split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .toUpperCase()}
-                    </span>
-                  </div>
-                )}
+                  <AvatarFallback className="bg-linear-to-br from-primary to-primary/80 font-semibold text-white text-3xl">
+                    {getInitials(profile.name)}
+                  </AvatarFallback>
+                </Avatar>
 
                 {/* Overlay pour hover */}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -243,7 +240,7 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
               </motion.div>
 
               {/* Badge d'édition avec couleur personnalisée */}
-              <div 
+              <div
                 className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center"
                 style={{ backgroundColor: customColor }}
               >
@@ -280,7 +277,7 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
                     sizes="128px"
                   />
                 ) : (
-                  <div 
+                  <div
                     className="w-full h-full flex items-center justify-center"
                     style={{ backgroundColor: customColor }}
                   >
@@ -324,17 +321,17 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
                     borderRadius: "1rem",
                     background: `linear-gradient(to bottom right, ${customColorLight}, ${customColorLight}40)`,
                   },
-                  uploadIcon: { 
+                  uploadIcon: {
                     color: customColor,
                     width: "3rem",
                     height: "3rem"
                   },
-                  label: { 
-                    color: customColorDark, 
+                  label: {
+                    color: customColorDark,
                     fontWeight: "600",
                     fontSize: "0.95rem"
                   },
-                  allowedContent: { 
+                  allowedContent: {
                     color: "#6b7280",
                     fontSize: "0.85rem"
                   },
@@ -354,18 +351,18 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
                 <div className="flex items-center gap-3 p-4 rounded-xl"
                   style={{ backgroundColor: `${customColor}20` }}
                 >
-                  <Loader2 
-                    className="w-5 h-5 animate-spin" 
+                  <Loader2
+                    className="w-5 h-5 animate-spin"
                     style={{ color: customColor }}
                   />
                   <div className="flex-1">
-                    <p 
+                    <p
                       className="text-sm font-medium"
                       style={{ color: customColorDark }}
                     >
                       Téléchargement en cours...
                     </p>
-                    <p 
+                    <p
                       className="text-xs"
                       style={{ color: customColor }}
                     >
@@ -379,18 +376,18 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
                 <div className="flex items-center gap-3 p-4 rounded-xl"
                   style={{ backgroundColor: `${customColor}20` }}
                 >
-                  <Loader2 
-                    className="w-5 h-5 animate-spin" 
+                  <Loader2
+                    className="w-5 h-5 animate-spin"
                     style={{ color: customColor }}
                   />
                   <div className="flex-1">
-                    <p 
+                    <p
                       className="text-sm font-medium"
                       style={{ color: customColorDark }}
                     >
                       Mise à jour en cours...
                     </p>
-                    <p 
+                    <p
                       className="text-xs"
                       style={{ color: customColor }}
                     >
@@ -401,7 +398,7 @@ export  const AvatarUploadSection = ({size, className}: AvatarUploadSectionProps
               )}
             </div>
 
-         
+
           </div>
         </DialogContent>
       </Dialog>

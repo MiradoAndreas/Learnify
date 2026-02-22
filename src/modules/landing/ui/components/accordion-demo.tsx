@@ -94,27 +94,7 @@ export function AccordionDemo() {
       </Accordion>
 
 
-      {/* <Accordion
-        type="multiple"
 
-
-        className="w-full space-y-2 z-50"
-      >
-        {FAQ_ITEMS.map((item) => (
-          <AccordionItem
-            key={item.value}
-            value={item.value}
-            className="border border-white/10 bg-white/5 rounded-lg px-4 transition-all hover:bg-white/8"
-          >
-            <AccordionTrigger className="text-sm font-medium text-white hover:no-underline py-4">
-              {item.question}
-            </AccordionTrigger>
-            <AccordionContent className="text-zinc-400 leading-relaxed pb-4">
-              {item.answer}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion> */}
     </div>
   )
 }

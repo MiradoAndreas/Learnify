@@ -6,6 +6,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { motion } from "framer-motion"
 
 interface CourseObjectivesSectionProps {
   courseId: string;
@@ -59,30 +60,30 @@ const CourseObjectivesSectionSuspense = ({
       courseId,
     })
   );
-  
+
   return (
-    <div className="space-y-4">
+    <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .6 }} className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold">Qu'est ce que je peux gagner après ce cours ?</h2>
-        <p className="text-muted-foreground mt-1">
+        <h2 className="text-2xl font-bold text-foreground dark:text-zinc-100">
+          Qu'est ce que je peux gagner après ce cours ?
+        </h2>
+        <p className="text-muted-foreground dark:text-zinc-400 mt-1">
           Après ce cours vous avez le niveau à :
         </p>
       </div>
-
-     
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {objectives.map((objective) => (
           <div key={objective.id} className="flex items-start gap-3">
             <div className="shrink-0 mt-1">
-              <Check className="h-5 w-5 text-primary" />
+              <Check className="h-5 w-5 text-primary dark:text-primary" />
             </div>
-            <span className="text-foreground leading-relaxed">
+            <span className="text-foreground dark:text-zinc-200 leading-relaxed">
               {objective.text}
             </span>
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };

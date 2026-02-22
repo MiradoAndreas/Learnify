@@ -6,7 +6,6 @@ import { tsvector } from "@/db/index";
 import {
   pgTable,
   text,
-  
   timestamp,
   boolean,
   index,
@@ -474,3 +473,5 @@ export const lessonAttachmentRelations = relations(
     }),
   })
 );
+
+
