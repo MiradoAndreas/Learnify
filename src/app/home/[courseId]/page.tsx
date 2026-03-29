@@ -45,7 +45,7 @@ const Page = async ({ params }: PageProps) => {
   );
 
   prefetch(
-    trpc.course.getCourseResources.queryOptions({
+    trpc.course.getCourseResourcesPublic.queryOptions({
       courseId,
     })
   );

@@ -98,7 +98,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
 
   return (
     <>
-      <Card className="shadow-none  border-none py-0 gap-4 -mx-6">
+      <Card className="shadow-none  border-none py-0 gap-4 -mx-6 ">
         <CardHeader className="text-center gap-0">
           <CardTitle className="text-lg font-bold text-black/80">
             Sign in to <span className="text-[#ffa041]">Learnify</span>🙌

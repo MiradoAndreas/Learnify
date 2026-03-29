@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { THUMBNAIL_FALLBACK } from '@/constants';
-import { formatDuration } from '@/modules/teachers/courses/lessons/ui/utils/format-duration';
+
 import { useTRPC } from '@/trpc/client';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Heart, PlayCircleIcon, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { Handle } from 'vaul';
 
 interface CourseSidebarSectionProps {
   courseId: string;
@@ -55,10 +57,10 @@ export const CourseSidebarSection = ({
   return (
     <Suspense fallback={<CourseSidebarSectionSkeleton />}>
       <ErrorBoundary fallback={<CourseSidebarSectionError />}>
-        <CourseSidebarSectionSuspense 
-          freeLessons={freeLessons} 
-          onPlayPreview={onPlayPreview} 
-          courseId={courseId} 
+        <CourseSidebarSectionSuspense
+          freeLessons={freeLessons}
+          onPlayPreview={onPlayPreview}
+          courseId={courseId}
         />
       </ErrorBoundary>
     </Suspense>
@@ -71,25 +73,66 @@ const CourseSidebarSectionSuspense = ({
   courseId
 }: CourseSidebarSectionProps) => {
   const trpc = useTRPC();
+  const router = useRouter()
 
-  const {data: course} = useSuspenseQuery(
+  const queryClient = useQueryClient()
+
+  const { data: course } = useSuspenseQuery(
     trpc.course.getCourseBasicInfo.queryOptions({
       courseId
     })
   )
 
+  const simulatePayment = useMutation(
+    trpc.paiement.simulateSuccessfulPayment.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          trpc.paiement.getMyCourses.queryOptions()
+        );
+
+        router.push(`/courses/${courseId}`);
+      },
+    })
+  );
+
+  const createCheckout = useMutation(
+    trpc.paiement.createCheckout.mutationOptions(
+      {
+        onSuccess: async (data) => {
+
+          if (data.alreadyPurchased) {
+            router.push(data.redirectTo)
+            return
+          }
+
+          if (data.free) {
+            await simulatePayment.mutateAsync({ courseId });
+            return;
+          }
+
+          router.push(data.checkoutUrl || "");
+
+        }
+      }
+    )
+  )
+
+  const handleCheckout = () => {
+    createCheckout.mutate({ courseId })
+  }
+
   return (
     <div className="space-y-6">
       {/* Aperçu vidéo */}
       <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-        <Image 
-          src={course.thumbnailUrl || THUMBNAIL_FALLBACK} 
-          alt={course.title} 
+        <Image
+          src={course.thumbnailUrl || THUMBNAIL_FALLBACK}
+          alt={course.title}
           fill
           className="object-cover"
         />
         {freeLessons.length > 0 && (
-          <button 
+          <button
             onClick={onPlayPreview}
             className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/50 transition-colors"
           >
@@ -121,8 +164,8 @@ const CourseSidebarSectionSuspense = ({
 
       {/* Actions */}
       <div className="space-y-3">
-        <Button className="w-full" size="lg">
-          {course.price > 0 ? "S'inscrire maintenant" : "Commencer gratuitement"}
+        <Button className="w-full" size="lg" onClick={handleCheckout} disabled={createCheckout.isPending || simulatePayment.isPending}>
+          {course.price > 0 ? "Acheter le cours" : "Commencer gratuitement"}
         </Button>
         {course.price > 0 && (
           <Button variant="outline" className="w-full">

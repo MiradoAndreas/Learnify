@@ -2456,7 +2456,7 @@ const ThumbnailTab = memo(
                           className="object-cover"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-6">
+                        <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent flex items-end p-6">
                           <div className="text-white">
                             <p className="font-bold text-lg">{course.title}</p>
                             <p className="text-sm opacity-90">

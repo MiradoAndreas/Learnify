@@ -49,7 +49,7 @@ export function Search() {
           />
           {/* add the popular search queries */}
 
-          <PopularSearches queries={['Développeur', 'NextJS', 'Marketing', 'Algo', 'React', 'Cours', 'il', 'beginner']} />
+          <PopularSearches queries={['Développeur', 'NextJS', 'Marketing', 'Algo', 'Dancer', 'Cours', 'Formation', 'beginner']} />
         </div>
 
       </div>

@@ -1,8 +1,8 @@
 import { db } from "@/db";
-import { trainerProfiles } from "@/db/schema";
+import { courseEnrollments, trainerProfiles } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { cache } from "react";
 import superjson from "superjson";
@@ -74,6 +74,50 @@ export const teacherProcedure = protectedProcedure.use(
       ctx: {
         ...ctx,
         trainer: trainer[0], // ← Enrichir le contexte
+      },
+    });
+  }
+);
+
+export const paidCourseProcedure = protectedProcedure.use(
+  async ({ ctx, next, getRawInput }) => {
+    // Récupérer l'input de la procédure appelante
+    const input = await getRawInput() as { courseId?: string } | undefined;
+    
+    // Si pas de courseId dans l'input, on ne peut pas vérifier
+    if (!input?.courseId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "courseId requis pour vérifier l'accès au cours payant",
+      });
+    }
+
+    // Vérifier si l'utilisateur a accès au cours
+    const [enrollment] = await db
+      .select({ id: courseEnrollments.id })
+      .from(courseEnrollments)
+      .where(
+        and(
+          eq(courseEnrollments.userId, ctx.auth.user.id),
+          eq(courseEnrollments.courseId, input.courseId),
+          eq(courseEnrollments.status, "active")
+        )
+      )
+      .limit(1);
+
+    if (!enrollment) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Vous devez acheter ce cours pour y accéder",
+      });
+    }
+
+    // Ajouter l'enrollment au contexte pour utilisation ultérieure
+    return next({
+      ctx: {
+        ...ctx,
+        enrollment: enrollment,
+        courseId: input.courseId,
       },
     });
   }

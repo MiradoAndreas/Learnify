@@ -143,7 +143,7 @@ export const NewCourseForm = () => {
         </motion.div>
 
         <Card className="border border-border bg-card shadow-2xl rounded-2xl overflow-hidden pt-0">
-          <CardHeader className="bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground py-8">
+          <CardHeader className="bg-linear-to-r from-primary via-primary/90 to-primary text-primary-foreground py-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 max-w-fit mx-auto">
               <div className="flex items-center gap-4">
 
@@ -175,7 +175,7 @@ export const NewCourseForm = () => {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full"></div>
+                      <div className="w-3 h-8 bg-linear-to-r from-primary to-primary/80 rounded-full"></div>
                       <FormLabel className="text-lg font-bold text-foreground flex items-center gap-2">
                         <Target className="w-5 h-5 text-primary" />
                         Titre Perçant
@@ -219,7 +219,7 @@ export const NewCourseForm = () => {
                   </div>
 
                   {/* Guide Card */}
-                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-xl p-4 border border-blue-200 dark:border-blue-800/50">
+                  <div className="bg-linear-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-xl p-4 border border-blue-200 dark:border-blue-800/50">
                     <div className="flex items-start gap-3">
                       <div>
                         <p className="font-semibold text-blue-800 dark:text-blue-300 mb-1">
@@ -246,7 +246,7 @@ export const NewCourseForm = () => {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full"></div>
+                      <div className="w-3 h-8 bg-linear-to-r from-primary to-primary/80 rounded-full"></div>
                       <FormLabel className="text-lg font-bold text-foreground flex items-center gap-2">
                         <BookText className="w-5 h-5 text-primary" />
                         Histoire Captivante
@@ -291,7 +291,7 @@ export const NewCourseForm = () => {
                   </div>
 
                   {/* Success Story */}
-                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 rounded-xl p-4 border border-emerald-200 dark:border-emerald-800/50">
+                  <div className="bg-linear-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 rounded-xl p-4 border border-emerald-200 dark:border-emerald-800/50">
                     <div className="flex items-start gap-3">
                       <Award className="w-5 h-5 text-emerald-500 dark:text-emerald-400 shrink-0 mt-0.5" />
                       <div>
@@ -319,7 +319,7 @@ export const NewCourseForm = () => {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full"></div>
+                      <div className="w-3 h-8 bg-linear-to-r from-primary to-primary/80 rounded-full"></div>
                       <FormLabel className="text-lg font-bold text-foreground flex items-center gap-2">
                         <Gem className="w-5 h-5 text-primary" />
                         Valorisez Votre Expertise
@@ -475,7 +475,7 @@ export const NewCourseForm = () => {
                   </div>
 
                   {/* Revenue Calculator */}
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl p-4 border border-amber-200 dark:border-amber-800/50">
+                  <div className="bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl p-4 border border-amber-200 dark:border-amber-800/50">
                     <div className="flex items-start gap-3">
                       <TrendingUp className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
                       <div>
@@ -514,7 +514,7 @@ export const NewCourseForm = () => {
                 >
                   <Button
                     type="submit"
-                    className="w-full h-16 rounded-xl bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 disabled:opacity-50"
+                    className="w-full h-16 rounded-xl bg-linear-to-r from-primary via-primary/90 to-primary text-primary-foreground font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 disabled:opacity-50"
                     disabled={
                       createCourse.isPending ||
                       titleLength < 5 ||
@@ -577,7 +577,7 @@ export const NewCourseForm = () => {
                   transition={{ duration: 0.3, delay: 0.4 }}
                   className="mt-8"
                 >
-                  <div className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-950 dark:to-gray-900 text-white rounded-2xl p-6">
+                  <div className="bg-linear-to-r from-gray-900 to-gray-800 dark:from-gray-950 dark:to-gray-900 text-white rounded-2xl p-6">
                     <div className="flex items-start gap-4">
 
                       <div>

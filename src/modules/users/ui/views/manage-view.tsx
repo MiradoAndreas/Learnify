@@ -17,7 +17,7 @@ import { motion } from "framer-motion"
 
 export const ManageView = () => {
   return (
-    <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .6 }} className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ duration: .6 }} className="min-h-screen bg-linear-to-b from-background to-muted/20">
       {/* Header avec navigation */}
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -33,7 +33,7 @@ export const ManageView = () => {
               </Link>
             </Button>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Mon profil
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -81,7 +81,7 @@ export const ManageView = () => {
             {/* Contenu des tabs avec animations */}
             <TabsContent value="profile" className="space-y-8 animate-in fade-in duration-300">
               <Card className="overflow-hidden border border-border bg-card shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="bg-gradient-to-r from-muted/50 to-card border-b border-border">
+                <CardHeader className="bg-linear-to-r from-muted/50 to-card border-b border-border">
                   <CardTitle className="text-xl flex items-center gap-2 text-foreground">
                     Photo de profil
                   </CardTitle>

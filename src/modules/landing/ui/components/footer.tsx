@@ -229,7 +229,7 @@ export const Footer = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h1 className="text-center uppercase mt-20 text-5xl md:text-9xl lg:text-[12rem] xl:text-[13rem] font-bold bg-clip-text text-transparent bg-gradient-to-b from-muted-foreground/20 via-muted-foreground/10 to-transparent dark:from-gray-800 dark:via-gray-800/50 dark:to-transparent inset-x-0 select-none pointer-events-none">
+          <h1 className="text-center uppercase mt-20 text-5xl md:text-9xl lg:text-[12rem] xl:text-[13rem] font-bold bg-clip-text text-transparent bg-linear-to-b from-muted-foreground/20 via-muted-foreground/10 to-transparent dark:from-gray-800 dark:via-gray-800/50 dark:to-transparent inset-x-0 select-none pointer-events-none">
             Learnify
           </h1>
         </motion.div>

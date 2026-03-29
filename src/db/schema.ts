@@ -18,6 +18,7 @@ import {
   serial,
   unique,
   primaryKey,
+  foreignKey,
 } from "drizzle-orm/pg-core";
 
 import {
@@ -36,15 +37,15 @@ export const user = pgTable("user", {
   imageKey: text("image_key"),
   isAdmin: boolean("is_admin"),
 
-   // Ajoutez ces champs pour les informations supplémentaires
-   firstName: text("first_name"),
-   lastName: text("last_name"),
-   phone: text("phone"),
-   bio: text("bio"),
-   location: text("location"),
-   website: text("website"),
+  // Ajoutez ces champs pour les informations supplémentaires
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  phone: text("phone"),
+  bio: text("bio"),
+  location: text("location"),
+  website: text("website"),
 
-    // Réseaux sociaux
+  // Réseaux sociaux
   facebookUrl: text("facebook_url"),
   twitterUrl: text("twitter_url"),
   linkedinUrl: text("linkedin_url"),
@@ -77,7 +78,7 @@ export const session = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
   },
-  (table) => [index("session_userId_idx").on(table.userId)]
+  (table) => [index("session_userId_idx").on(table.userId)],
 );
 
 export const account = pgTable(
@@ -101,7 +102,7 @@ export const account = pgTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index("account_userId_idx").on(table.userId)]
+  (table) => [index("account_userId_idx").on(table.userId)],
 );
 
 export const verification = pgTable(
@@ -117,7 +118,7 @@ export const verification = pgTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index("verification_identifier_idx").on(table.identifier)]
+  (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
 export const userRelations = relations(user, ({ many, one }) => ({
@@ -167,7 +168,7 @@ export const trainerProfiles = pgTable(
   (table) => ({
     userIdx: index("trainer_profiles_user_id_idx").on(table.userId),
     statusIdx: index("trainer_profiles_status_idx").on(table.status),
-  })
+  }),
 );
 
 export const trainerProfilesRelations = relations(
@@ -177,7 +178,7 @@ export const trainerProfilesRelations = relations(
       fields: [trainerProfiles.userId],
       references: [user.id],
     }),
-  })
+  }),
 );
 
 export const trainerApplicationSchema = z.object({
@@ -188,7 +189,7 @@ export const trainerApplicationSchema = z.object({
   skills: z.array(z.string().min(2).max(30)).min(1).max(5),
 });
 export const trainerProfileInsertSchema = createInsertSchema(
-  trainerProfiles
+  trainerProfiles,
 ).omit({
   id: true,
   status: true,
@@ -210,8 +211,6 @@ export const courseCategories = pgTable("course_categories", {
   slug: text("slug").notNull().unique(),
   group: text("group").default("Other"),
 });
-
-
 
 export const courseStatusEnum = pgEnum("course_status", ["draft", "published"]);
 export const courseLanguageEnum = pgEnum("course_language", ["fr", "mg", "en"]);
@@ -240,9 +239,6 @@ export const courses = pgTable("courses", {
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
-
-   
-    
 });
 
 export const courseInsertSchema = createInsertSchema(courses);
@@ -320,7 +316,7 @@ export const courseSectionRelations = relations(
       references: [courses.id],
     }),
     lessons: many(courseLessons),
-  })
+  }),
 );
 
 export const courseLessonRelations = relations(
@@ -331,7 +327,7 @@ export const courseLessonRelations = relations(
       references: [courseSections.id],
     }),
     attachments: many(lessonAttachments),
-  })
+  }),
 );
 
 export const createCourseSchema = z.object({
@@ -364,7 +360,7 @@ export const courseCategoryRelations = pgTable(
   },
   (t) => ({
     pk: primaryKey({ columns: [t.courseId, t.categoryId] }),
-  })
+  }),
 );
 
 export const courseREquirements = pgTable("course_requirements", {
@@ -408,7 +404,7 @@ export const courseLearningObjectives = pgTable(
   },
   (t) => ({
     uniquePosition: unique().on(t.courseId, t.position),
-  })
+  }),
 );
 
 export const courseTargetAudiences = pgTable("course_target_audiences", {
@@ -471,7 +467,208 @@ export const lessonAttachmentRelations = relations(
       fields: [lessonAttachments.lessonId],
       references: [courseLessons.id],
     }),
-  })
+  }),
 );
 
+// * Contrôle l'accès
+export const courseEnrollments = pgTable("course_enrollments", {
+  id: uuid("id").primaryKey().defaultRandom(),
 
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  courseId: uuid("course_id")
+    .notNull()
+    .references(() => courses.id, { onDelete: "cascade" }),
+
+  status: text("status").notNull().default("pending"),
+  // pending | active | refunded | revoked
+
+  activatedAt: timestamp("activated_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// * Intention financière
+export const payments = pgTable("payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  courseId: uuid("course_id")
+    .notNull()
+    .references(() => courses.id),
+
+  amount: integer("amount").notNull(),
+  fees: integer("fees").notNull(),
+  netAmount: integer("net_amount").notNull(),
+
+  provider: text("provider").notNull(),
+  externalTransactionId: text("external_tx_id"),
+
+  status: text("status").notNull().default("pending"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  confirmedAt: timestamp("confirmed_at"),
+});
+
+// * Logique comission
+export const teacherEarnings = pgTable("teacher_earnings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  trainerId: uuid("trainer_id")
+    .notNull()
+    .references(() => trainerProfiles.id),
+
+  paymentId: uuid("payment_id")
+    .notNull()
+    .references(() => payments.id),
+
+  amount: integer("amount").notNull(),
+  status: text("status").default("pending"),
+  // pending | payable | paid
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  paidAt: timestamp("paid_at"),
+});
+
+// Table pour les likes des commentaires
+export const lessonComments = pgTable(
+  "lesson_comments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+
+    parentId: uuid("parent_id"),
+
+    lessonId: uuid("lesson_id")
+      .references(() => courseLessons.id, { onDelete: "cascade" })
+      .notNull(),
+
+    userId: text("user_id")
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+
+    content: text("content").notNull(),
+
+    isEdited: boolean("is_edited").default(false).notNull(),
+    isPinned: boolean("is_pinned").default(false).notNull(),
+    isDeleted: boolean("is_deleted").default(false).notNull(),
+
+    likesCount: integer("likes_count").default(0).notNull(),
+    repliesCount: integer("replies_count").default(0).notNull(),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    deletedAt: timestamp("deleted_at"),
+  },
+  (t) => [
+    foreignKey({
+      columns: [t.parentId],
+      foreignColumns: [t.id],
+      name: "lesson_comments_parent_id_fkey",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const commentLikes = pgTable(
+  "comment_likes",
+  {
+    userId: text("user_id")
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+
+    commentId: uuid("comment_id")
+      .references(() => lessonComments.id, { onDelete: "cascade" })
+      .notNull(),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [
+    primaryKey({
+      name: "comment_likes_pk",
+      columns: [t.userId, t.commentId],
+    }),
+  ],
+);
+
+export const lessonCommentsRelations = relations(
+  lessonComments,
+  ({ one, many }) => ({
+    lesson: one(courseLessons, {
+      fields: [lessonComments.lessonId],
+      references: [courseLessons.id],
+    }),
+
+    user: one(user, {
+      fields: [lessonComments.userId],
+      references: [user.id],
+    }),
+
+    parent: one(lessonComments, {
+      fields: [lessonComments.parentId],
+      references: [lessonComments.id],
+      relationName: "lesson_comments_parent_id_fkey",
+    }),
+
+    replies: many(lessonComments, {
+      relationName: "lesson_comments_parent_id_fkey",
+    }),
+
+    likes: many(commentLikes),
+  }),
+);
+
+export const lessonCommentSelectSchema = createSelectSchema(lessonComments);
+export const lessonCommentInsertSchema = createInsertSchema(lessonComments);
+export const lessonCommentUpdateSchema = createUpdateSchema(lessonComments);
+
+export type LessonComment = z.infer<typeof lessonCommentSelectSchema>;
+
+export const lessonProgress = pgTable(
+  "lesson_progress",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+
+    lessonId: uuid("lesson_id")
+      .notNull()
+      .references(() => courseLessons.id, { onDelete: "cascade" }),
+
+    status: text("status", {
+      enum: ["in_progress", "completed"],
+    })
+      .default("in_progress")
+      .notNull(),
+
+    progress: integer("progress").default(0).notNull(),
+    lastPosition: integer("last_position").default(0).notNull(),
+
+    completedAt: timestamp("completed_at"),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    unique("lesson_progress_user_lesson_unique").on(t.userId, t.lessonId),
+    index("lesson_progress_user_idx").on(t.userId),
+    index("lesson_progress_status_idx").on(t.status),
+  ],
+);
+
+export const lessonProgressRelations = relations(lessonProgress, ({ one }) => ({
+  user: one(user, {
+    fields: [lessonProgress.userId],
+    references: [user.id],
+  }),
+  lesson: one(courseLessons, {
+    fields: [lessonProgress.lessonId],
+    references: [courseLessons.id],
+  }),
+}));

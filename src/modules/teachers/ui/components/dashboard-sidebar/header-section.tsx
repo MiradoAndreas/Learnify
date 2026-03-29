@@ -66,7 +66,7 @@ export const HeaderSection = () => {
                 alt={teacherImageAlt}
                 className="object-cover"
               />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 font-semibold text-white">
+              <AvatarFallback className="bg-linear-to-br from-primary to-primary/80 font-semibold text-white">
                 {teacherInitial}
               </AvatarFallback>
             </Avatar>
@@ -84,14 +84,14 @@ export const HeaderSection = () => {
 
         className="group relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent dark:from-primary/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-linear-to-r from-primary/20 to-transparent dark:from-primary/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <Avatar className="size-28 border-4 border-background dark:border-gray-800 shadow-lg group-hover:scale-105 transition-all duration-300">
           <AvatarImage
             src={teacher.image || undefined}
             alt={teacherImageAlt}
             className="object-cover"
           />
-          <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-2xl font-bold text-white">
+          <AvatarFallback className="bg-linear-to-br from-primary to-primary/80 text-2xl font-bold text-white">
             {teacherInitial}
           </AvatarFallback>
         </Avatar>

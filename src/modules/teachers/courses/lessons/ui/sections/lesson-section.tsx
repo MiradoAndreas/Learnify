@@ -403,7 +403,7 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
       >
         <Card className="border border-border bg-card shadow-xl rounded-2xl overflow-hidden">
           <CardContent className="p-12 text-center">
-            <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-24 h-24 mx-auto mb-8 bg-linear-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-lg">
               <Layers className="w-12 h-12 text-primary-foreground" />
             </div>
 
@@ -418,7 +418,7 @@ const LessonSectionSuspense = ({ courseId }: LessonSectionProps) => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
               <Button
                 onClick={() => setOpen(true)}
-                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all"
+                className="bg-linear-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all"
               >
                 <Plus className="w-5 h-5 mr-2" />
                 Créer une section
@@ -925,7 +925,7 @@ const TableSectionRow = ({
                 <div className="px-6 pb-6 pt-4">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-2 h-6 bg-gradient-to-b from-primary to-primary/80 rounded-full"></div>
+                      <div className="w-2 h-6 bg-linear-to-b from-primary to-primary/80 rounded-full"></div>
                       <h4 className="font-semibold text-foreground">
                         Leçons de "{section.title}"
                       </h4>

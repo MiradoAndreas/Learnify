@@ -104,7 +104,7 @@ const TeacherBasicInfoSectionSuspense = ({ id }: TeacherBasicInfoSectionProps) =
       {/* En-tête du profil */}
       <div className="flex flex-col md:flex-row gap-8 mb-8">
         {/* Photo de profil */}
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <div className="relative">
             <div className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full">
               <Avatar className="w-[112px] h-[112px] hover:scale-105 transition-all duration-200 border-2 border-background shadow-sm">
@@ -113,7 +113,7 @@ const TeacherBasicInfoSectionSuspense = ({ id }: TeacherBasicInfoSectionProps) =
                   alt={profile.fullName}
                   className="object-cover"
                 />
-                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 font-semibold text-primary-foreground text-3xl">
+                <AvatarFallback className="bg-linear-to-br from-primary to-primary/80 font-semibold text-primary-foreground text-3xl">
                   {getInitials(profile.fullName)}
                 </AvatarFallback>
               </Avatar>
@@ -261,7 +261,7 @@ const TeacherBasicInfoSectionSuspense = ({ id }: TeacherBasicInfoSectionProps) =
       </div>
 
       {/* Informations de l'expérience (version complète) */}
-      <div className="mt-12 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 dark:from-primary/10 dark:via-primary/5 dark:to-primary/10 rounded-xl p-6 border border-primary/20">
+      <div className="mt-12 bg-linear-to-r from-primary/5 via-primary/10 to-primary/5 dark:from-primary/10 dark:via-primary/5 dark:to-primary/10 rounded-xl p-6 border border-primary/20">
         <h2 className="text-xl font-semibold text-foreground mb-4">Mon parcours</h2>
         <div className="prose max-w-none dark:prose-invert">
           <ExpandableText
@@ -281,7 +281,7 @@ const TeacherProfileSkeleton = () => {
     <div className="p-6 space-y-8 bg-background">
       {/* En-tête skeleton */}
       <div className="flex flex-col md:flex-row gap-8">
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <Skeleton className="w-[112px] h-[112px] rounded-full" />
         </div>
         <div className="flex-1 space-y-4">

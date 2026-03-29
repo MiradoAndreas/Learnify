@@ -1,4 +1,4 @@
-import { createTRPCRouter } from "@/trpc/init";
+import { createTRPCRouter, paidCourseProcedure } from "@/trpc/init";
 import {
   baseProcedure,
   protectedProcedure,
@@ -7,7 +7,7 @@ import {
 import { mux } from "@/lib/mux";
 import { TRPCError } from "@trpc/server";
 
-import { and, asc, desc, eq, ilike, inArray, lt, ne, or, SQL, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, ilike, inArray, lt, ne, or, SQL, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 
@@ -36,6 +36,7 @@ import { get } from "http";
 
 import { UTApi } from "uploadthing/server";
 import { DEFAULT_COURSE_LIMIT } from "@/constants";
+import { LessonDetails, LessonNavigation, LessonVideo } from "../types/course.type";
 
 export const coursesRouter = createTRPCRouter({
   // trpc/routers/course.ts
@@ -564,7 +565,7 @@ export const coursesRouter = createTRPCRouter({
     }),
 
   // Procédure 7: Ressources du cours
-  getCourseResources: baseProcedure
+  getCourseResourcesPublic: baseProcedure
     .input(z.object({ courseId: z.uuid() }))
     .query(async ({ input }) => {
       const { courseId } = input;
@@ -879,5 +880,383 @@ export const coursesRouter = createTRPCRouter({
 
     return updatedLesson;
   }),
-  
+
+  getMyCourseById: protectedProcedure
+  .input(z.object({ courseId: z.uuid() }))
+  .query(async ({ input }) => {
+    const { courseId } = input;
+
+    const [course] = await db
+      .select({
+        id: courses.id,
+        title: courses.title,
+        description: courses.description,
+        price: courses.price,
+        level: courses.level,
+        language: courses.language,
+        status: courses.status,
+        thumbnailUrl: courses.thumbnailUrl,
+        createdAt: courses.createdAt,
+        publishedAt: courses.publishedAt,
+
+
+        duration: sql<number>`
+        COALESCE(
+          (
+            SELECT SUM(${courseLessons.duration})
+          FROM ${courseLessons}
+          INNER JOIN ${courseSections} ON ${courseLessons.sectionId} = ${courseSections.id}
+          WHERE ${courseSections.courseId} = ${courses.id}
+            AND ${courseLessons.isPublished} = true
+            AND ${courseLessons.duration} IS NOT NULL
+        
+          ), 0)
+      `.as("duration"),
+      })
+      .from(courses)
+      .leftJoin(
+        courseCategoryRelations,
+        eq(courseCategoryRelations.courseId, courses.id)
+      )
+      .leftJoin(
+        courseCategories,
+        eq(courseCategoryRelations.categoryId, courseCategories.id)
+      )
+      .where(and(eq(courses.id, courseId), eq(courses.status, "published")))
+      .groupBy(courses.id)
+      .limit(1);
+
+    if (!course) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Cours non trouvé ou non publié",
+      });
+    }
+
+    return course;
+  }),
+
+  // Dans votre coursesRouter, ajoutez ces 3 procédures :
+
+/**
+ * PROCÉDURE 1: getLessonVideo
+ * Récupère uniquement les informations nécessaires pour la vidéo
+ * Légère et rapide pour un chargement prioritaire
+ */
+getLessonVideo: paidCourseProcedure
+  .input(z.object({ 
+    courseId: z.uuid(),
+    lessonId: z.uuid()
+  }))
+  .query(async ({ ctx, input }): Promise<LessonVideo> => {
+    const { lessonId } = input;
+
+    const [video] = await db
+      .select({
+        id: courseLessons.id,
+        title: courseLessons.title,
+        muxPlaybackId: courseLessons.muxPlaybackId,
+        muxAssetId: courseLessons.muxAssetId,
+        muxStatus: courseLessons.muxStatus,
+        thumbnailUrl: courseLessons.thumbnailUrl,
+        duration: courseLessons.duration,
+        position: courseLessons.position,
+        sectionId: courseLessons.sectionId,
+        courseId: courseSections.courseId,
+      })
+      .from(courseLessons)
+      .innerJoin(courseSections, eq(courseLessons.sectionId, courseSections.id))
+      .innerJoin(courses, eq(courseSections.courseId, courses.id))
+      .where(
+        and(
+          eq(courseLessons.id, lessonId),
+          eq(courseLessons.isPublished, true),
+          eq(courses.status, "published")
+        )
+      )
+      .limit(1);
+
+    if (!video) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Vidéo non trouvée",
+      });
+    }
+
+    return video;
+  }),
+
+/**
+* PROCÉDURE 2: getLessonDetails
+* Récupère toutes les informations détaillées de la leçon
+* (description, ressources, formateur, etc.)
+*/
+getLessonDetails: paidCourseProcedure
+  .input(z.object({ 
+    courseId: z.uuid(),
+    lessonId: z.uuid()
+  }))
+  .query(async ({ ctx, input }) => {
+    const { lessonId } = input;
+
+    const [lesson] = await db
+      .select({
+        id: courseLessons.id,
+        title: courseLessons.title,
+        description: courseLessons.description,
+        position: courseLessons.position,
+        duration: courseLessons.duration,
+        visibility: courseLessons.visibility,
+        createdAt: courseLessons.createdAt,
+        updatedAt: courseLessons.updatedAt,
+
+        sectionId: courseSections.id,
+        sectionTitle: courseSections.title,
+        sectionPosition: courseSections.position,
+
+        courseId: courses.id,
+        courseTitle: courses.title,
+        courseLevel: courses.level,
+        courseLanguage: courses.language,
+
+       
+      })
+      .from(courseLessons)
+      .innerJoin(courseSections, eq(courseLessons.sectionId, courseSections.id))
+      .innerJoin(courses, eq(courseSections.courseId, courses.id))
+      
+      .where(
+        and(
+          eq(courseLessons.id, lessonId),
+          eq(courseLessons.isPublished, true),
+          eq(courses.status, "published")
+        )
+      )
+      .limit(1);
+
+    if (!lesson) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Leçon non trouvée",
+      });
+    }
+
+    const resources = await db
+      .select({
+        id: lessonAttachments.id,
+        name: lessonAttachments.name,
+        attachmentUrl: lessonAttachments.attachmentUrl,
+        type: lessonAttachments.type,
+        size: lessonAttachments.size,
+        createdAt: lessonAttachments.createdAt,
+      })
+      .from(lessonAttachments)
+      .where(eq(lessonAttachments.lessonId, lessonId))
+      .orderBy(asc(lessonAttachments.createdAt));
+
+    return {
+      ...lesson,
+      resources,
+    };
+  }),
+
+/**
+* PROCÉDURE 3: getLessonNavigation
+* Récupère les informations de navigation (leçons précédente/suivante)
+*/
+getLessonNavigation: paidCourseProcedure
+  .input(z.object({ 
+    courseId: z.uuid(),
+    lessonId: z.uuid()
+  }))
+  .query(async ({ input }) => {
+    const { lessonId } = input;
+
+    // 1. Récupérer la leçon courante avec son cours
+    const [current] = await db
+      .select({
+        id: courseLessons.id,
+        sectionId: courseLessons.sectionId,
+        position: courseLessons.position,
+        title: courseLessons.title,
+        courseId: courseSections.courseId,
+      })
+      .from(courseLessons)
+      .innerJoin(courseSections, eq(courseLessons.sectionId, courseSections.id))
+      .where(
+        and(
+          eq(courseLessons.id, lessonId),
+          eq(courseLessons.isPublished, true)
+        )
+      )
+      .limit(1);
+
+    if (!current) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Leçon non trouvée",
+      });
+    }
+
+    // 2. Récupérer TOUTES les leçons du cours ENTIER, triées par section puis par position
+    const allCourseLessons = await db
+      .select({
+        id: courseLessons.id,
+        title: courseLessons.title,
+        sectionId: courseLessons.sectionId,
+        sectionTitle: courseSections.title,
+        sectionPosition: courseSections.position,
+        position: courseLessons.position,
+        duration: courseLessons.duration,
+      })
+      .from(courseLessons)
+      .innerJoin(courseSections, eq(courseLessons.sectionId, courseSections.id))
+      .where(
+        and(
+          eq(courseSections.courseId, current.courseId),
+          eq(courseLessons.isPublished, true)
+        )
+      )
+      .orderBy(
+        asc(courseSections.position),  // D'abord par ordre des sections
+        asc(courseLessons.position)     // Puis par position dans la section
+      );
+
+    // 3. Si pas de leçons dans le cours (normalement ne devrait pas arriver)
+    if (allCourseLessons.length === 0) {
+      return {
+        previousLesson: null,
+        nextLesson: null,
+        totalLessons: 0,
+      };
+    }
+
+    // 4. Trouver l'index de la leçon courante dans la liste complète
+    const currentIndex = allCourseLessons.findIndex(l => l.id === lessonId);
+    
+    // 5. Si la leçon n'est pas trouvée (ne devrait pas arriver)
+    if (currentIndex === -1) {
+      return {
+        previousLesson: null,
+        nextLesson: null,
+        totalLessons: allCourseLessons.length,
+      };
+    }
+
+    // 6. Déterminer la leçon précédente et suivante dans TOUT le cours
+    const previousLesson = currentIndex > 0 
+      ? {
+          id: allCourseLessons[currentIndex - 1].id,
+          title: allCourseLessons[currentIndex - 1].title,
+          position: allCourseLessons[currentIndex - 1].position,
+          duration: allCourseLessons[currentIndex - 1].duration,
+        }
+      : null;
+      
+    const nextLesson = currentIndex < allCourseLessons.length - 1 
+      ? {
+          id: allCourseLessons[currentIndex + 1].id,
+          title: allCourseLessons[currentIndex + 1].title,
+          position: allCourseLessons[currentIndex + 1].position,
+          duration: allCourseLessons[currentIndex + 1].duration,
+        }
+      : null;
+
+    return {
+      previousLesson,
+      nextLesson,
+      totalLessons: allCourseLessons.length,
+    };
+  }),
+
+  getCourseTitlByCourseId: baseProcedure
+  .input(z.object({ 
+    courseId: z.string().uuid()
+  }))
+  .query(async ({ input }) => {
+    const { courseId } = input;
+
+    const [course] = await db
+      .select({
+        id: courses.id,
+        title: courses.title,
+      })
+      .from(courses)
+      .where(eq(courses.id, courseId))
+      .limit(1);
+
+    if (!course) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Cours non trouvé",
+      });
+    }
+
+    return course;
+  }),
+  getRessourcePrivate: paidCourseProcedure
+    .input(z.object({ courseId: z.uuid() }))
+    .query(async ({ input }) => {
+      const { courseId } = input;
+
+      const [courseAttachmentsList, lessonAttachmentsList] = await Promise.all([
+        // Ressources du cours
+        db
+          .select({
+            id: courseAttachments.id,
+            name: courseAttachments.name,
+            attachmentUrl: courseAttachments.attachmentUrl,
+            type: courseAttachments.type,
+            size: courseAttachments.size,
+            createdAt: courseAttachments.createdAt,
+          })
+          .from(courseAttachments)
+          .innerJoin(courses, eq(courses.id, courseAttachments.courseId))
+          .where(
+            and(
+              eq(courseAttachments.courseId, courseId),
+              eq(courses.status, "published")
+            )
+          )
+          .orderBy(desc(courseAttachments.createdAt)),
+
+        // Ressources des leçons
+        db
+          .select({
+            lessonId: courseLessons.id,
+            lessonTitle: courseLessons.title,
+            attachmentId: lessonAttachments.id,
+            attachmentName: lessonAttachments.name,
+            attachmentUrl: lessonAttachments.attachmentUrl,
+            type: lessonAttachments.type,
+            size: lessonAttachments.size,
+            createdAt: lessonAttachments.createdAt,
+          })
+          .from(courseLessons)
+          .innerJoin(
+            courseSections,
+            eq(courseLessons.sectionId, courseSections.id)
+          )
+          .innerJoin(courses, eq(courses.id, courseSections.courseId))
+          .leftJoin(
+            lessonAttachments,
+            eq(lessonAttachments.lessonId, courseLessons.id)
+          )
+          .where(
+            and(
+              eq(courseSections.courseId, courseId),
+              eq(courses.status, "published"),
+              eq(courseLessons.isPublished, true)
+            )
+          )
+          .orderBy(courseLessons.position, asc(lessonAttachments.createdAt)),
+      ]);
+
+      return {
+        courseAttachments: courseAttachmentsList,
+        lessonAttachments: lessonAttachmentsList.filter(
+          (la) => la.attachmentId !== null
+        ),
+      };
+    }),
 });

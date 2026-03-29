@@ -373,7 +373,7 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
               <Button
                 type="submit"
                 disabled={!form.formState.isDirty || update.isPending}
-                className="h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-primary-foreground"
+                className="h-11 bg-linear-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-primary-foreground"
               >
                 {update.isPending ? (
                   <>
@@ -523,7 +523,7 @@ const LessonFormSuspense = ({ lessonId, courseId }: LessonIdSectionProps) => {
             <div className="space-y-8">
               {/* Aperçu vidéo */}
               <Card className="border border-border bg-card shadow-lg rounded-2xl overflow-hidden pt-0">
-                <CardHeader className="bg-gradient-to-r from-primary to-primary/80 py-6  border-b border-border/20">
+                <CardHeader className="bg-linear-to-r from-primary to-primary/80 py-6  border-b border-border/20">
                   <CardTitle className="text-xl font-bold text-primary-foreground">
                     Aperçu de la vidéo
                   </CardTitle>

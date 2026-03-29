@@ -281,7 +281,7 @@ export const NavbarButton = ({
     secondary: "bg-transparent shadow-none dark:text-white",
     dark: "bg-black text-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
     gradient:
-      "bg-gradient-to-b from-[#ffd699] via-[#ffb74d] to-[#f9a825] text-white font-bold shadow-[0_1px_0_rgba(255,255,255,0.45)_inset,0_8px_24px_rgba(255,183,77,0.35)]",
+      "bg-linear-to-b from-[#ffd699] via-[#ffb74d] to-[#f9a825] text-white font-bold shadow-[0_1px_0_rgba(255,255,255,0.45)_inset,0_8px_24px_rgba(255,183,77,0.35)]",
   };
 
   // Si asChild est true, on rend un span au lieu d'un a

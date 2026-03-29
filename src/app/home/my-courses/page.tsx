@@ -1,10 +1,15 @@
+import { MyCourseView } from "@/modules/my-courses/ui/views/my-course-view"
+import { HydrateClient, prefetch, trpc } from "@/trpc/server"
 
 
-const Page = () => {
+const Page = async () => {
+  prefetch(
+    trpc.paiement.getMyCourses.queryOptions()
+  )
   return (
-    <div className="flex items-center justify-center pt-[100px]">
-      Vous allez voir dans cet page tous votre cours
-    </div>
+    <HydrateClient>
+      <MyCourseView />
+    </HydrateClient>
   )
 }
 

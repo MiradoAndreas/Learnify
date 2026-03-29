@@ -200,10 +200,11 @@ export const CourseCard = ({
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.4, ease: appleEasing }}
         whileHover={{ y: -4 }}
+        className="h-full"
       >
-        <Link href={`/home/${course.id}`} className="block">
-          <Card className="group pt-0 overflow-hidden border border-border hover:border-[#ffb74d]/30 transition-all duration-300 hover:shadow-lg">
-            <div className="flex flex-col sm:flex-row">
+        <Link href={`/home/${course.id}`} className="block h-full">
+          <Card className="group pt-0 overflow-hidden border border-border hover:border-[#ffb74d]/30 transition-all duration-300 hover:shadow-lg h-full">
+            <div className="flex flex-col sm:flex-row h-full">
               {/* Image avec animation de chargement */}
               <motion.div
                 className="relative sm:w-2/5 aspect-video sm:aspect-auto bg-[#ffb74d]/5"
@@ -248,27 +249,29 @@ export const CourseCard = ({
                 </motion.div>
               </motion.div>
 
-              {/* Contenu */}
-              <div className="flex-1 p-4">
-                <motion.h3
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-[#ffb74d] transition-colors"
-                >
-                  {course.title}
-                </motion.h3>
+              {/* Contenu - prend tout l'espace restant */}
+              <div className="flex-1 p-4 flex flex-col justify-between">
+                <div>
+                  <motion.h3
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-[#ffb74d] transition-colors"
+                  >
+                    {course.title}
+                  </motion.h3>
 
-                <RichTextDisplay
-                  content={course.description}
-                  className="text-sm text-muted-foreground mb-3 line-clamp-2"
-                />
+                  <RichTextDisplay
+                    content={course.description}
+                    className="text-sm text-muted-foreground mb-3 line-clamp-2"
+                  />
+                </div>
 
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between mt-auto"
                 >
                   <div className="text-lg font-bold text-[#ffb74d]">
                     {isFreeCourse ? "Gratuit" : `${course.price.toLocaleString()} Ar`}
@@ -291,25 +294,25 @@ export const CourseCard = ({
     );
   }
 
-  // Version par défaut avec animations
+  // Version par défaut avec animations - MODIFIÉE POUR HAUTEUR UNIFORME
   return (
     <TooltipProvider>
       <HoverCard openDelay={300} closeDelay={100}>
         <HoverCardTrigger asChild>
-          <Link href={`/home/${course.id}`} className="block">
+          <Link href={`/home/${course.id}`} className="block h-full">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.4, ease: appleEasing }}
               whileHover={{ y: -4 }}
-              className={cn("w-full cursor-pointer group")}
+              className={cn("w-full cursor-pointer group h-full")}
               onMouseEnter={handleMouseEnter}
             >
-              <Card className="h-full pt-0 gap-0 overflow-hidden border border-border/50 hover:border-[#ffb74d]/30 transition-all duration-500 hover:shadow-xl">
-                {/* Image avec overlay et animation */}
+              <Card className="h-full pt-0 gap-0 overflow-hidden border border-border/50 hover:border-[#ffb74d]/30 transition-all duration-500 hover:shadow-xl flex flex-col">
+                {/* Image avec overlay et animation - hauteur fixe */}
                 <motion.div
-                  className="relative aspect-video overflow-hidden bg-[#ffb74d]/5"
+                  className="relative aspect-video overflow-hidden bg-[#ffb74d]/5 shrink-0"
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
                 >
@@ -372,8 +375,8 @@ export const CourseCard = ({
                   </motion.div>
                 </motion.div>
 
-                {/* Contenu principal */}
-                <CardContent className="p-5">
+                {/* Contenu principal - prend tout l'espace disponible */}
+                <CardContent className="p-5 flex-1">
                   <motion.h3
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -406,8 +409,8 @@ export const CourseCard = ({
                   </motion.div>
                 </CardContent>
 
-                {/* Footer avec prix et CTA */}
-                <CardFooter className="px-5 pt-0 border-t">
+                {/* Footer avec prix et CTA - toujours en bas */}
+                <CardFooter className="px-5 pt-0 border-t mt-auto">
                   <div className="w-full flex flex-col gap-10">
                     <div className="space-y-1">
                       {formatPriceWithDiscount(course.price)}
@@ -438,7 +441,7 @@ export const CourseCard = ({
           </Link>
         </HoverCardTrigger>
 
-        {/* Hover Card enrichi avec animations */}
+        {/* Hover Card enrichi avec animations (inchangé) */}
         <HoverCardContent
           className="w-[300px] lg:w-[400px] p-0 border shadow-2xl overflow-hidden"
           align="center"

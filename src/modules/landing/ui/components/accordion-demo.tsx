@@ -1,12 +1,10 @@
 "use client"
-
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-
 // 1. Centralisation des données pour un code plus propre
 const FAQ_ITEMS = [
   {
@@ -92,9 +90,6 @@ export function AccordionDemo() {
           </AccordionItem>
         ))}
       </Accordion>
-
-
-
     </div>
   )
 }

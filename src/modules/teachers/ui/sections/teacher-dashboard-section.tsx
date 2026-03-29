@@ -110,7 +110,7 @@ export const columns: ColumnDef<Course>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 bg-linear-to-r from-primary to-primary/80 rounded-lg flex items-center justify-center">
           <LayoutGrid className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -156,7 +156,7 @@ export const columns: ColumnDef<Course>[] = [
           variant={isPublished ? "default" : "secondary"}
           className={cn(
             isPublished
-              ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white dark:from-green-600 dark:to-emerald-700"
+              ? "bg-linear-to-r from-green-500 to-emerald-600 text-white dark:from-green-600 dark:to-emerald-700"
               : "bg-muted text-muted-foreground dark:bg-gray-800 dark:text-gray-300"
           )}
         >
@@ -348,7 +348,7 @@ function TeacherDashboardSectionSuspense() {
         </div>
         <Button
           asChild
-          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-white shadow-lg hover:shadow-xl"
+          className="bg-linear-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-white shadow-lg hover:shadow-xl"
         >
           <Link href="/teacher/courses/new" >
             <PlusIcon className="h-4 w-4 mr-2" />
@@ -370,7 +370,7 @@ function TeacherDashboardSectionSuspense() {
                   {totalCourses}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-linear-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
                 <LayoutGrid className="w-5 h-5 text-white" />
               </div>
             </div>
@@ -388,7 +388,7 @@ function TeacherDashboardSectionSuspense() {
                   {publishedCourses}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-linear-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 rounded-full flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
             </div>
@@ -406,7 +406,7 @@ function TeacherDashboardSectionSuspense() {
                   Ar {totalRevenue.toLocaleString()}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-linear-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 rounded-full flex items-center justify-center">
                 <Users className="w-5 h-5 text-white" />
               </div>
             </div>
@@ -517,7 +517,7 @@ function TeacherDashboardSectionSuspense() {
                       className="h-32 text-center"
                     >
                       <div className="flex flex-col items-center justify-center gap-3">
-                        <div className="w-16 h-16 bg-gradient-to-r from-muted to-muted/50 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center">
+                        <div className="w-16 h-16 bg-linear-to-r from-muted to-muted/50 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center">
                           <LayoutGrid className="w-8 h-8 text-muted-foreground dark:text-gray-500" />
                         </div>
                         <div>
@@ -672,7 +672,7 @@ const TeacherDashboardSectionError = () => {
   return (
     <Card className="border-2 border-destructive/20 bg-destructive/5 dark:border-destructive/30 dark:bg-destructive/10">
       <CardContent className="p-8 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-destructive/20 to-destructive/10 dark:from-destructive/30 dark:to-destructive/20 rounded-full flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 bg-linear-to-r from-destructive/20 to-destructive/10 dark:from-destructive/30 dark:to-destructive/20 rounded-full flex items-center justify-center">
           <Loader2 className="w-8 h-8 text-destructive dark:text-destructive/80 animate-spin" />
         </div>
         <h3 className="text-lg font-semibold text-destructive dark:text-destructive/90 mb-2">
@@ -683,7 +683,7 @@ const TeacherDashboardSectionError = () => {
         </p>
         <Button
           onClick={() => window.location.reload()}
-          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-white"
+          className="bg-linear-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-white"
         >
           Réessayer
         </Button>

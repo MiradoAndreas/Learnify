@@ -1,6 +1,6 @@
 "use client";
 import { BackgroundBeams } from "@/components/ui/background-beams";
-import React from "react";
+
 import { OtherQuestion } from "./other-question";
 
 

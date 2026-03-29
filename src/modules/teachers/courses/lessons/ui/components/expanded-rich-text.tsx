@@ -71,7 +71,7 @@ export const ExpandableRichText = ({
       </motion.div>
 
       {!isExpanded && needsTruncation && (
-        <div className="absolute bottom-0 left-0 right-0 h-6 pointer-events-none bg-gradient-to-b from-transparent to-background" />
+        <div className="absolute bottom-0 left-0 right-0 h-6 pointer-events-none bg-linear-to-b from-transparent to-background" />
       )}
 
       {needsTruncation && (

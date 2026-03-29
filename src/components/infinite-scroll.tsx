@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Button } from "./ui/button";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { Spinner } from "./ui/spinner";
-import { Laugh } from "lucide-react";
+import { Laugh, RefreshCcw } from "lucide-react";
 
 interface InfiniteScrollProps {
   isManual?: boolean;
@@ -36,11 +36,11 @@ export const InfiniteScroll = ({
       <div ref={targetRef} className="h-1" />
       {hasNextPage ? (
         <Button
-          
+
           disabled={!hasNextPage || isFetchingNextPage}
           onClick={() => fetchNextPage()}
         >
-          {isFetchingNextPage ? <Spinner /> : <Laugh  />}
+          {isFetchingNextPage ? <RefreshCcw className="animate-spin" /> : <RefreshCcw />}
           {isFetchingNextPage ? "Chargement..." : "Charger plus"}
         </Button>
       ) : (

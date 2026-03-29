@@ -300,7 +300,7 @@ const LessonAttachmentsSuspense = ({
           className={cn(
             "rounded-lg flex items-center justify-center transition-all duration-300",
             size === "lg" ? "w-12 h-12" : "w-10 h-10",
-            "bg-gradient-to-br from-card to-muted border border-border",
+            "bg-linear-to-br from-card to-muted border border-border",
             "group-hover:border-primary/30 group-hover:shadow-lg"
           )}
           style={{
@@ -312,7 +312,7 @@ const LessonAttachmentsSuspense = ({
           </div>
         </div>
         {size === "lg" && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-primary to-primary/80 rounded-full border-2 border-background shadow-md animate-pulse"></div>
+          <div className="absolute -top-1 -right-1 w-4 h-4 bg-linear-to-r from-primary to-primary/80 rounded-full border-2 border-background shadow-md animate-pulse"></div>
         )}
       </div>
     );
@@ -367,13 +367,13 @@ const LessonAttachmentsSuspense = ({
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/70 rounded-xl blur-lg opacity-30"></div>
-              <div className="relative w-12 h-12 bg-gradient-to-r from-primary to-primary/70 rounded-xl flex items-center justify-center shadow-xl">
+              <div className="absolute inset-0 bg-linear-to-r from-primary to-primary/70 rounded-xl blur-lg opacity-30"></div>
+              <div className="relative w-12 h-12 bg-linear-to-r from-primary to-primary/70 rounded-xl flex items-center justify-center shadow-xl">
                 <FolderPlus className="w-6 h-6 text-primary-foreground" />
               </div>
             </div>
             <div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <h3 className="text-2xl font-bold bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 Ressources de la leçon
               </h3>
               <p className="text-muted-foreground">
@@ -406,14 +406,14 @@ const LessonAttachmentsSuspense = ({
         className={cn(
           "relative border-3 border-dashed rounded-2xl p-8 transition-all duration-300",
           isDragging
-            ? "border-primary bg-gradient-to-br from-primary/5 to-primary/10 shadow-xl"
-            : "border-border hover:border-primary hover:shadow-lg bg-gradient-to-br from-card to-muted/50"
+            ? "border-primary bg-linear-to-br from-primary/5 to-primary/10 shadow-xl"
+            : "border-border hover:border-primary hover:shadow-lg bg-linear-to-br from-card to-muted/50"
         )}
         onDragEnter={() => setIsDragging(true)}
         onDragLeave={() => setIsDragging(false)}
       >
         {isDragging && (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl flex items-center justify-center">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-primary/5 rounded-2xl flex items-center justify-center">
             <div className="text-center">
               <Upload className="w-12 h-12 text-primary mx-auto mb-3 animate-bounce" />
               <p className="text-lg font-semibold text-primary">
@@ -559,9 +559,9 @@ const LessonAttachmentsSuspense = ({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-12 border-2 border-dashed border-border rounded-2xl bg-gradient-to-b from-card to-muted/30"
+            className="text-center py-12 border-2 border-dashed border-border rounded-2xl bg-linear-to-b from-card to-muted/30"
           >
-            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-muted to-muted/50 rounded-full flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto mb-4 bg-linear-to-br from-muted to-muted/50 rounded-full flex items-center justify-center">
               <FileIcon className="h-10 w-10 text-muted-foreground" />
             </div>
             <p className="text-foreground font-medium">
@@ -610,7 +610,7 @@ const LessonAttachmentsSuspense = ({
                           />
                           <Button
                             size="sm"
-                            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-primary-foreground"
+                            className="bg-linear-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary text-primary-foreground"
                             onClick={() => {
                               if (editName.trim() === "") {
                                 toast.error("Le nom ne peut pas être vide", {
@@ -746,7 +746,7 @@ const LessonAttachmentsSuspense = ({
       <Card className="border border-border bg-card">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-r from-primary/10 to-primary/5 rounded-xl flex items-center justify-center">
               <AlertCircle className="h-5 w-5 text-primary" />
             </div>
             <div className="space-y-3">

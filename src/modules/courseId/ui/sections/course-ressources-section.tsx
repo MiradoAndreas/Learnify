@@ -46,7 +46,7 @@ const CourseResourcesSectionSuspense = ({
   const trpc = useTRPC();
 
   const { data: resources } = useSuspenseQuery(
-    trpc.course.getCourseResources.queryOptions({
+    trpc.course.getCourseResourcesPublic.queryOptions({
       courseId,
     })
   );

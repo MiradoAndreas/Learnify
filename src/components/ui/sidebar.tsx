@@ -27,8 +27,8 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "16rem";
-const SIDEBAR_WIDTH_MOBILE = "18rem";
+const SIDEBAR_WIDTH = "20rem";
+const SIDEBAR_WIDTH_MOBILE = "25rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
@@ -253,32 +253,51 @@ function Sidebar({
   );
 }
 
+type SidebarTriggerProps = Omit<
+  React.ComponentProps<typeof Button>,
+  "children"
+> & {
+  icon?: React.ReactNode;
+};
+
 function SidebarTrigger({
   className,
   onClick,
+  icon,
   ...props
-}: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+}: SidebarTriggerProps) {
+  const { toggleSidebar, open } = useSidebar();
+
+  const tooltip = open
+    ? "Fermer la barre latérale"
+    : "Ouvrir la barre latérale";
 
   return (
-    <Button
-      data-sidebar="trigger"
-      data-slot="sidebar-trigger"
-      variant="secondary"
-      size="icon"
-      className={cn("size-7", className)}
-      onClick={(event) => {
-        onClick?.(event);
-        toggleSidebar();
-      }}
-      {...props}
-    >
-      <MenuIcon />
-      <span className="sr-only">Toggle Sidebar</span>
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            data-sidebar="trigger"
+            variant="secondary"
+            size="icon"
+            className={cn("size-7", className)}
+            onClick={(event) => {
+              onClick?.(event);
+              toggleSidebar();
+            }}
+            {...props}
+          >
+            {icon ?? <MenuIcon />}
+            <span className="sr-only">{tooltip}</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          {tooltip}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
-
 function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   const { toggleSidebar } = useSidebar();
 
