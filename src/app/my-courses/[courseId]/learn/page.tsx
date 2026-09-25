@@ -4,7 +4,7 @@ import { LearningView } from "@/modules/learn/ui/views/learning-view";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DEFAULT_COURSE_LIMIT } from "@/constants";
 import { PanelLeft } from "lucide-react";
-
+export const dynamic = "force-dynamic"
 interface PageProps {
   params: Promise<{
     courseId: string;

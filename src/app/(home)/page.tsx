@@ -9,7 +9,7 @@ import { NavbarSection } from "@/modules/landing/ui/sections/navbar-section";
 import { ProblemSection } from "@/modules/landing/ui/sections/problem-section";
 import { StickyBannerDemo } from "@/modules/landing/ui/sections/sticky-banner-section";
 import { TestimonialSection } from "@/modules/landing/ui/sections/testimonial-section";
-
+export const dynamic = "force-dynamic"
 
 const Page = () => {
   return (

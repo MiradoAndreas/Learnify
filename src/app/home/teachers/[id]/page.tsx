@@ -1,7 +1,7 @@
 import { DEFAULT_COURSE_LIMIT } from "@/constants"
 import { TeacherPageView } from "@/modules/teacherPublic/ui/views/teacher-page-view"
 import { HydrateClient, prefetch, trpc } from "@/trpc/server"
-
+export const dynamic = "force-dynamic"
 interface PageProps {
   params: Promise<{
     id: string

@@ -2,6 +2,7 @@
 import { requireAuth } from "@/lib/auth-utils";
 import { ManageView } from "@/modules/users/ui/views/manage-view";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
+export const dynamic = "force-dynamic"
 const Page = async () => {
   await requireAuth();
 
