@@ -16,7 +16,6 @@ import {
   Award,
   CheckCircle2,
   AlertCircle,
-  Sparkles,
   BadgeCheck,
   Calendar,
   DollarSign
@@ -25,9 +24,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
