@@ -1,4 +1,5 @@
 import {
+
   baseProcedure,
   createTRPCRouter,
   protectedProcedure,
@@ -886,19 +887,39 @@ export const teacherRouter = createTRPCRouter({
       };
     }),
   createLessonUpload: teacherProcedure
-    .input(
-      z.object({
-        sectionId: z.uuid(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { id: userId } = ctx.auth.user;
 
-      // 1️⃣ Vérifier que l'utilisateur est bien un formateur
+  .input(
+    z.object({
+      sectionId: z.uuid(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    console.log("[createLessonUpload] START");
+    console.log("[createLessonUpload] sectionId:", input.sectionId);
+
+    try {
+      // ============================================================
+      // 1. AUTH
+      // ============================================================
+
+      console.log("[createLessonUpload] STEP 1: checking auth");
+
+      const userId = ctx.auth.user.id;
+
+      console.log("[createLessonUpload] userId:", userId);
+
+      // ============================================================
+      // 2. TRAINER
+      // ============================================================
+
+      console.log("[createLessonUpload] STEP 2: fetching trainer");
+
       const [trainer] = await db
         .select()
         .from(trainerProfiles)
         .where(eq(trainerProfiles.userId, userId));
+
+      console.log("[createLessonUpload] trainer:", trainer);
 
       if (!trainer) {
         throw new TRPCError({
@@ -907,7 +928,12 @@ export const teacherRouter = createTRPCRouter({
         });
       }
 
-      // 2️⃣ Récupérer section + courseId
+      // ============================================================
+      // 3. SECTION
+      // ============================================================
+
+      console.log("[createLessonUpload] STEP 3: fetching section");
+
       const [section] = await db
         .select({
           sectionId: courseSections.id,
@@ -915,25 +941,57 @@ export const teacherRouter = createTRPCRouter({
           trainerId: courses.trainerId,
         })
         .from(courseSections)
-        .innerJoin(courses, eq(courses.id, courseSections.courseId))
+        .innerJoin(
+          courses,
+          eq(courses.id, courseSections.courseId)
+        )
         .where(eq(courseSections.id, input.sectionId));
 
+      console.log("[createLessonUpload] section:", section);
+
       if (!section || section.trainerId !== trainer.id) {
-        throw new TRPCError({ code: "FORBIDDEN" });
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cette section ne vous appartient pas",
+        });
       }
+
       const courseId = section.courseId;
 
-      // 3️⃣ CALCULER LA DERNIÈRE POSITION DANS LA SECTION
+      // ============================================================
+      // 4. POSITION
+      // ============================================================
+
+      console.log("[createLessonUpload] STEP 4: fetching last lesson");
+
       const [lastLesson] = await db
-        .select({ position: courseLessons.position })
+        .select({
+          position: courseLessons.position,
+        })
         .from(courseLessons)
-        .where(eq(courseLessons.sectionId, input.sectionId))
+        .where(
+          eq(courseLessons.sectionId, input.sectionId)
+        )
         .orderBy(desc(courseLessons.position))
         .limit(1);
 
-      const position = lastLesson ? lastLesson.position + 1 : 1;
+      console.log("[createLessonUpload] lastLesson:", lastLesson);
 
-      // 4️⃣ Créer l'upload Mux
+      const position = lastLesson
+        ? lastLesson.position + 1
+        : 1;
+
+      console.log(
+        "[createLessonUpload] calculated position:",
+        position
+      );
+
+      // ============================================================
+      // 5. MUX
+      // ============================================================
+
+      console.log("[createLessonUpload] STEP 5: creating Mux upload");
+
       const upload = await mux.video.uploads.create({
         new_asset_settings: {
           passthrough: userId,
@@ -943,7 +1001,6 @@ export const teacherRouter = createTRPCRouter({
               generated_subtitles: [
                 {
                   language_code: "fr",
-                  name: "Malagasy",
                 },
               ],
             },
@@ -952,32 +1009,60 @@ export const teacherRouter = createTRPCRouter({
         cors_origin: "*",
       });
 
-      // 5️⃣ Créer la lesson en DB avec la position calculée
+      console.log("[createLessonUpload] Mux upload created:", {
+        id: upload.id,
+        url: upload.url,
+      });
+
+      // ============================================================
+      // 6. CREATE LESSON
+      // ============================================================
+
+      console.log("[createLessonUpload] STEP 6: inserting lesson");
+
       const [lesson] = await db
         .insert(courseLessons)
         .values({
           sectionId: section.sectionId,
           title: "Untitled lesson",
-          // ou "Leçon sans titre",
           description: "No description",
-          muxStatus: "waiting", // ou "pending"
+          muxStatus: "waiting",
           muxUploadId: upload.id,
-          visibility: "paid", // ou "draft" selon votre logique
+          visibility: "paid",
           isPublished: false,
-          position: position, // ← Position calculée automatiquement
+          position,
 
           createdAt: new Date(),
           updatedAt: new Date(),
         })
         .returning();
 
-      // 6️⃣ Retour EXACT attendu par le frontend
+      console.log(
+        "[createLessonUpload] lesson created:",
+        lesson
+      );
+
+      // ============================================================
+      // 7. SUCCESS
+      // ============================================================
+
+      console.log("[createLessonUpload] SUCCESS");
+
       return {
         lesson,
         url: upload.url,
         courseId,
       };
-    }),
+    } catch (error) {
+      console.error(
+        "[createLessonUpload] FAILED"
+      );
+
+      console.error(error);
+
+      throw error;
+    }
+  }),
   getAllLessonByCourseId: teacherProcedure
     .input(
       z.object({

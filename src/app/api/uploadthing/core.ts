@@ -1,18 +1,18 @@
-import { db } from "@/db";
-import {
-  courseAttachments,
-  courseLessons,
-  courses,
-  courseSections,
-  lessonAttachments,
-  trainerProfiles,
-} from "@/db/schema";
-import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError, UTApi } from "uploadthing/server";
 import z from "zod";
+import { db } from "@/db";
+import {
+  courseAttachments,
+  courseLessons,
+  courseSections,
+  courses,
+  lessonAttachments,
+  trainerProfiles,
+} from "@/db/schema";
+import { auth } from "@/lib/auth";
 
 console.log("📦 uploadthing core.ts LOADED");
 
@@ -30,27 +30,32 @@ export const ourFileRouter = {
   })
     .input(z.object({ userId: z.string() }))
     .middleware(async ({ input }) => {
+      console.log("Middleware passé");
+      console.log("On récupere le session ici");
       const session = await auth.api.getSession({
         headers: await headers(),
       });
-  
+      console.log("session recupérer");
+
       if (!session?.user) {
+        console.log("Uploadthing error");
         throw new UploadThingError("Unauthorized");
       }
-  
+
       // Vérifier que l'utilisateur modifie son propre avatar
       if (session.user.id !== input.userId) {
+        console.log("Vous pouvez updater votre propre avatar");
         throw new UploadThingError("You can only update your own avatar");
       }
-  
+
       return { userId: input.userId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("Avatar upload complete:", file);
-  
+
       // Vous pouvez ici mettre à jour la base de données immédiatement
       // Ou laisser le frontend gérer la mise à jour via une mutation TRPC
-      
+
       return {
         uploadBy: metadata.userId,
         url: file.ufsUrl,
@@ -58,68 +63,157 @@ export const ourFileRouter = {
         size: file.size,
       };
     }),
-  
-  thumbnailUploader: f({
-    image: {
-      maxFileSize: "4MB",
-      maxFileCount: 1,
-    },
-  })
-    .input(
-      z.object({
-        courseId: z.uuid(),
-      })
-    )
-    // Set permissions and file types for this FileRoute
-    .middleware(async ({ input }) => {
-      console.log("🟡 middleware START", input);
-      // This code runs on your server before upload
+
+thumbnailUploader: f({
+  image: {
+    maxFileSize: "4MB",
+    maxFileCount: 1,
+  },
+})
+  .input(
+    z.object({
+      courseId: z.uuid(),
+    }),
+  )
+  .middleware(async ({ input }) => {
+    console.log("\n");
+    console.log("========================================");
+    console.log("🟡 THUMBNAIL MIDDLEWARE START");
+    console.log("========================================");
+
+    try {
+      console.log("1️⃣ INPUT");
+      console.dir(input, { depth: null });
+
+      // -------------------------------
+      // AUTH
+      // -------------------------------
+
+      console.log("2️⃣ GET SESSION");
+
+      const requestHeaders = await headers();
+
+      console.log("   headers récupérés");
+
       const session = await auth.api.getSession({
-        headers: await headers(),
+        headers: requestHeaders,
       });
 
-      console.log("🟡 session", session?.user?.id);
-
-      if (!session) {
-        console.log("NO SESSION");
-        throw new UploadThingError("Unauthorized");
-      }
+      console.log("   session:", !!session);
+      console.log("   user:", session?.user?.id);
 
       if (!session?.user) {
+        console.error("❌ NO SESSION");
+
         throw new UploadThingError("Unauthorized");
       }
 
-      // Recuperer le trainer profile
+      // -------------------------------
+      // TRAINER
+      // -------------------------------
+
+      console.log("3️⃣ GET TRAINER");
+
       const [trainer] = await db
-        .select({ id: trainerProfiles.id })
+        .select({
+          id: trainerProfiles.id,
+        })
         .from(trainerProfiles)
-        .where(eq(trainerProfiles.userId, session.user.id))
+        .where(
+          eq(
+            trainerProfiles.userId,
+            session.user.id,
+          ),
+        )
         .limit(1);
 
-      console.log("🟡 trainer", trainer);
+      console.log("   trainer:", trainer);
 
       if (!trainer) {
-        console.log("🔴 NO TRAINER");
-        throw new UploadThingError("Trainer account not found");
+        console.error("❌ TRAINER NOT FOUND");
+
+        throw new UploadThingError(
+          "Trainer account not found",
+        );
       }
 
-      console.log("🟢 middleware OK");
+      // -------------------------------
+      // METADATA
+      // -------------------------------
 
-      // Récupérer le cours
+      console.log("4️⃣ CREATE METADATA");
 
-      return { trainer, ...input };
-    })
-    .onUploadComplete(async ({ metadata, file }) => {
-      console.log("🟢 onUploadComplete START");
-      console.log("📦 metadata", metadata);
-      console.log("📁 file", file);
-      return {
-        uploadedBy: metadata.trainer.id,
-        url: file.ufsUrl,
-        key: file.key,
+      const metadata = {
+        trainer: {
+          id: trainer.id,
+        },
+        courseId: input.courseId,
       };
-    }),
 
+      console.log("   metadata:");
+      console.dir(metadata, { depth: null });
+
+      console.log("5️⃣ RETURN METADATA");
+
+      console.log("========================================");
+      console.log("🟢 THUMBNAIL MIDDLEWARE SUCCESS");
+      console.log("========================================");
+
+      return metadata;
+    } catch (error) {
+      console.log("========================================");
+      console.error("🔴 THUMBNAIL MIDDLEWARE ERROR");
+      console.error("========================================");
+
+      console.error("error:", error);
+
+      if (error instanceof Error) {
+        console.error("name:", error.name);
+        console.error("message:", error.message);
+        console.error("stack:", error.stack);
+      }
+
+      console.log("========================================");
+
+      throw error;
+    }
+  })
+  .onUploadComplete(async ({ metadata, file }) => {
+    console.log("\n");
+    console.log("========================================");
+    console.log("🟢 THUMBNAIL UPLOAD COMPLETE");
+    console.log("========================================");
+
+    console.log("metadata:");
+    console.dir(metadata, { depth: null });
+
+    console.log("file:");
+    console.dir(
+      {
+        key: file.key,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        url: file.ufsUrl,
+      },
+      { depth: null },
+    );
+
+    const result = {
+      uploadedBy: metadata.trainer.id,
+      url: file.ufsUrl,
+      key: file.key,
+    };
+
+    console.log("result:");
+    console.dir(result, { depth: null });
+
+    console.log("========================================");
+    console.log("🟢 THUMBNAIL COMPLETE SUCCESS");
+    console.log("========================================");
+
+    return result;
+  }),
   // NOUVELLE ROUTE : Course Attachments
   courseAttachmentUploader: f({
     pdf: {
@@ -144,7 +238,7 @@ export const ourFileRouter = {
       z.object({
         courseId: z.uuid(),
         name: z.string().optional(), // Nom personnalisé (optionnel)
-      })
+      }),
     )
     .middleware(async ({ input }) => {
       const session = await auth.api.getSession({
@@ -166,7 +260,10 @@ export const ourFileRouter = {
         .select({ id: courses.id })
         .from(courses)
         .where(
-          and(eq(courses.id, input.courseId), eq(courses.trainerId, trainer.id))
+          and(
+            eq(courses.id, input.courseId),
+            eq(courses.trainerId, trainer.id),
+          ),
         )
         .limit(1);
 
@@ -229,7 +326,7 @@ export const ourFileRouter = {
       z.object({
         lessonId: z.uuid(),
         name: z.string().optional(), // Nom personnalisé (optionnel)
-      })
+      }),
     )
     .middleware(async ({ input }) => {
       const session = await auth.api.getSession({
@@ -252,14 +349,14 @@ export const ourFileRouter = {
         .from(courseLessons)
         .innerJoin(
           courseSections,
-          eq(courseSections.id, courseLessons.sectionId)
+          eq(courseSections.id, courseLessons.sectionId),
         )
         .innerJoin(courses, eq(courses.id, courseSections.courseId))
         .where(
           and(
             eq(courseLessons.id, input.lessonId),
-            eq(courses.trainerId, trainer.id)
-          )
+            eq(courses.trainerId, trainer.id),
+          ),
         )
         .limit(1);
 
@@ -310,7 +407,7 @@ export const ourFileRouter = {
         } catch (deleteError) {
           console.error(
             "❌ Error deleting file from UploadThing:",
-            deleteError
+            deleteError,
           );
         }
 

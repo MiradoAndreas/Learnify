@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:all": "concurrently \"pnpm dev:webhook\" \"pnpm dev \"",
-    "dev:webhook": "ngrok http --url=nonepisodic-unpersisting-era.ngrok-free.dev 3000",
+    "dev:webhook": "ngrok http --url=banked-chamber-oxidize.ngrok-free.dev 3000",
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
@@ -79,7 +79,7 @@
     "@trpc/tanstack-react-query": "^11.8.1",
     "@uploadthing/react": "^7.3.3",
     "algoliasearch": "^5.47.0",
-    "better-auth": "^1.4.7",
+    "better-auth": "^1.7.5",
     "class-variance-authority": "^0.7.1",
     "client-only": "^0.0.1",
     "clsx": "^2.1.1",
