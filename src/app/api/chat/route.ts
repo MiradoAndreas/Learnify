@@ -2,6 +2,7 @@ import { openai } from "@ai-sdk/openai";
 import { tasks } from "@trigger.dev/sdk/v3";
 import { streamText } from "ai";
 import { asc, eq } from "drizzle-orm";
+import { after } from "next/server";
 
 import { db } from "@/db";
 
@@ -10,10 +11,8 @@ import { conversations, messages, userLearningProfiles } from "@/db/schema";
 import { searchLessonChunks } from "@/modules/chat-ai/lib/rag/search";
 
 export async function POST(req: Request) {
-  console.log("POST appellé : ");
   const session = await auth.api.getSession({ headers: req.headers });
   if (!session?.user) {
-    console.log("Session utilisateur non trouvé");
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -23,21 +22,14 @@ export async function POST(req: Request) {
     lessonId?: string;
   };
 
-  console.log("conversation Id : ", conversationId);
-  console.log("message : ", message);
-  console.log("lessonId : ", lessonId);
-
   const [conversation] = await db
     .select({ id: conversations.id, userId: conversations.userId })
     .from(conversations)
     .where(eq(conversations.id, conversationId))
     .limit(1);
-  console.log("conversation", conversation);
   if (!conversation || conversation.userId !== session.user.id) {
     return new Response("Not found", { status: 404 });
   }
-
-  console.log("Insertion dans la table message");
 
   await db.insert(messages).values({
     conversationId,
@@ -84,20 +76,26 @@ export async function POST(req: Request) {
         content: m.content,
       })),
     onFinish: async ({ text }) => {
-      await db.insert(messages).values({
-        conversationId,
-        role: "assistant",
-        content: text,
-      });
+      after(async () => {
+        await db.insert(messages).values({
+          conversationId,
+          role: "assistant",
+          content: text,
+        });
 
-      await tasks.trigger("update-learning-profile", {
-        userId: session.user.id,
-        conversationId,
+        try {
+          await tasks.trigger("update-learning-profile", {
+            userId: session.user.id,
+            conversationId,
+          });
+        } catch (error) {
+          // Never let a failed trigger take down the response — it already
+          // reached the client. Just make the failure visible in the logs.
+          console.error("update-learning-profile trigger failed", error);
+        }
       });
     },
   });
-
-  console.log("result : ", result);
 
   return result.toUIMessageStreamResponse();
 }
