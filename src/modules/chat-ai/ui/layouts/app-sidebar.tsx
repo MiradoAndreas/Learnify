@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CoinsIcon, MessageSquareIcon, SquarePenIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -92,11 +88,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupLabel>Recents</SidebarGroupLabel>
           <SidebarGroupContent>
-            <ErrorBoundary fallback={<ConversationListError />}>
-              <Suspense fallback={<ConversationListSkeleton />}>
-                <ConversationList />
-              </Suspense>
-            </ErrorBoundary>
+            <ConversationList />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
@@ -149,11 +141,21 @@ function ConversationListError() {
 function ConversationList() {
   const trpc = useTRPC();
   const pathname = usePathname();
-  const { data: conversations } = useSuspenseQuery(
-    trpc.chat.list.queryOptions(),
-  );
+  const {
+    data: conversations,
+    isLoading,
+    isError,
+  } = useQuery(trpc.chat.list.queryOptions());
 
-  if (conversations.length === 0) {
+  if (isLoading) {
+    <ConversationListSkeleton />;
+  }
+
+  if (isError) {
+    <ConversationListError />;
+  }
+
+  if (conversations?.length === 0) {
     return (
       <Empty className="border p-2 group-data-[collapsible=icon]:hidden">
         <EmptyDescription className="text-xs">
@@ -166,7 +168,7 @@ function ConversationList() {
   return (
     <>
       <SidebarMenu className="group-data-[collapsible=icon]:hidden">
-        {conversations.map((conversation) => (
+        {conversations?.map((conversation) => (
           <SidebarMenuItem key={conversation.id}>
             <SidebarMenuButton
               asChild
@@ -205,7 +207,7 @@ function ConversationList() {
                 </PopoverTitle>
               </PopoverHeader>
               <SidebarMenu>
-                {conversations.map((conversation) => (
+                {conversations?.map((conversation) => (
                   <SidebarMenuItem key={conversation.id}>
                     <PopoverClose asChild>
                       <SidebarMenuButton
