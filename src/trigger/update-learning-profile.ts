@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { task } from "@trigger.dev/sdk";
+import { task } from "@trigger.dev/sdk/v3";
 import { generateText } from "ai";
 import { desc, eq } from "drizzle-orm";
 
