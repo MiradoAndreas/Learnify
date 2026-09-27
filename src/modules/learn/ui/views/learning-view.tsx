@@ -1,4 +1,3 @@
-import React from 'react'
 
 import { PlayerSection } from '../sections/player-section';
 import { DetailsSection } from '../sections/details-section';

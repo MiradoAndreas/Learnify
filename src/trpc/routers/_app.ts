@@ -9,6 +9,7 @@ import { paymentRouter } from "@/modules/paiments/server/procedure";
 import { lessonCommentsRouter } from "@/modules/comment/server/procedure";
 import { commentLikesRouter } from "@/modules/comment-reaction/server/procedure";
 import { lessonProgressRouter } from "@/modules/lesson-progress/server/procedure";
+import { chatRouter } from "@/modules/chat-ai/server/procedure";
 
 export const appRouter = createTRPCRouter({
   user: userRouter,
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   comments: lessonCommentsRouter,
   commentLikes: commentLikesRouter,
   lessonProgress: lessonProgressRouter,
+  chat: chatRouter,
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;

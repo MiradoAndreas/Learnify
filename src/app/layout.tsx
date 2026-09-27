@@ -4,7 +4,6 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { TRPCReactProvider } from "@/trpc/client";
 import { ThemeProvider } from "@/components/theme-provider";
-import { FooterSection } from "@/modules/landing/ui/sections/footer-section";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,16 +30,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
       >
-
-
         <TRPCReactProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
             <Toaster />
             {children}
-            <FooterSection />
           </ThemeProvider>
         </TRPCReactProvider>
-
       </body>
     </html>
   );

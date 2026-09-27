@@ -53,16 +53,21 @@ export const HomeNavbar = ({ isTeacher }: HomeNavbarProps) => {
           {/* Menu and Logo */}
           <div className="flex items-center shrink-0">
             <SidebarTrigger className="lg:flex" />
-            <Link href="/" className="flex items-center gap-1 p-2 sm:p-3 md:p-4">
+            <Link
+              href="/"
+              className="flex items-center gap-1 p-2 sm:p-3 md:p-4"
+            >
               <Logo />
             </Link>
           </div>
 
           {/* Search Input skeleton */}
           {!isTeacher && (
-            <div className={cn(
-              "flex-1 hidden md:block max-w-full md:max-w-[400px] lg:max-w-[600px] px-2"
-            )}>
+            <div
+              className={cn(
+                "flex-1 hidden md:block max-w-full md:max-w-[400px] lg:max-w-[600px] px-2",
+              )}
+            >
               <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded-md animate-pulse" />
             </div>
           )}
@@ -103,18 +108,23 @@ export const HomeNavbar = ({ isTeacher }: HomeNavbarProps) => {
           {/* Menu and Logo */}
           <div className="flex items-center shrink-0">
             <SidebarTrigger className="lg:flex" />
-            <Link href="/" className="flex items-center gap-1 p-2 sm:p-3 md:p-4">
+            <Link
+              href="/"
+              className="flex items-center gap-1 p-2 sm:p-3 md:p-4"
+            >
               <Logo />
             </Link>
           </div>
 
           {/* Search Input */}
           {!isTeacher && (
-            <div className={cn(
-              "flex-1 transition-all duration-300",
-              "hidden md:block max-w-full md:max-w-[400px] lg:max-w-[600px]",
-              "px-2"
-            )}>
+            <div
+              className={cn(
+                "flex-1 transition-all duration-300",
+                "hidden md:block max-w-full md:max-w-[400px] lg:max-w-[600px]",
+                "px-2",
+              )}
+            >
               <SearchInput />
             </div>
           )}
@@ -158,12 +168,20 @@ export const HomeNavbar = ({ isTeacher }: HomeNavbarProps) => {
                 <div className="flex flex-col gap-4">
                   <SearchInput />
                   <Link href="/login">
-                    <NavbarButton variant="secondary" asChild={true} className="w-full">
+                    <NavbarButton
+                      variant="secondary"
+                      asChild={true}
+                      className="w-full"
+                    >
                       Connexion
                     </NavbarButton>
                   </Link>
                   <Link href="/register">
-                    <NavbarButton variant="gradient" asChild={true} className="w-full">
+                    <NavbarButton
+                      variant="gradient"
+                      asChild={true}
+                      className="w-full"
+                    >
                       S'inscrire
                     </NavbarButton>
                   </Link>
@@ -197,11 +215,13 @@ export const HomeNavbar = ({ isTeacher }: HomeNavbarProps) => {
 
         {/* Search Input */}
         {!isTeacher && (
-          <div className={cn(
-            "flex-1 transition-all duration-300",
-            "max-w-full md:max-w-[400px] lg:max-w-[600px]",
-            "px-2"
-          )}>
+          <div
+            className={cn(
+              "flex-1 transition-all duration-300",
+              "max-w-full md:max-w-[400px] lg:max-w-[600px]",
+              "px-2",
+            )}
+          >
             <SearchInput />
           </div>
         )}
@@ -217,10 +237,12 @@ export const HomeNavbar = ({ isTeacher }: HomeNavbarProps) => {
         </Button>
 
         {/* User section - desktop */}
-        <div className={cn(
-          "shrink-0 items-center gap-2 sm:gap-3 md:gap-4",
-          "hidden lg:flex"
-        )}>
+        <div
+          className={cn(
+            "shrink-0 items-center gap-2 sm:gap-3 md:gap-4",
+            "hidden lg:flex",
+          )}
+        >
           {!isTeacher ? (
             <TeacherModeButton />
           ) : (
@@ -318,7 +340,7 @@ export const HomeNavbar = ({ isTeacher }: HomeNavbarProps) => {
         "bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/80",
         isScrolled
           ? "border-b border-border/50 shadow-sm"
-          : "border-b border-transparent"
+          : "border-b border-transparent",
       )}
     >
       {renderNavContent()}

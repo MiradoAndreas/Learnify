@@ -1,10 +1,9 @@
-
-import { HydrateClient, prefetch, trpc } from "@/trpc/server";
-import { LearningView } from "@/modules/learn/ui/views/learning-view";
+import { PanelLeft } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DEFAULT_COURSE_LIMIT } from "@/constants";
-import { PanelLeft } from "lucide-react";
-export const dynamic = "force-dynamic"
+import { LearningView } from "@/modules/learn/ui/views/learning-view";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
+export const dynamic = "force-dynamic";
 interface PageProps {
   params: Promise<{
     courseId: string;
@@ -21,9 +20,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
   if (!lessonId) {
     return (
       <div>
-        <div className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 my-5 md:my-6">
-
-        </div>
+        <div className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 my-5 md:my-6"></div>
         <div className="min-h-[calc(100vh-4rem)] bg-background flex items-center justify-center p-4">
           <div className="max-w-sm w-full text-center">
             <div className="mb-6">
@@ -37,7 +34,8 @@ const Page = async ({ params, searchParams }: PageProps) => {
             </h2>
 
             <p className="text-sm text-muted-foreground mb-6">
-              Choisissez une leçon dans le menu pour commencer votre apprentissage
+              Choisissez une leçon dans le menu pour commencer votre
+              apprentissage
             </p>
 
             <div className="text-xs text-muted-foreground/50 flex items-center justify-center gap-2">
@@ -49,37 +47,36 @@ const Page = async ({ params, searchParams }: PageProps) => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
+  prefetch(trpc.course.getLessonVideo.queryOptions({ courseId, lessonId }));
+  prefetch(trpc.course.getLessonDetails.queryOptions({ courseId, lessonId }));
   prefetch(
-    trpc.course.getLessonVideo.queryOptions({ courseId, lessonId })
-  )
-  prefetch(
-    trpc.course.getLessonDetails.queryOptions({ courseId, lessonId })
-  )
-  prefetch(
-    trpc.course.getLessonNavigation.queryOptions({ courseId, lessonId })
-  )
+    trpc.course.getLessonNavigation.queryOptions({ courseId, lessonId }),
+  );
 
   prefetch(
-    trpc.comments.getMany.infiniteQueryOptions({ courseId, lessonId, limit: DEFAULT_COURSE_LIMIT })
-  )
-
-
+    trpc.comments.getMany.infiniteQueryOptions({
+      courseId,
+      lessonId,
+      limit: DEFAULT_COURSE_LIMIT,
+    }),
+  );
 
   return (
     <HydrateClient>
       <div className="px-4 md:px-6">
-        <div className="focus:p-4 my-5 md:my-6">
-          <SidebarTrigger size="lg" aria-label="Ouvrir le menu des leçons" icon={<PanelLeft className="size-8" />} />
-
+        <div className="focus:p-4 my-5 md:my-6 flex items-center justify-between">
+          <SidebarTrigger
+            size="lg"
+            aria-label="Ouvrir le menu des leçons"
+            icon={<PanelLeft className="size-8" />}
+          />
         </div>
-
 
         <LearningView courseId={courseId} lessonId={lessonId} />
       </div>
-
     </HydrateClient>
   );
 };

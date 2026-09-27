@@ -27,6 +27,7 @@ import {
   createUpdateSchema,
 } from "drizzle-zod";
 import z from "zod";
+import { vector } from "./vector-type";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -672,3 +673,132 @@ export const lessonProgressRelations = relations(lessonProgress, ({ one }) => ({
     references: [courseLessons.id],
   }),
 }));
+
+export const chatRoleEnum = pgEnum("chat_role", [
+  "user",
+  "assistant",
+  "system",
+]);
+
+export const conversations = pgTable(
+  "conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    // Optional context — a conversation can be scoped to one lesson, one
+    // course, or left standalone as a general tutor chat.
+    lessonId: uuid("lesson_id").references(() => courseLessons.id, {
+      onDelete: "set null",
+    }),
+    courseId: uuid("course_id").references(() => courses.id, {
+      onDelete: "set null",
+    }),
+    title: text("title").notNull().default("New chat"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("conversations_user_id_idx").on(table.userId)],
+);
+
+export const messages = pgTable(
+  "messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => conversations.id, { onDelete: "cascade" }),
+    role: chatRoleEnum("role").notNull(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("messages_conversation_id_idx").on(table.conversationId)],
+);
+
+/**
+ * One evolving profile per user — this is the "adapts progressively" part.
+ * Rewritten by the update-learning-profile Trigger.dev task after each
+ * exchange, then read back into the system prompt of every future turn.
+ */
+export const userLearningProfiles = pgTable("user_learning_profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: "cascade" }),
+  summary: text("summary").notNull().default(""),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+/**
+ * RAG source: chunks of lesson content with their embedding, searched at
+ * query time via cosine distance. Populated by the embed-lesson task.
+ */
+export const lessonChunks = pgTable(
+  "lesson_chunks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    lessonId: uuid("lesson_id")
+      .notNull()
+      .references(() => courseLessons.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("lesson_chunks_lesson_id_idx").on(table.lessonId)],
+);
+
+export const conversationsRelations = relations(
+  conversations,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [conversations.userId],
+      references: [user.id],
+    }),
+    lesson: one(courseLessons, {
+      fields: [conversations.lessonId],
+      references: [courseLessons.id],
+    }),
+    course: one(courses, {
+      fields: [conversations.courseId],
+      references: [courses.id],
+    }),
+    messages: many(messages),
+  }),
+);
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  conversation: one(conversations, {
+    fields: [messages.conversationId],
+    references: [conversations.id],
+  }),
+}));
+
+export const userLearningProfilesRelations = relations(
+  userLearningProfiles,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [userLearningProfiles.userId],
+      references: [user.id],
+    }),
+  }),
+);
+
+export const lessonChunksRelations = relations(lessonChunks, ({ one }) => ({
+  lesson: one(courseLessons, {
+    fields: [lessonChunks.lessonId],
+    references: [courseLessons.id],
+  }),
+}));
+
+export const conversationInsertSchema = createInsertSchema(conversations);
+export const conversationSelectSchema = createSelectSchema(conversations);
+export const messageInsertSchema = createInsertSchema(messages);
+export const messageSelectSchema = createSelectSchema(messages);

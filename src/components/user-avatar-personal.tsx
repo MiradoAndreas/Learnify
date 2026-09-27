@@ -57,22 +57,18 @@ export const UserAvatarPersonal = ({
   onClickLogout,
   userId,
 }: UserAvatarProps) => {
-
   const [open, setOpen] = useState(false);
-  
 
   // Générer les initiales pour l'avatar fallback
   const getInitials = () => {
     if (!name) return "?";
     return name
       .split(" ")
-      .map(part => part[0])
+      .map((part) => part[0])
       .slice(0, 2)
       .join("")
       .toUpperCase();
   };
-
-  
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
@@ -84,9 +80,9 @@ export const UserAvatarPersonal = ({
         <DropdownMenuTrigger asChild>
           <button className="outline-none">
             <Avatar className={cn(avatarVariants({ size, className }))}>
-              <AvatarImage 
-                src={imageUrl || undefined} 
-                alt={`Avatar de ${name}`} 
+              <AvatarImage
+                src={imageUrl || undefined}
+                alt={`Avatar de ${name}`}
               />
               <AvatarFallback className="bg-[#00887a] font-light text-white">
                 {getInitials()}
@@ -119,35 +115,33 @@ export const UserAvatarPersonal = ({
               </div>
             </div>
           </DropdownMenuLabel>
-          
+
           <Separator className="my-1" />
-          
+
           <DropdownMenuGroup>
-            <DropdownMenuItem 
-              className="flex items-center gap-3 px-4 py-3 cursor-pointer"
-             
-            >
+            <DropdownMenuItem className="flex items-center gap-3 px-4 py-3 cursor-pointer">
               <UserIcon className="h-4 w-4" />
               <span className="text-sm">Mon profil</span>
               <DropdownMenuShortcut>⇧⌘U</DropdownMenuShortcut>
             </DropdownMenuItem>
-            
-            <DropdownMenuItem 
-              className="cursor-pointer"
-              
-            >
-              <Link href={`/home/manage-account`} className="flex items-center gap-3  py-3 cursor-pointer">
-              <SettingsIcon className="h-4 w-4" />
-              <span className="text-sm">Gérer le compte</span>
-              <DropdownMenuShortcut>⇧⌘M</DropdownMenuShortcut></Link>
+
+            <DropdownMenuItem className="cursor-pointer">
+              <Link
+                href={`/home/manage-account`}
+                className="flex items-center gap-3  py-3 cursor-pointer"
+              >
+                <SettingsIcon className="h-4 w-4" />
+                <span className="text-sm">Gérer le compte</span>
+                <DropdownMenuShortcut>⇧⌘M</DropdownMenuShortcut>
+              </Link>
             </DropdownMenuItem>
-            
+
             <DropdownMenuItem className="flex items-center gap-3 px-4 py-3 cursor-pointer">
               <GraduationCapIcon className="h-4 w-4" />
               <span className="text-sm">Professeur</span>
             </DropdownMenuItem>
-            
-            <DropdownMenuItem 
+
+            <DropdownMenuItem
               className="flex items-center gap-3 px-4 py-3 cursor-pointer text-red-600 focus:text-red-600"
               onClick={onClickLogout}
             >
@@ -155,7 +149,7 @@ export const UserAvatarPersonal = ({
               <span className="text-sm">Se déconnecter</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
-          
+
           <div className="bg-[#f7f0eb] px-4 py-3 -mx-1 -mb-1">
             <div className="flex flex-col items-center gap-2 text-center">
               <div className="flex items-center gap-1">
