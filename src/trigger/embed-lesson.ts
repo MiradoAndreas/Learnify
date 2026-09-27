@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { task } from "@trigger.dev/sdk/v3";
+import { task } from "@trigger.dev/sdk";
 import { embedMany } from "ai";
 import { eq } from "drizzle-orm";
 

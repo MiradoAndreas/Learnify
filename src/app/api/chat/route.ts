@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { tasks } from "@trigger.dev/sdk/v3";
+import { tasks } from "@trigger.dev/sdk";
 import { streamText } from "ai";
 import { asc, eq } from "drizzle-orm";
 import { after } from "next/server";
