@@ -163,12 +163,12 @@ export const UserAvatarPersonal = ({
                     className="object-contain"
                   />
                   <span className="text-sm font-bold text-foreground">
-                    Learnify
+                    Mianatr'AI
                   </span>
                 </div>
               </div>
               <p className="text-xs font-semibold text-[#f36b16]">
-                © 2025 Learnify by Miranga
+                © 2025 Mianatr'AI by AITeam
               </p>
             </div>
           </div>

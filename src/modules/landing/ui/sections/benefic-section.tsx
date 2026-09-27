@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
 // Dans BeneficSection, modifiez l'import :
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 
 // Remplacer l'import statique par :
 const FeaturesSectionDemo = dynamic(
-  () => import('@/components/features-section-demo-3'),
+  () => import("@/components/features-section-demo-3"),
   {
     ssr: false,
-    loading: () => <div className="h-96 animate-pulse bg-gray-100 rounded-lg" />
-  }
-)
+    loading: () => (
+      <div className="h-96 animate-pulse bg-gray-100 rounded-lg" />
+    ),
+  },
+);
 
-import { motion } from "framer-motion"
-
-
+import { motion } from "framer-motion";
 
 export const BeneficSection = () => {
   return (
@@ -36,7 +36,7 @@ export const BeneficSection = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-3xl font-bold md:text-4xl mt-6 mb-4 text-center text-[#202632]"
         >
-          Pourquoi Learnify change vraiment ta façon d’apprendre
+          Pourquoi Mianatr'AI change vraiment ta façon d’apprendre
         </motion.h1>
 
         <motion.p
@@ -46,15 +46,13 @@ export const BeneficSection = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-sm md:text-md lg:text-lg text-center text-muted-foreground"
         >
-          Des cours clairs, pratiques et accessibles, pensés pour t’aider à progresser vite et construire des compétences utiles
+          Des cours clairs, pratiques et accessibles, pensés pour t’aider à
+          progresser vite et construire des compétences utiles
         </motion.p>
-
-
       </div>
       <div>
         <FeaturesSectionDemo />
       </div>
-
     </section>
-  )
-}
+  );
+};

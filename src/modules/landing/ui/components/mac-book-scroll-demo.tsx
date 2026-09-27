@@ -2,7 +2,6 @@
 
 import { MacbookScroll } from "@/components/ui/macbook-scroll";
 
-
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -21,7 +20,7 @@ export function MacbookScrollDemo() {
         <MacbookScroll
           title={
             <span>
-              Voir les cours disponible sur Learnify <br /> Par des experts
+              Voir les cours disponible sur Mianatr'AI <br /> Par des experts
             </span>
           }
           badge={
@@ -36,16 +35,17 @@ export function MacbookScrollDemo() {
     );
   }
 
-  const imageSrc = resolvedTheme === 'dark'
-    ? '/capture-learnify2-dark.png'
-    : '/capture-learnify2.png';
+  const imageSrc =
+    resolvedTheme === "dark"
+      ? "/capture-learnify2-dark.png"
+      : "/capture-learnify2.png";
 
   return (
     <div className="w-full overflow-hidden bg-white dark:bg-[#0B0B0F] hidden lg:block">
       <MacbookScroll
         title={
           <span>
-            Voir les cours disponible sur Learnify <br /> Par des experts
+            Voir les cours disponible sur Mianatr'AI <br /> Par des experts
           </span>
         }
         badge={

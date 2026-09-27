@@ -31,7 +31,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
-
 const loginSchema = z.object({
   email: z.email("Please enter a valid email adress"),
   password: z.string().min(1, "Password is required"),
@@ -67,7 +66,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-      }
+      },
     );
     // todos : remove this thing when the router.push is enough
     onSuccess();
@@ -76,7 +75,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
   const isPending = form.formState.isSubmitting;
 
   const onSocial = async (provider: "github" | "google" | "linkedin") => {
-    toast.loading(`Redirecting to ${provider}`)
+    toast.loading(`Redirecting to ${provider}`);
     setIsSocialPending(true);
     await authClient.signIn.social(
       {
@@ -91,7 +90,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-      }
+      },
     );
     onSuccess();
   };
@@ -101,7 +100,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
       <Card className="shadow-none  border-none py-0 gap-4 -mx-6 ">
         <CardHeader className="text-center gap-0">
           <CardTitle className="text-lg font-bold text-black/80">
-            Sign in to <span className="text-[#ffa041]">Learnify</span>🙌
+            Sign in to <span className="text-[#ffa041]">Mianatr'AI</span>🙌
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
             Welcome back! Please sign in to continue
@@ -126,7 +125,6 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                       src="/logos/google.svg"
                       width={15}
                       height={15}
-
                     />
                     <span className="text-xs text-muted-foreground">
                       Continue with Goggle
@@ -146,7 +144,6 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                         src="/logos/github.svg"
                         width={15}
                         height={15}
-
                       />
                     </Button>
                     <Button
@@ -161,7 +158,6 @@ export function LoginForm({ onSuccess, onSwitch }: LoginProps) {
                         src="/logos/linkedin.svg"
                         width={15}
                         height={15}
-
                       />
                     </Button>
                   </div>

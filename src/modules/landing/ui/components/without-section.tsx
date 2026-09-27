@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { motion } from "framer-motion"
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 const problems = [
   "Tu regardes des cours au hasard sans savoir quoi apprendre ni dans quel ordre",
@@ -12,8 +12,8 @@ const problems = [
   "Tu n’as rien de concret à présenter dans ton portfolio.",
   "Tu apprends de manière irrégulière et désorganisée.",
   "Tu doutes de ton niveau et hésites à postuler ou te lancer.",
-  "Tu apprends seul, sans feedback ni accompagnement."
-]
+  "Tu apprends seul, sans feedback ni accompagnement.",
+];
 
 export const WithoutSection = () => {
   return (
@@ -25,7 +25,7 @@ export const WithoutSection = () => {
         transition={{ duration: 0.5 }}
         className="text-md font-semibold text-center"
       >
-        Sans <span className="text-xl font-bold">Learnify</span>
+        Sans <span className="text-xl font-bold">Mianatr'AI</span>
       </motion.h1>
 
       <div className="flex flex-col gap-y-3 md:gap-4">
@@ -50,5 +50,5 @@ export const WithoutSection = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

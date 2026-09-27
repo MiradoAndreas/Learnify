@@ -53,7 +53,10 @@ const CoursesSkeleton = () => {
       {/* Grid de cartes skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, index) => (
-          <Card key={`skeleton-${index}`} className="overflow-hidden border-border/50 shadow-sm">
+          <Card
+            key={`skeleton-${index}`}
+            className="overflow-hidden border-border/50 shadow-sm"
+          >
             {/* Image/Thumbnail */}
             <Skeleton className="aspect-video w-full rounded-none" />
 
@@ -129,7 +132,8 @@ const CoursesError = () => {
         Erreur de chargement
       </h3>
       <p className="text-muted-foreground text-center max-w-sm">
-        Impossible de charger les cours. Veuillez vérifier votre connexion et réessayer.
+        Impossible de charger les cours. Veuillez vérifier votre connexion et
+        réessayer.
       </p>
       <button
         onClick={() => window.location.reload()}
@@ -148,13 +152,13 @@ const CoursesSectionSuspense = ({ categoryId }: CoursesSectionProps) => {
     data: courses,
     hasNextPage,
     fetchNextPage,
-    isFetchingNextPage
+    isFetchingNextPage,
   } = useSuspenseInfiniteQuery(
     trpc.course.getAllPublishedCourses.infiniteQueryOptions(
       { categoryId, limit: DEFAULT_COURSE_LIMIT },
       {
-        getNextPageParam: lastPage => lastPage.nextCursor
-      }
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
     ),
   );
 
@@ -214,7 +218,7 @@ const CoursesSectionSuspense = ({ categoryId }: CoursesSectionProps) => {
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
         fetchNextPage={fetchNextPage}
-        textInEnd="Vous avez atteint tous les cours disponibles sur Learnify"
+        textInEnd="Vous avez atteint tous les cours disponibles sur Mianatr'AI"
       />
     </div>
   );

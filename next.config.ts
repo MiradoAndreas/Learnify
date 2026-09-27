@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "www.pexels.com",
+      },
+      {
+        protocol: "https",
         hostname: "q28d7n44nc.ufs.sh",
       },
       {

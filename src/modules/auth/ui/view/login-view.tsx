@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -54,11 +54,11 @@ export function LoginView() {
         callbackURL: "/",
       },
       {
-        onSuccess: () => { },
+        onSuccess: () => {},
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-      }
+      },
     );
   };
   const onSocial = async (provider: "google" | "github" | "linkedin") => {
@@ -67,11 +67,11 @@ export function LoginView() {
         provider: provider,
       },
       {
-        onSuccess: () => { },
+        onSuccess: () => {},
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-      }
+      },
     );
   };
 
@@ -110,7 +110,7 @@ export function LoginView() {
       >
         <CardHeader className="text-center gap-0">
           <CardTitle className="text-lg font-bold text-black/80">
-            Sign in to <span className="text-[#ffa041]">Learnify</span>🙌
+            Sign in to <span className="text-[#ffa041]">Miantr'AI</span>🙌
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
             Welcome back! Please sign in to continue
@@ -250,7 +250,6 @@ export function LoginView() {
                 >
                   Don't have an account?{" "}
                   <Link
-
                     href="/register"
                     className="hover:underline cursor-pointer hover:underline-offset-4 font-bold text-primary/90"
                   >

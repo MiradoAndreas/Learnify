@@ -17,8 +17,8 @@ const fadeUp = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: appleEasing }
-  }
+    transition: { duration: 0.5, ease: appleEasing },
+  },
 };
 
 const scaleIn = {
@@ -26,8 +26,8 @@ const scaleIn = {
   show: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.5, ease: appleEasing }
-  }
+    transition: { duration: 0.5, ease: appleEasing },
+  },
 };
 
 const staggerContainer = {
@@ -37,16 +37,16 @@ const staggerContainer = {
     transition: {
       staggerChildren: 0.1,
       delayChildren: 0.1,
-    }
-  }
+    },
+  },
 };
 
 export const Footer = () => {
   const footerNavs = [
     {
-      label: "Learnify",
+      label: "Mianatr'AI  ",
       items: [
-        { href: "/about", name: "À propos de Learnify" },
+        { href: "/about", name: "À propos de Mianatr'AI " },
         { href: "/how-it-works", name: "Comment ça marche" },
         { href: "/pricing", name: "Tarifs" },
         { href: "/contact", name: "Contact" },
@@ -129,10 +129,7 @@ export const Footer = () => {
                 className="w-full px-4 py-3 rounded-lg h-full bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
               />
             </motion.div>
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <InteractiveHoverButton className="w-[230px] md:w-[300px]">
                 S'inscrire
               </InteractiveHoverButton>
@@ -187,11 +184,8 @@ export const Footer = () => {
           variants={fadeUp}
           className="mt-16 py-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-6"
         >
-          <motion.p
-            variants={fadeUp}
-            className="text-sm text-muted-foreground"
-          >
-            © {new Date().getFullYear()} Learnify. Apprendre aujourd’hui,
+          <motion.p variants={fadeUp} className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Mianatr'AI . Apprendre aujourd’hui,
             réussir demain.
           </motion.p>
 
@@ -230,7 +224,7 @@ export const Footer = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <h1 className="text-center uppercase mt-20 text-5xl md:text-9xl lg:text-[12rem] xl:text-[13rem] font-bold bg-clip-text text-transparent bg-linear-to-b from-muted-foreground/20 via-muted-foreground/10 to-transparent dark:from-gray-800 dark:via-gray-800/50 dark:to-transparent inset-x-0 select-none pointer-events-none">
-            Learnify
+            Mianatr'AI
           </h1>
         </motion.div>
       </div>

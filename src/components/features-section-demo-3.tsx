@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -20,8 +20,8 @@ const fadeUp = {
     transition: {
       duration: 0.7,
       ease: appleEasing,
-    }
-  }
+    },
+  },
 };
 
 const slideInLeft = {
@@ -32,8 +32,8 @@ const slideInLeft = {
     transition: {
       duration: 0.6,
       ease: appleEasing,
-    }
-  }
+    },
+  },
 };
 
 const slideInRight = {
@@ -44,8 +44,8 @@ const slideInRight = {
     transition: {
       duration: 0.6,
       ease: appleEasing,
-    }
-  }
+    },
+  },
 };
 
 export default function FeaturesSectionDemo() {
@@ -53,7 +53,7 @@ export default function FeaturesSectionDemo() {
     {
       title: "Commence à apprendre gratuitement",
       description:
-        "Accède à des vidéos gratuites en malagasy pour tester Learnify et progresser sans payer.",
+        "Accède à des vidéos gratuites en malagasy pour tester Mianatr'AI et progresser sans payer.",
       skeleton: <SkeletonOne />,
       animation: fadeUp,
       className:
@@ -70,7 +70,7 @@ export default function FeaturesSectionDemo() {
     {
       title: "Apprends tout ce que tu veux, sans limites",
       description:
-        "Learnify te donne accès à un univers de compétences : programmation, design, marketing et bien plus. Ta seule limite, c’est ton ambition.",
+        "Mianatr'AI    te donne accès à un univers de compétences : programmation, design, marketing et bien plus. Ta seule limite, c’est ton ambition.",
       skeleton: <SkeletonThree />,
       animation: slideInLeft,
       className:
@@ -104,7 +104,11 @@ export default function FeaturesSectionDemo() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.5, delay: 0.2 + index * 0.1, ease: appleEasing }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.2 + index * 0.1,
+                  ease: appleEasing,
+                }}
               >
                 {feature.skeleton}
               </motion.div>
@@ -143,9 +147,10 @@ const FeatureCard = ({
 
 const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
   return (
-
     <PointerHighlight>
-      <span className="max-w-5xl mx-auto text-left tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug">{children}</span>
+      <span className="max-w-5xl mx-auto text-left tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug">
+        {children}
+      </span>
     </PointerHighlight>
   );
 };
@@ -160,7 +165,7 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
       className={cn(
         "text-sm md:text-base max-w-4xl text-left mx-auto",
         "text-neutral-500 text-center font-normal dark:text-neutral-300",
-        "text-left max-w-sm mx-0 md:text-sm my-2"
+        "text-left max-w-sm mx-0 md:text-sm my-2",
       )}
     >
       {children}
@@ -228,7 +233,7 @@ export const SkeletonTwo = () => {
       scale: 1.1,
       rotate: 0,
       zIndex: 100,
-      transition: { duration: 0.3, ease: appleEasing }
+      transition: { duration: 0.3, ease: appleEasing },
     },
   };
 

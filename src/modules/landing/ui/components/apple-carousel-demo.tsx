@@ -2,7 +2,7 @@
 
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 import Image from "next/image";
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
 export function AppleCardsCarouselDemo() {
   const cards = data.map((card, index) => (
@@ -11,7 +11,6 @@ export function AppleCardsCarouselDemo() {
 
   return (
     <div className="w-full h-full py-20">
-
       <div className="max-w-3xl mx-auto flex flex-col items-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -30,7 +29,7 @@ export function AppleCardsCarouselDemo() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-3xl font-bold md:text-4xl mt-6 mb-4 text-center text-[#202632]"
         >
-          Apprendre sur Learnify, c’est simple, rapide et efficace
+          Apprendre sur Mianatr'AI, c’est simple, rapide et efficace
         </motion.h1>
 
         <motion.p
@@ -40,9 +39,9 @@ export function AppleCardsCarouselDemo() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-sm md:text-md lg:text-lg text-center text-muted-foreground"
         >
-          Découvre comment Learnify t’accompagne, étape par étape, pour transformer tes ambitions en compétences concrètes.
+          Découvre comment Mianatr'AI t’accompagne, étape par étape, pour
+          transformer tes ambitions en compétences concrètes.
         </motion.p>
-
       </div>
       <motion.div
         initial={{ opacity: 0 }}
@@ -56,8 +55,6 @@ export function AppleCardsCarouselDemo() {
   );
 }
 
-
-
 const data = [
   {
     category: "Découverte",
@@ -65,8 +62,9 @@ const data = [
     src: "https://plus.unsplash.com/premium_photo-1664372145591-f7cc308ff5da?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bGVhcm58ZW58MHx8MHx8fDA%3D",
     content: (
       <p>
-        Accède à une large bibliothèque de cours en tech, business, design,
-        IA et bien plus. Sur Learnify, chaque compétence est pensée pour ton avenir.
+        Accède à une large bibliothèque de cours en tech, business, design, IA
+        et bien plus. Sur Mianatr'AI, chaque compétence est pensée pour ton
+        avenir.
       </p>
     ),
   },
@@ -87,8 +85,8 @@ const data = [
     src: "https://images.unsplash.com/photo-1526684185682-c7210ad1dace?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2FsbSUyMHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D",
     content: (
       <p>
-        Depuis ton téléphone ou ton ordinateur, avance à ton propre rythme
-        et reprends exactement là où tu t’es arrêté.
+        Depuis ton téléphone ou ton ordinateur, avance à ton propre rythme et
+        reprends exactement là où tu t’es arrêté.
       </p>
     ),
   },
@@ -117,11 +115,11 @@ const data = [
   {
     category: "Résultats",
     title: "Transforme tes compétences en opportunités",
-    src: "https://images.unsplash.com/photo-1603202662706-62ead3176b8f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d29yayUyMHdvbWVuJTIwc21pbGV8ZW58MHx8MHx8fDA%3D",
+    src: "https://www.pexels.com/fr-fr/photo/jeune-homme-avec-un-sac-a-dos-dans-un-parc-urbain-31951231/",
     content: (
       <p>
-        Développe des compétences utiles localement et internationalement,
-        et ouvre la porte à de nouvelles opportunités professionnelles.
+        Développe des compétences utiles localement et internationalement, et
+        ouvre la porte à de nouvelles opportunités professionnelles.
       </p>
     ),
   },

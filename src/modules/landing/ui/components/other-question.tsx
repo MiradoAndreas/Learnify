@@ -1,12 +1,11 @@
-import { AccordionDemo } from "./accordion-demo"
-import { motion } from "framer-motion"
+import { AccordionDemo } from "./accordion-demo";
+import { motion } from "framer-motion";
 
 const appleEasing = [0.16, 1, 0.3, 1] as const;
 
 export const OtherQuestion = () => {
   return (
     <div className="py-20 md:py-30">
-
       <div className="p-4 flex flex-col gap-5">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
@@ -25,7 +24,7 @@ export const OtherQuestion = () => {
           transition={{ duration: 0.6, delay: 0.1, ease: appleEasing }}
           className="text-[#929292] text-center text-xl md:text-2xl"
         >
-          Autre Questions sur Learnify ?
+          Autre Questions sur Mianatr'AI ?
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -37,9 +36,6 @@ export const OtherQuestion = () => {
           <AccordionDemo />
         </motion.div>
       </div>
-
     </div>
-
-
-  )
-}
+  );
+};

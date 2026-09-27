@@ -11,7 +11,6 @@ import Image from "next/image";
 
 import React, { useRef, useState } from "react";
 
-
 interface NavbarProps {
   children: React.ReactNode;
   className?: string;
@@ -79,9 +78,9 @@ export const Navbar = ({ children, className }: NavbarProps) => {
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
           ? React.cloneElement(
-            child as React.ReactElement<{ visible?: boolean }>,
-            { visible },
-          )
+              child as React.ReactElement<{ visible?: boolean }>,
+              { visible },
+            )
           : child,
       )}
     </motion.div>
@@ -92,7 +91,7 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
     <motion.div
       style={{
-        minWidth: "800px"
+        minWidth: "800px",
       }}
       animate={{
         backdropFilter: visible ? "blur(10px)" : "none",
@@ -107,7 +106,6 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         stiffness: 200,
         damping: 50,
       }}
-
       className={cn(
         "relative z-60 mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex dark:bg-transparent ",
         visible && "bg-white/80 dark:bg-neutral-950/80",
@@ -230,9 +228,15 @@ export const MobileNavToggle = ({
   onClick: () => void;
 }) => {
   return isOpen ? (
-    <IconX className="text-black dark:text-white cursor-pointer" onClick={onClick} />
+    <IconX
+      className="text-black dark:text-white cursor-pointer"
+      onClick={onClick}
+    />
   ) : (
-    <IconMenu2 className="text-black dark:text-white cursor-pointer" onClick={onClick} />
+    <IconMenu2
+      className="text-black dark:text-white cursor-pointer"
+      onClick={onClick}
+    />
   );
 };
 
@@ -242,13 +246,8 @@ export const NavbarLogo = () => {
       href="#"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
     >
-      <Image
-        src="https://assets.aceternity.com/logo-dark.png"
-        alt="logo"
-        width={30}
-        height={30}
-      />
-      <span className="font-medium text-black dark:text-white">Learnify</span>
+      <Image src={"/logos/logo.svg"} alt="logo" width={30} height={30} />
+      <span className="font-medium text-black dark:text-white">Miantra'AI</span>
     </a>
   );
 };
@@ -269,9 +268,9 @@ export const NavbarButton = ({
   className?: string;
   variant?: "primary" | "secondary" | "dark" | "gradient";
 } & (
-    | React.ComponentPropsWithoutRef<"a">
-    | React.ComponentPropsWithoutRef<"button">
-  )) => {
+  | React.ComponentPropsWithoutRef<"a">
+  | React.ComponentPropsWithoutRef<"button">
+)) => {
   const baseStyles =
     "px-4 py-2 rounded-md bg-white button bg-white text-black text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
 

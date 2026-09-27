@@ -1,73 +1,125 @@
-"use client"
-import { useState } from "react"
+"use client";
+import { useState } from "react";
 
-import { InteractiveHoverButton } from "./interactive-hover-button"
+import { InteractiveHoverButton } from "./interactive-hover-button";
 
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
-import { VideoPlayer } from "../video-player"
-import Link from "next/link"
-import { PointerHighlight } from "./pointer-highlight"
-import { TextAnimate } from "./text-animate"
+import { VideoPlayer } from "../video-player";
+import Link from "next/link";
+import { PointerHighlight } from "./pointer-highlight";
+import { TextAnimate } from "./text-animate";
 
 export const HeroFloat = () => {
   const features = [
     {
       name: "Trusted",
-      icon:
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-          <path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            fillRule="evenodd"
+            d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+            clipRule="evenodd"
+          />
         </svg>
-
+      ),
     },
     {
       name: "Over 1000+ videos",
-      icon:
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-          <path fillRule="evenodd" d="M1 4.75C1 3.784 1.784 3 2.75 3h14.5c.966 0 1.75.784 1.75 1.75v10.515a1.75 1.75 0 01-1.75 1.75h-1.5c-.078 0-.155-.005-.23-.015H4.48c-.075.01-.152.015-.23.015h-1.5A1.75 1.75 0 011 15.265V4.75zm16.5 7.385V11.01a.25.25 0 00-.25-.25h-1.5a.25.25 0 00-.25.25v1.125c0 .138.112.25.25.25h1.5a.25.25 0 00.25-.25zm0 2.005a.25.25 0 00-.25-.25h-1.5a.25.25 0 00-.25.25v1.125c0 .108.069.2.165.235h1.585a.25.25 0 00.25-.25v-1.11zm-15 1.11v-1.11a.25.25 0 01.25-.25h1.5a.25.25 0 01.25.25v1.125a.25.25 0 01-.164.235H2.75a.25.25 0 01-.25-.25zm2-4.24v1.125a.25.25 0 01-.25.25h-1.5a.25.25 0 01-.25-.25V11.01a.25.25 0 01.25-.25h1.5a.25.25 0 01.25.25zm13-2.005V7.88a.25.25 0 00-.25-.25h-1.5a.25.25 0 00-.25.25v1.125c0 .138.112.25.25.25h1.5a.25.25 0 00.25-.25zM4.25 7.63a.25.25 0 01.25.25v1.125a.25.25 0 01-.25.25h-1.5a.25.25 0 01-.25-.25V7.88a.25.25 0 01.25-.25h1.5zm0-3.13a.25.25 0 01.25.25v1.125a.25.25 0 01-.25.25h-1.5a.25.25 0 01-.25-.25V4.75a.25.25 0 01.25-.25h1.5zm11.5 1.625a.25.25 0 01-.25-.25V4.75a.25.25 0 01.25-.25h1.5a.25.25 0 01.25.25v1.125a.25.25 0 01-.25.25h-1.5zm-9 3.125a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" clipRule="evenodd" />
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            fillRule="evenodd"
+            d="M1 4.75C1 3.784 1.784 3 2.75 3h14.5c.966 0 1.75.784 1.75 1.75v10.515a1.75 1.75 0 01-1.75 1.75h-1.5c-.078 0-.155-.005-.23-.015H4.48c-.075.01-.152.015-.23.015h-1.5A1.75 1.75 0 011 15.265V4.75zm16.5 7.385V11.01a.25.25 0 00-.25-.25h-1.5a.25.25 0 00-.25.25v1.125c0 .138.112.25.25.25h1.5a.25.25 0 00.25-.25zm0 2.005a.25.25 0 00-.25-.25h-1.5a.25.25 0 00-.25.25v1.125c0 .108.069.2.165.235h1.585a.25.25 0 00.25-.25v-1.11zm-15 1.11v-1.11a.25.25 0 01.25-.25h1.5a.25.25 0 01.25.25v1.125a.25.25 0 01-.164.235H2.75a.25.25 0 01-.25-.25zm2-4.24v1.125a.25.25 0 01-.25.25h-1.5a.25.25 0 01-.25-.25V11.01a.25.25 0 01.25-.25h1.5a.25.25 0 01.25.25zm13-2.005V7.88a.25.25 0 00-.25-.25h-1.5a.25.25 0 00-.25.25v1.125c0 .138.112.25.25.25h1.5a.25.25 0 00.25-.25zM4.25 7.63a.25.25 0 01.25.25v1.125a.25.25 0 01-.25.25h-1.5a.25.25 0 01-.25-.25V7.88a.25.25 0 01.25-.25h1.5zm0-3.13a.25.25 0 01.25.25v1.125a.25.25 0 01-.25.25h-1.5a.25.25 0 01-.25-.25V4.75a.25.25 0 01.25-.25h1.5zm11.5 1.625a.25.25 0 01-.25-.25V4.75a.25.25 0 01.25-.25h1.5a.25.25 0 01.25.25v1.125a.25.25 0 01-.25.25h-1.5zm-9 3.125a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z"
+            clipRule="evenodd"
+          />
         </svg>
+      ),
     },
     {
       name: "400 ratings",
-      icon:
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-          <path fillRule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clipRule="evenodd" />
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
+            clipRule="evenodd"
+          />
         </svg>
-    }
-  ]
+      ),
+    },
+  ];
 
-  const [isVideoPoppedUp, setVideoPopUp] = useState(false)
+  const [isVideoPoppedUp, setVideoPopUp] = useState(false);
 
   return (
     <section>
       <div className="max-w-7xl mx-auto px-4 py-28 md:py-50 gap-12 text-gray-600 md:px-8 xl:flex">
         <div className="space-y-5 max-w-2xl mx-auto text-center xl:text-left">
-          <motion.div initial={{ opacity: 0, x: 500 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: 0.5 }} className="flex flex-wrap items-center justify-center gap-6 xl:justify-start">
-            {
-              features.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-x-2 text-gray-500 text-sm">
-                  {item.icon}
-                  {item.name}
-                </div>
-              ))
-            }
+          <motion.div
+            initial={{ opacity: 0, x: 500 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="flex flex-wrap items-center justify-center gap-6 xl:justify-start"
+          >
+            {features.map((item, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-x-2 text-gray-500 text-sm"
+              >
+                {item.icon}
+                {item.name}
+              </div>
+            ))}
           </motion.div>
           <div className="flex items-center md:items-start flex-col  gap-4 ">
-
-
-            <TextAnimate animation="blurInUp" by="character" className="text-2xl md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug  mx-auto" once={true} >
+            <TextAnimate
+              animation="blurInUp"
+              by="character"
+              className="text-2xl md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug  mx-auto"
+              once={true}
+            >
               Arrêter de regarder des tutos
             </TextAnimate>
 
-            <motion.h1 initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: .3 }} className="text-2xl  md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white  leading-relaxed lg:leading-snug  ">
+            <motion.h1
+              initial={{ opacity: 0, y: 100 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-2xl  md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white  leading-relaxed lg:leading-snug  "
+            >
               <PointerHighlight>
                 <span>Commencez à maîtriser</span>
               </PointerHighlight>
             </motion.h1>
           </div>
 
-          <motion.p initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: .5 }} className="max-w-xl mx-auto xl:mx-0">
-            Learnify t’aide à apprendre vite, pratiquer mieux et construire des projets concrets qui comptent.
+          <motion.p
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="max-w-xl mx-auto xl:mx-0"
+          >
+            Mianatr'AI t’aide à apprendre vite, pratiquer mieux et construire
+            des projets concrets qui comptent.
           </motion.p>
 
           <motion.div
@@ -76,46 +128,65 @@ export const HeroFloat = () => {
             viewport={{ once: true, amount: 0.2 }}
             transition={{
               duration: 0.7,
-              delay: 1
+              delay: 1,
             }}
           >
-            <Link href="/home" >
+            <Link href="/home">
               <InteractiveHoverButton>
                 Lancer mon apprentissage
-              </InteractiveHoverButton></Link>
+              </InteractiveHoverButton>
+            </Link>
           </motion.div>
         </div>
         <div className="flex-1 max-w-xl mx-auto mt-14 xl:mt-0 rounded-xl overflow-x-hidden overflow-y-hidden">
-
-          <motion.div initial={{ opacity: 0, y: 200 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: 0.5 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 200 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
             <VideoPlayer
               playbackId="MXt1YAmkBML7d00NbgEoig33do4tbxH4QK3NA1Wvj1FQ"
-
               thumbnailUrl="https://image.mux.com/MXt1YAmkBML7d00NbgEoig33do4tbxH4QK3NA1Wvj1FQ/thumbnail.png?width=214&height=121&time=6"
             />
           </motion.div>
         </div>
       </div>
-      {
-        isVideoPoppedUp ? (
-          <div className="fixed inset-0 w-full h-full flex items-center justify-center">
-            <div className="absolute inset-0 w-full h-full bg-black/50" onClick={() => setVideoPopUp(false)}></div>
-            <div className="px-4 relative">
-              <button
-                className="w-12 h-12 mb-5 rounded-full duration-150 bg-gray-800 hover:bg-gray-700 text-white"
-                onClick={() => setVideoPopUp(false)}
+      {isVideoPoppedUp ? (
+        <div className="fixed inset-0 w-full h-full flex items-center justify-center">
+          <div
+            className="absolute inset-0 w-full h-full bg-black/50"
+            onClick={() => setVideoPopUp(false)}
+          ></div>
+          <div className="px-4 relative">
+            <button
+              className="w-12 h-12 mb-5 rounded-full duration-150 bg-gray-800 hover:bg-gray-700 text-white"
+              onClick={() => setVideoPopUp(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="w-5 h-5 m-auto"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 m-auto">
-                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                </svg>
-              </button>
-              <video className="rounded-lg w-full max-w-2xl" controls autoPlay={true}>
-                <source src="https://raw.githubusercontent.com/sidiDev/remote-assets/main/FloatUI.mp4" type="video/mp4" />
-              </video>
-            </div>
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            </button>
+            <video
+              className="rounded-lg w-full max-w-2xl"
+              controls
+              autoPlay={true}
+            >
+              <source
+                src="https://raw.githubusercontent.com/sidiDev/remote-assets/main/FloatUI.mp4"
+                type="video/mp4"
+              />
+            </video>
           </div>
-        ) : ""
-      }
+        </div>
+      ) : (
+        ""
+      )}
     </section>
-  )
-}
+  );
+};
