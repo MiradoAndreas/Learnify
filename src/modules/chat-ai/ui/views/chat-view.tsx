@@ -10,6 +10,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { ChatComposer } from "../components/chat-composer";
 import { ChatModelId, DEFAULT_CHAT_MODEL_ID } from "../components/chat-models";
+import { TestTriggerButton } from "@/components/test-trigger-button";
 
 export function ChatView({ conversationId }: { conversationId: string }) {
   const trpc = useTRPC();
@@ -65,6 +66,7 @@ export function ChatView({ conversationId }: { conversationId: string }) {
 
   return (
     <div className="mx-auto  h-full min-w-full  p-4 flex min-h-svh flex-col items-center justify-center gap-6">
+      <TestTriggerButton />
       <div className="flex-1 min-w-full overflow-y-auto">
         {messages.map((message) => (
           <div
